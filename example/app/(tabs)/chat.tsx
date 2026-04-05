@@ -1,5 +1,5 @@
 import { useState, useCallback, useRef, useEffect } from 'react'
-import { View, Text, StyleSheet, useWindowDimensions, TextInput, Pressable } from 'react-native'
+import { View, Text, StyleSheet, ScrollView, useWindowDimensions, TextInput, Pressable } from 'react-native'
 
 import { chatTheme } from '../../data/chat-theme'
 import { mockMessages, mockStreamTokens, type ChatMessage } from '../../data/mock-messages'
@@ -60,7 +60,7 @@ export default function ChatScreen() {
       </View>
 
       {/* Messages */}
-      <View style={styles.messageList}>
+      <ScrollView style={styles.messageList} contentContainerStyle={styles.messageContent}>
         {messages.slice(-10).map(msg => (
           <View
             key={msg.id}
@@ -81,7 +81,7 @@ export default function ChatScreen() {
             <View style={styles.cursor} />
           </View>
         )}
-      </View>
+      </ScrollView>
 
       {/* Stream button */}
       <Pressable style={styles.streamBtn} onPress={startStreaming} disabled={isStreaming}>
@@ -110,7 +110,8 @@ const styles = StyleSheet.create({
   toggleActive: { backgroundColor: '#007AFF' },
   toggleText: { fontSize: 14, color: '#333' },
   toggleTextActive: { color: '#fff', fontWeight: '600' },
-  messageList: { flex: 1, padding: 16, gap: 8 },
+  messageList: { flex: 1 },
+  messageContent: { padding: 16, gap: 8, paddingBottom: 16 },
   bubble: {
     padding: 12,
     borderRadius: 16,
