@@ -15,7 +15,7 @@ export function getEngineProfile(): EngineProfile {
 
   cachedProfile = Platform.select({
     ios: {
-      lineFitEpsilon: 0.01,
+      lineFitEpsilon: -0.5, // conservative: break lines slightly earlier to match RN Text rendering
       carryCJKAfterClosingQuote: true,
       preferPrefixWidthsForBreakableRuns: false,
       preferEarlySoftHyphenBreak: false,

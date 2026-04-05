@@ -11,9 +11,7 @@ const textStyleConfig = { fontFamily: 'Helvetica Neue', fontSize: 16, lineHeight
 function AccuracyRow({ text, testWidth }: { text: string; testWidth: number }) {
   const [actual, setActual] = useState<number | null>(null)
   const [actualWidth, setActualWidth] = useState<number | null>(null)
-  // Use actual rendered width for prediction, not estimated
-  const effectiveWidth = actualWidth ?? (testWidth - 8)
-  const predicted = useTextHeight(text, textStyleConfig, effectiveWidth)
+  const predicted = useTextHeight(text, textStyleConfig, testWidth - 8) // container width minus padding
 
   const diff = actual !== null ? Math.abs(predicted - actual) : null
   const pass = diff !== null ? diff < 1 : null
