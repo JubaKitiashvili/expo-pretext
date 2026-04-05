@@ -20,7 +20,11 @@ export function getLineHeight(style: TextStyle): number {
   return style.lineHeight ?? style.fontSize * 1.2
 }
 
+const SYSTEM_FONTS = ['System', 'system', 'sans-serif', 'serif', 'monospace']
+
 export function isFontLoaded(fontFamily: string): boolean {
+  // System fonts are always available
+  if (SYSTEM_FONTS.includes(fontFamily)) return true
   try {
     const Font = require('expo-font')
     return Font.isLoaded(fontFamily)

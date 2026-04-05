@@ -53,14 +53,32 @@ import type {
   PreparedTextWithSegments as PublicPreparedTextWithSegments,
 } from './types'
 
-let sharedGraphemeSegmenter: Intl.Segmenter | null = null
+// Grapheme segmenter for rich-path text materialization.
+// Intl.Segmenter may not be available in Hermes — use a fallback
+// that splits on Unicode code points via spread operator.
+interface GraphemeSegmenterLike {
+  segment(text: string): Iterable<{ segment: string }>
+}
+
+let sharedGraphemeSegmenter: GraphemeSegmenterLike | null = null
 // Rich-path only. Reuses grapheme splits while materializing multiple lines
 // from the same prepared handle, without pushing that cache into the API.
 let sharedLineTextCaches = new WeakMap<InternalPreparedTextWithSegments, Map<number, string[]>>()
 
-function getSharedGraphemeSegmenter(): Intl.Segmenter {
+function getSharedGraphemeSegmenter(): GraphemeSegmenterLike {
   if (sharedGraphemeSegmenter === null) {
-    sharedGraphemeSegmenter = new Intl.Segmenter(undefined, { granularity: 'grapheme' })
+    if (typeof Intl !== 'undefined' && typeof (Intl as any).Segmenter === 'function') {
+      sharedGraphemeSegmenter = new (Intl as any).Segmenter(undefined, { granularity: 'grapheme' })
+    } else {
+      // Fallback: split on code points via spread operator.
+      // This handles most cases correctly (including astral plane),
+      // but may not perfectly handle complex grapheme clusters (ZWJ emoji).
+      sharedGraphemeSegmenter = {
+        segment(text: string): Iterable<{ segment: string }> {
+          return [...text].map(ch => ({ segment: ch }))
+        },
+      }
+    }
   }
   return sharedGraphemeSegmenter
 }
