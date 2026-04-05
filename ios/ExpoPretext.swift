@@ -287,7 +287,8 @@ public class ExpoPretext: Module {
     // Set up locale for tokenizer
     let cfLocale: CFLocale?
     if let locale = locale {
-      cfLocale = CFLocaleCreate(nil, locale as CFString)
+      let loc = Locale(identifier: locale)
+      cfLocale = loc as CFLocale
     } else {
       cfLocale = CFLocaleCopyCurrent()
     }
