@@ -1,0 +1,4 @@
+ios/
+android/
+node_modules/
+bun.lock

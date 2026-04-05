@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "expo-pretext-example",
+    "slug": "expo-pretext-example",
+    "version": "1.0.0",
+    "scheme": "expo-pretext-example",
+    "platforms": ["ios", "android"],
+    "ios": {
+      "bundleIdentifier": "dev.jubakitiashvili.expopretext.example"
+    },
+    "android": {
+      "package": "dev.jubakitiashvili.expopretext.example"
+    },
+    "plugins": ["expo-router"]
+  }
+}
