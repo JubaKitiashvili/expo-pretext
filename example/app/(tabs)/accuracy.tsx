@@ -10,7 +10,10 @@ const textStyleConfig = { fontFamily: 'Helvetica Neue', fontSize: 16, lineHeight
 
 function AccuracyRow({ text, testWidth }: { text: string; testWidth: number }) {
   const [actual, setActual] = useState<number | null>(null)
-  const predicted = useTextHeight(text, textStyleConfig, testWidth - 8) // minus padding
+  const [actualWidth, setActualWidth] = useState<number | null>(null)
+  // Use actual rendered width for prediction, not estimated
+  const effectiveWidth = actualWidth ?? (testWidth - 8)
+  const predicted = useTextHeight(text, textStyleConfig, effectiveWidth)
 
   const diff = actual !== null ? Math.abs(predicted - actual) : null
   const pass = diff !== null ? diff < 1 : null
@@ -25,7 +28,7 @@ function AccuracyRow({ text, testWidth }: { text: string; testWidth: number }) {
               {pass ? 'PASS' : 'FAIL'}
             </Text>
             <Text style={styles.diffValue}>diff: {diff.toFixed(1)}px</Text>
-            <Text style={styles.detailText}>P:{predicted.toFixed(0)} A:{actual?.toFixed(0)}</Text>
+            <Text style={styles.detailText}>P:{predicted.toFixed(0)} A:{actual?.toFixed(0)} W:{actualWidth?.toFixed(0)}</Text>
           </View>
         ) : (
           <Text style={styles.diffValue}>measuring...</Text>
@@ -34,7 +37,10 @@ function AccuracyRow({ text, testWidth }: { text: string; testWidth: number }) {
       <View style={[styles.textBox, { width: testWidth }]}>
         <Text
           style={styles.sampleText}
-          onLayout={e => setActual(e.nativeEvent.layout.height)}
+          onLayout={e => {
+            setActual(e.nativeEvent.layout.height)
+            setActualWidth(e.nativeEvent.layout.width)
+          }}
         >
           {text}
         </Text>

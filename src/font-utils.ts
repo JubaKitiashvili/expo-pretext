@@ -20,7 +20,14 @@ export function getLineHeight(style: TextStyle): number {
   return style.lineHeight ?? style.fontSize * 1.2
 }
 
-const SYSTEM_FONTS = ['System', 'system', 'sans-serif', 'serif', 'monospace']
+const SYSTEM_FONTS = [
+  'System', 'system', 'sans-serif', 'serif', 'monospace',
+  // iOS built-in fonts
+  'Helvetica', 'Helvetica Neue', 'Arial', 'Courier', 'Courier New',
+  'Georgia', 'Times New Roman', 'Trebuchet MS', 'Verdana',
+  'American Typewriter', 'Avenir', 'Avenir Next', 'Baskerville',
+  'Didot', 'Futura', 'Gill Sans', 'Menlo', 'Optima', 'Palatino',
+]
 
 export function isFontLoaded(fontFamily: string): boolean {
   // System fonts are always available
