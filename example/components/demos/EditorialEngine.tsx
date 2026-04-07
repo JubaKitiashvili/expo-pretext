@@ -133,53 +133,49 @@ export function EditorialEngineDemo() {
 
         {/* Orbs */}
         {orbs.map((o, i) => {
-          const [r, g, b] = o.color
+          const [cr, cg, cb] = o.color
+          const d = o.r * 2
           return (
             <View key={i} pointerEvents="none" style={{
               position: 'absolute',
-              left: pad + o.x - o.r * 1.5,
-              top: bodyTop + o.y - o.r * 1.5,
-              width: o.r * 3,
-              height: o.r * 3,
-              borderRadius: o.r * 1.5,
-              // Outer glow — large, very subtle
-              shadowColor: `rgb(${r},${g},${b})`,
-              shadowOpacity: 0.12,
-              shadowRadius: o.r,
-              shadowOffset: { width: 0, height: 0 },
-              justifyContent: 'center',
-              alignItems: 'center',
+              left: pad + o.x - o.r,
+              top: bodyTop + o.y - o.r,
+              width: d, height: d, borderRadius: o.r,
             }}>
-              {/* Main orb body — very dark, subtle fill */}
+              {/* Layer 1: outer glow — box-shadow: 0 0 120px 40px rgba(r,g,b,0.07) */}
               <View style={{
-                width: o.r * 2,
-                height: o.r * 2,
-                borderRadius: o.r,
-                backgroundColor: `rgba(${r},${g},${b},0.08)`,
-                borderWidth: 0.5,
-                borderColor: `rgba(${r},${g},${b},0.12)`,
-                // Inner shadow glow
-                shadowColor: `rgb(${r},${g},${b})`,
-                shadowOpacity: 0.18,
-                shadowRadius: o.r * 0.5,
+                position: 'absolute', width: d, height: d, borderRadius: o.r,
+                shadowColor: `rgb(${cr},${cg},${cb})`,
+                shadowOpacity: 0.07,
+                shadowRadius: Math.round(o.r * 1.2),
                 shadowOffset: { width: 0, height: 0 },
-              }}>
-                {/* Highlight spot — small, top-left, subtle */}
-                <View style={{
-                  position: 'absolute',
-                  width: o.r * 0.6,
-                  height: o.r * 0.6,
-                  borderRadius: o.r * 0.3,
-                  top: o.r * 0.25,
-                  left: o.r * 0.35,
-                  backgroundColor: `rgba(${r},${g},${b},0.15)`,
-                  // Highlight glow
-                  shadowColor: `rgb(${r},${g},${b})`,
-                  shadowOpacity: 0.3,
-                  shadowRadius: o.r * 0.4,
-                  shadowOffset: { width: -o.r * 0.1, height: -o.r * 0.1 },
-                }} />
-              </View>
+              }} />
+              {/* Layer 2: inner glow — box-shadow: 0 0 60px 15px rgba(r,g,b,0.18) */}
+              <View style={{
+                position: 'absolute', width: d, height: d, borderRadius: o.r,
+                shadowColor: `rgb(${cr},${cg},${cb})`,
+                shadowOpacity: 0.18,
+                shadowRadius: Math.round(o.r * 0.6),
+                shadowOffset: { width: 0, height: 0 },
+              }} />
+              {/* Layer 3: orb body — radial-gradient edge: rgba(r,g,b,0.12) */}
+              <View style={{
+                position: 'absolute', width: d, height: d, borderRadius: o.r,
+                backgroundColor: `rgba(${cr},${cg},${cb},0.10)`,
+              }} />
+              {/* Layer 4: highlight — radial-gradient center at 35% 35%: rgba(r,g,b,0.35) */}
+              <View style={{
+                position: 'absolute',
+                width: d * 0.55, height: d * 0.55,
+                borderRadius: d * 0.275,
+                top: d * 0.1, left: d * 0.1,
+                backgroundColor: `rgba(${cr},${cg},${cb},0.22)`,
+                // Soften the highlight edge
+                shadowColor: `rgb(${cr},${cg},${cb})`,
+                shadowOpacity: 0.25,
+                shadowRadius: Math.round(o.r * 0.5),
+                shadowOffset: { width: 0, height: 0 },
+              }} />
             </View>
           )
         })}
