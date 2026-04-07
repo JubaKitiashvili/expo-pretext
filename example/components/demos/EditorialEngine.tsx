@@ -29,14 +29,14 @@ export function EditorialEngineDemo() {
   const stageH = 700
   const pad = 16
 
-  const [orbs, setOrbs] = useState<OrbState[]>(() => initOrbs(stageW - pad * 2, stageH - 200))
+  const [orbs, setOrbs] = useState<OrbState[]>(() => initOrbs(stageW - pad * 2, stageH - pad * 2))
   const [paused, setPaused] = useState(false)
   const dragRef = useRef<number | null>(null)
   const orbsRef = useRef(orbs)
   orbsRef.current = orbs
 
   const innerW = stageW - pad * 2
-  const bodyTop = 190 // after headline + drop cap area
+  const bodyTop = pad
 
   // Physics
   useEffect(() => {
@@ -104,9 +104,6 @@ export function EditorialEngineDemo() {
   return (
     <View style={styles.outerContainer}>
       <View {...pan.panHandlers} style={[styles.stage, { width: stageW, height: stageH }]}>
-        {/* Headline */}
-        <Text style={styles.headline}>{HEADLINE}</Text>
-
         {/* Drop cap */}
         <Text style={styles.dropCap}>T</Text>
 
@@ -181,13 +178,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#0f0f14',
     overflow: 'hidden',
   },
-  headline: {
-    position: 'absolute', top: 16, left: 16, right: 16,
-    fontFamily: 'Georgia', fontWeight: '700', fontSize: 36, lineHeight: 40,
-    color: '#ffffff', letterSpacing: -0.5,
-  },
   dropCap: {
-    position: 'absolute', top: 192, left: 16,
+    position: 'absolute', top: 18, left: 16,
     fontFamily: 'Georgia', fontWeight: '700', fontSize: 72, lineHeight: 72,
     color: '#c4a35a',
   },
@@ -205,7 +197,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
   },
   hintPill: {
-    position: 'absolute', top: 156, alignSelf: 'center', left: '15%', right: '15%',
+    position: 'absolute', bottom: 8, alignSelf: 'center', left: '15%', right: '15%',
     backgroundColor: 'rgba(0,0,0,0.5)',
     paddingHorizontal: 16, paddingVertical: 6, borderRadius: 999,
     alignItems: 'center',
