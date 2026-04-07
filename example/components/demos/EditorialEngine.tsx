@@ -82,18 +82,22 @@ export function EditorialEngineDemo() {
     onPanResponderRelease: () => { dragRef.current = null },
   }), [innerW, stageH, bodyTop, pad])
 
-  // Layout
+  // Layout — drop cap as rect obstacle, orbs as circle obstacles
+  const DROP_CAP_W = 52
+  const DROP_CAP_H = LH * 3
+
   const lines = useMemo(() => {
     const prepared = prepareWithSegments(bodyText, bodyStyle)
     const bodyH = stageH - bodyTop - pad
-    const obstacles: CircleObstacle[] = orbs.map(o => ({
+    const circleObs: CircleObstacle[] = orbs.map(o => ({
       cx: o.x, cy: o.y, r: o.r, hPad: 12, vPad: 4,
     }))
+    const rectObs = [{ x: 0, y: 0, w: DROP_CAP_W, h: DROP_CAP_H }]
     return layoutColumn(
       prepared,
       { segmentIndex: 0, graphemeIndex: 0 },
       { x: 0, y: 0, width: innerW, height: bodyH },
-      LH, obstacles,
+      LH, circleObs, rectObs,
     ).lines
   }, [orbs, innerW, stageH, bodyTop])
 
@@ -108,14 +112,16 @@ export function EditorialEngineDemo() {
 
         {/* Body text lines */}
         {lines.map((s, i) => (
-          <Text key={i} style={[styles.bodyLine, {
+          <View key={i} style={{
             position: 'absolute',
             top: bodyTop + s.y,
             left: pad + s.x,
             width: s.width,
-          }]}>
-            {s.text}
-          </Text>
+            height: LH,
+            overflow: 'hidden',
+          }}>
+            <Text style={styles.bodyLine}>{s.text}</Text>
+          </View>
         ))}
 
         {/* Orbs */}
