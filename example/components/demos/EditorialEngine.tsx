@@ -82,9 +82,16 @@ export function EditorialEngineDemo() {
     onPanResponderRelease: () => { dragRef.current = null },
   }), [innerW, stageH, bodyTop, pad])
 
-  // Layout — drop cap as rect obstacle, orbs as circle obstacles
+  // Layout — drop cap + pullquote as rect obstacles, orbs as circle obstacles
   const DROP_CAP_W = 52
   const DROP_CAP_H = LH * 3
+
+  // Pullquote position (right side, middle of body)
+  const PQ_W = Math.floor(innerW * 0.48)
+  const PQ_X = innerW - PQ_W
+  const PQ_Y = LH * 9
+  const PQ_H = LH * 7
+  const PQ_TEXT = '\u201CThe performance improvement is not incremental \u2014 it is categorical. 0.05ms versus 30ms. Zero reflows versus five hundred.\u201D'
 
   const lines = useMemo(() => {
     const prepared = prepareWithSegments(bodyText, bodyStyle)
@@ -92,14 +99,17 @@ export function EditorialEngineDemo() {
     const circleObs: CircleObstacle[] = orbs.map(o => ({
       cx: o.x, cy: o.y, r: o.r, hPad: 12, vPad: 4,
     }))
-    const rectObs = [{ x: 0, y: 0, w: DROP_CAP_W, h: DROP_CAP_H }]
+    const rectObs = [
+      { x: 0, y: 0, w: DROP_CAP_W, h: DROP_CAP_H },
+      { x: PQ_X - 8, y: PQ_Y - 4, w: PQ_W + 8, h: PQ_H + 8 },
+    ]
     return layoutColumn(
       prepared,
       { segmentIndex: 0, graphemeIndex: 0 },
       { x: 0, y: 0, width: innerW, height: bodyH },
       LH, circleObs, rectObs,
     ).lines
-  }, [orbs, innerW, stageH, bodyTop])
+  }, [orbs, innerW, stageH, bodyTop, PQ_X, PQ_Y])
 
   return (
     <View style={styles.outerContainer}>
@@ -157,6 +167,21 @@ export function EditorialEngineDemo() {
           )
         })}
 
+        {/* Pullquote */}
+        <View style={{
+          position: 'absolute',
+          left: pad + PQ_X,
+          top: bodyTop + PQ_Y,
+          width: PQ_W,
+          height: PQ_H,
+          borderLeftWidth: 3,
+          borderLeftColor: '#6b5a3d',
+          paddingLeft: 14,
+          justifyContent: 'center',
+        }}>
+          <Text style={styles.pullquote}>{PQ_TEXT}</Text>
+        </View>
+
         {/* Hint */}
         <View style={styles.hintPill}>
           <Text style={styles.hintText}>
@@ -186,6 +211,10 @@ const styles = StyleSheet.create({
   bodyLine: {
     fontFamily: 'Georgia', fontSize: 16, lineHeight: 26,
     color: '#e8e4dc',
+  },
+  pullquote: {
+    fontFamily: 'Georgia', fontStyle: 'italic', fontSize: 17, lineHeight: 24,
+    color: '#b8a070',
   },
   orbContainer: {
     position: 'absolute',
