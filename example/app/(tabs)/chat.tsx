@@ -18,8 +18,6 @@ function ChatBubble({ message, maxWidth }: { message: ChatMessage; maxWidth: num
       style={[
         styles.bubble,
         isUser ? styles.userBubble : styles.assistantBubble,
-        // Use predicted height as minHeight — prevents layout jumps
-        { minHeight: predictedHeight + 24 }, // +24 for bubble padding
       ]}
     >
       <MarkdownRenderer content={message.content} isUser={isUser} />
