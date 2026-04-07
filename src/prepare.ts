@@ -7,7 +7,7 @@ import {
   type PrepareOptions as LayoutPrepareOptions,
 } from './layout'
 import { cacheNativeResult, tryResolveAllFromCache, clearJSCache } from './cache'
-import { textStyleToFontDescriptor, getFontKey, warnIfFontNotLoaded } from './font-utils'
+import { textStyleToFontDescriptor, getFontKey, getLineHeight, warnIfFontNotLoaded } from './font-utils'
 import { getEngineProfile } from './engine-profile'
 import type {
   TextStyle,
@@ -233,17 +233,17 @@ export function measureHeights(
     })
   }
 
+  // Primary: TextKit for pixel-perfect height
   const font = textStyleToFontDescriptor(style)
-  const results = native.batchSegmentAndMeasure(texts, font)
-  const fontKey = getFontKey(style)
-  const profile = getAnalysisProfile()
-
-  return results.map((result) => {
-    cacheNativeResult(fontKey, result.segments, result.widths)
-    const analysis = analyzeText(result.segments, result.isWordLike, profile)
-    const widthMap = buildWidthMap(result)
-    const prepared = buildPreparedText(analysis, widthMap, style)
-    return layout(prepared, maxWidth).height
+  const lh = getLineHeight(style)
+  return texts.map(text => {
+    try {
+      return native.measureTextHeight(text, font, maxWidth, lh).height
+    } catch {
+      // Fallback to segment-based
+      const p = prepare(text, style)
+      return layout(p, maxWidth).height
+    }
   })
 }
 
