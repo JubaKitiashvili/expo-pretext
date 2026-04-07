@@ -1,212 +1,209 @@
-import { useState, useMemo, useEffect } from 'react'
-import { View, Text, StyleSheet, useWindowDimensions, PanResponder, Pressable } from 'react-native'
+import { useState, useMemo, useEffect, useRef } from 'react'
+import { View, Text, StyleSheet, useWindowDimensions, Animated, PanResponder } from 'react-native'
 import {
   prepareWithSegments,
   layoutColumn,
   type CircleObstacle,
 } from 'expo-pretext'
 
-// Match Pretext's editorial engine style exactly
-const textStyle = { fontFamily: 'Georgia', fontSize: 15, lineHeight: 22 }
-const LH = 22
+const bodyStyle = { fontFamily: 'Georgia', fontSize: 16, lineHeight: 26 }
+const LH = 26
+const HEADLINE = 'THE FUTURE OF\nTEXT LAYOUT IS\nNOT CSS'
 
-const articleText = `Pretext measures and lays out multiline text entirely through arithmetic. No getBoundingClientRect, no reflow, no layout thrashing. The glowing orbs on this panel are circular obstacles. For every line of text, the engine checks whether the line intersects each orb, computes the blocked interval, and subtracts it from the available width. Text flows on both sides simultaneously — something CSS Shapes cannot do. All of this runs without a single DOM measurement. Drag the orbs to see text reflow in real time. The web renders text through a pipeline designed thirty years ago for static documents. A browser loads a font, shapes text into glyphs, measures their combined width, determines where lines break, and positions each line vertically. Every step requires the rendering engine to consult its internal layout tree — a structure so expensive that browsers guard access behind synchronous reflow barriers. Pretext sidesteps this entirely. It measures every word once via canvas and caches the widths. After preparation, layout is pure arithmetic: walk cached widths, track running line width, insert breaks when width exceeds maximum, sum line heights. No DOM. No reflow. Zero layout tree access.`
-
-// Pretext's orb colors: gold, blue, pink, green, purple
-type OrbDef = {
-  fx: number; fy: number; r: number
-  vx: number; vy: number
-  color: [number, number, number]
-}
-
-const orbDefs: OrbDef[] = [
-  { fx: 0.52, fy: 0.18, r: 55, vx: 0.5, vy: 0.35, color: [196, 163, 90] },   // gold
-  { fx: 0.18, fy: 0.45, r: 42, vx: -0.4, vy: 0.5, color: [100, 140, 255] },   // blue
-  { fx: 0.74, fy: 0.55, r: 48, vx: 0.35, vy: -0.45, color: [232, 100, 130] }, // pink
-  { fx: 0.38, fy: 0.75, r: 38, vx: -0.55, vy: -0.3, color: [80, 200, 140] },  // green
-]
+const bodyText = `he web renders text through a pipeline that was designed thirty years ago for static documents. A browser loads a font, shapes the text into glyphs, measures their combined width, determines where lines break, and positions each line vertically. Every step depends on the previous one. Every step requires the rendering engine to consult its internal layout tree — a structure so expensive to maintain that browsers guard access to it behind synchronous reflow barriers that can freeze the main thread for tens of milliseconds at a time. For a paragraph in a blog post, this pipeline is invisible. The browser loads, lays out, and paints before the reader's eye has traveled from the address bar to the first word. But the web is no longer a collection of static documents. It is a platform for applications, and those applications need to know about text in ways the original pipeline never anticipated. A messaging application needs to know the exact height of every message bubble before rendering a virtualized list. A masonry layout needs the height of every card to position them without overlap. An editorial page needs text to flow around images, advertisements, and interactive elements.`
 
 type OrbState = {
   x: number; y: number; vx: number; vy: number
   r: number; color: [number, number, number]
 }
 
+const initOrbs = (w: number, h: number): OrbState[] => [
+  { x: w * 0.45, y: h * 0.12, r: w * 0.18, vx: 0.4, vy: 0.3, color: [196, 163, 90] },
+  { x: w * 0.35, y: h * 0.52, r: w * 0.13, vx: -0.3, vy: 0.4, color: [100, 130, 220] },
+  { x: w * 0.7, y: h * 0.75, r: w * 0.15, vx: 0.25, vy: -0.35, color: [160, 100, 200] },
+]
+
 export function EditorialEngineDemo() {
   const { width } = useWindowDimensions()
-  const colW = width - 32
-  const colH = 560
-  const pad = 12
-  const innerW = colW - pad * 2
-  const innerH = colH - pad * 2
+  const stageW = width - 16
+  const stageH = 700
+  const pad = 16
+
+  const [orbs, setOrbs] = useState<OrbState[]>(() => initOrbs(stageW - pad * 2, stageH - 200))
   const [paused, setPaused] = useState(false)
-  const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const dragRef = useRef<number | null>(null)
+  const orbsRef = useRef(orbs)
+  orbsRef.current = orbs
 
-  const [orbs, setOrbs] = useState<OrbState[]>(() =>
-    orbDefs.map(d => ({
-      x: d.fx * innerW, y: d.fy * innerH,
-      vx: d.vx, vy: d.vy, r: d.r, color: d.color,
-    }))
-  )
+  const innerW = stageW - pad * 2
+  const bodyTop = 190 // after headline + drop cap area
 
-  // Physics — bounce off walls
+  // Physics
   useEffect(() => {
     if (paused) return
+    const bodyH = stageH - bodyTop - pad
     const iv = setInterval(() => {
       setOrbs(prev => prev.map((o, i) => {
-        if (i === dragIdx) return o
+        if (i === dragRef.current) return o
         let { x, y, vx, vy } = o
         x += vx; y += vy
         if (x - o.r < 0 || x + o.r > innerW) vx = -vx
-        if (y - o.r < 0 || y + o.r > innerH) vy = -vy
-        return {
-          ...o, vx, vy,
-          x: Math.max(o.r, Math.min(innerW - o.r, x)),
-          y: Math.max(o.r, Math.min(innerH - o.r, y)),
-        }
+        if (y - o.r < 0 || y + o.r > bodyH) vy = -vy
+        return { ...o, vx, vy, x: Math.max(o.r, Math.min(innerW - o.r, x)), y: Math.max(o.r, Math.min(bodyH - o.r, y)) }
       }))
     }, 33)
     return () => clearInterval(iv)
-  }, [paused, dragIdx, innerW, innerH])
+  }, [paused, innerW, stageH, bodyTop])
 
-  // Drag orbs
+  // Drag
   const pan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
+    onMoveShouldSetPanResponder: () => true,
     onPanResponderGrant: (e) => {
       const lx = e.nativeEvent.locationX - pad
-      const ly = e.nativeEvent.locationY - pad
-      const idx = orbs.findIndex(o => Math.hypot(lx - o.x, ly - o.y) < o.r + 10)
-      if (idx >= 0) setDragIdx(idx)
-      else setPaused(p => !p) // tap background = pause/resume
+      const ly = e.nativeEvent.locationY - bodyTop
+      const idx = orbsRef.current.findIndex(o => Math.hypot(lx - o.x, ly - o.y) < o.r + 15)
+      if (idx >= 0) {
+        dragRef.current = idx
+      } else {
+        dragRef.current = null
+        setPaused(p => !p)
+      }
     },
     onPanResponderMove: (e) => {
-      if (dragIdx === null) return
+      if (dragRef.current === null) return
       const lx = e.nativeEvent.locationX - pad
-      const ly = e.nativeEvent.locationY - pad
-      setOrbs(prev => prev.map((o, i) => i === dragIdx ? {
-        ...o,
-        x: Math.max(o.r, Math.min(innerW - o.r, lx)),
-        y: Math.max(o.r, Math.min(innerH - o.r, ly)),
+      const ly = e.nativeEvent.locationY - bodyTop
+      const bodyH = stageH - bodyTop - pad
+      setOrbs(prev => prev.map((o, i) => i === dragRef.current ? {
+        ...o, x: Math.max(o.r, Math.min(innerW - o.r, lx)), y: Math.max(o.r, Math.min(bodyH - o.r, ly)),
       } : o))
     },
-    onPanResponderRelease: () => setDragIdx(null),
-  }), [dragIdx, innerW, innerH, orbs, pad])
+    onPanResponderRelease: () => { dragRef.current = null },
+  }), [innerW, stageH, bodyTop, pad])
 
-  // Layout text around orbs
+  // Layout
   const lines = useMemo(() => {
-    const prepared = prepareWithSegments(articleText, textStyle)
+    const prepared = prepareWithSegments(bodyText, bodyStyle)
+    const bodyH = stageH - bodyTop - pad
     const obstacles: CircleObstacle[] = orbs.map(o => ({
-      cx: o.x, cy: o.y, r: o.r, hPad: 10, vPad: 3,
+      cx: o.x, cy: o.y, r: o.r, hPad: 12, vPad: 4,
     }))
     return layoutColumn(
       prepared,
       { segmentIndex: 0, graphemeIndex: 0 },
-      { x: 0, y: 0, width: innerW, height: innerH },
-      LH,
-      obstacles,
+      { x: 0, y: 0, width: innerW, height: bodyH },
+      LH, obstacles,
     ).lines
-  }, [orbs, innerW, innerH])
+  }, [orbs, innerW, stageH, bodyTop])
 
   return (
-    <View style={styles.container}>
-      {/* Hint bar */}
-      <View style={styles.hint}>
-        <Text style={styles.hintText}>
-          Drag orbs · Tap to {paused ? 'resume' : 'pause'} · Zero native calls per frame
-        </Text>
-      </View>
+    <View style={styles.outerContainer}>
+      <View {...pan.panHandlers} style={[styles.stage, { width: stageW, height: stageH }]}>
+        {/* Headline */}
+        <Text style={styles.headline}>{HEADLINE}</Text>
 
-      {/* Stage */}
-      <View {...pan.panHandlers} style={[styles.stage, { width: colW, height: colH }]}>
-        {/* Text lines */}
+        {/* Drop cap */}
+        <Text style={styles.dropCap}>T</Text>
+
+        {/* Body text lines */}
         {lines.map((s, i) => (
-          <Text
-            key={i}
-            style={[styles.line, {
-              position: 'absolute',
-              top: pad + s.y,
-              left: pad + s.x,
-              width: s.width,
-            }]}
-            numberOfLines={1}
-          >
+          <Text key={i} style={[styles.bodyLine, {
+            position: 'absolute',
+            top: bodyTop + s.y,
+            left: pad + s.x,
+            width: s.width,
+          }]}>
             {s.text}
           </Text>
         ))}
 
-        {/* Orbs with radial gradient effect */}
+        {/* Orbs */}
         {orbs.map((o, i) => {
           const [r, g, b] = o.color
           return (
-            <View key={i} style={[styles.orbOuter, {
+            <View key={i} pointerEvents="none" style={[styles.orbContainer, {
               position: 'absolute',
-              left: pad + o.x - o.r - 20,
-              top: pad + o.y - o.r - 20,
-              width: (o.r + 20) * 2,
-              height: (o.r + 20) * 2,
-              borderRadius: o.r + 20,
-              // Outer glow
-              shadowColor: `rgb(${r},${g},${b})`,
-              shadowOffset: { width: 0, height: 0 },
-              shadowOpacity: 0.25,
-              shadowRadius: 40,
+              left: pad + o.x - o.r,
+              top: bodyTop + o.y - o.r,
+              width: o.r * 2,
+              height: o.r * 2,
+              borderRadius: o.r,
             }]}>
-              <View style={[styles.orbInner, {
+              {/* Core */}
+              <View style={[styles.orbCore, {
                 width: o.r * 2,
                 height: o.r * 2,
                 borderRadius: o.r,
-                backgroundColor: `rgba(${r},${g},${b},0.12)`,
-                borderColor: `rgba(${r},${g},${b},0.25)`,
-                // Inner glow highlight (top-left)
+                backgroundColor: `rgba(${r},${g},${b},0.15)`,
                 shadowColor: `rgb(${r},${g},${b})`,
-                shadowOffset: { width: -o.r * 0.3, height: -o.r * 0.3 },
-                shadowOpacity: 0.35,
-                shadowRadius: o.r * 0.6,
+                shadowOpacity: 0.4,
+                shadowRadius: o.r * 0.8,
+                shadowOffset: { width: 0, height: 0 },
+              }]} />
+              {/* Highlight */}
+              <View style={[styles.orbHighlight, {
+                width: o.r * 0.8,
+                height: o.r * 0.8,
+                borderRadius: o.r * 0.4,
+                top: o.r * 0.2,
+                left: o.r * 0.3,
+                backgroundColor: `rgba(${r},${g},${b},0.25)`,
               }]} />
             </View>
           )
         })}
+
+        {/* Hint */}
+        <View style={styles.hintPill}>
+          <Text style={styles.hintText}>
+            Drag orbs · Tap to {paused ? 'resume' : 'pause'} · Zero DOM reads
+          </Text>
+        </View>
       </View>
 
-      {/* Stats */}
       <Text style={styles.stats}>
-        {lines.length} spans · layoutColumn() · prepareWithSegments() once
+        {lines.length} lines · layoutColumn() · {paused ? 'Paused' : 'Running'}
       </Text>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0c' },
-  hint: {
-    alignSelf: 'center', marginTop: 8, marginBottom: 8,
-    backgroundColor: 'rgba(0,0,0,0.45)',
-    paddingHorizontal: 18, paddingVertical: 8, borderRadius: 999,
-  },
-  hintText: {
-    fontSize: 12, color: 'rgba(255,255,255,0.22)',
-    fontFamily: 'Helvetica Neue',
-  },
+  outerContainer: { flex: 1, backgroundColor: '#0a0a0c', alignItems: 'center', paddingTop: 4 },
   stage: {
-    alignSelf: 'center',
     backgroundColor: '#0f0f14',
-    borderRadius: 8,
     overflow: 'hidden',
   },
-  line: {
-    fontFamily: 'Georgia',
-    fontSize: 15,
-    lineHeight: 22,
+  headline: {
+    position: 'absolute', top: 16, left: 16, right: 16,
+    fontFamily: 'Georgia', fontWeight: '700', fontSize: 36, lineHeight: 40,
+    color: '#ffffff', letterSpacing: -0.5,
+  },
+  dropCap: {
+    position: 'absolute', top: 180, left: 16,
+    fontFamily: 'Georgia', fontWeight: '700', fontSize: 72, lineHeight: 72,
+    color: '#c4a35a',
+  },
+  bodyLine: {
+    fontFamily: 'Georgia', fontSize: 16, lineHeight: 26,
     color: '#e8e4dc',
   },
-  orbOuter: {
-    justifyContent: 'center',
+  orbContainer: {
+    position: 'absolute',
+  },
+  orbCore: {
+    position: 'absolute',
+  },
+  orbHighlight: {
+    position: 'absolute',
+  },
+  hintPill: {
+    position: 'absolute', top: 156, alignSelf: 'center', left: '15%', right: '15%',
+    backgroundColor: 'rgba(0,0,0,0.5)',
+    paddingHorizontal: 16, paddingVertical: 6, borderRadius: 999,
     alignItems: 'center',
   },
-  orbInner: {
-    borderWidth: 1,
-  },
-  stats: {
-    fontSize: 10, color: 'rgba(255,255,255,0.28)',
-    textAlign: 'center', marginTop: 8, fontFamily: 'Menlo',
-  },
+  hintText: { fontSize: 11, color: 'rgba(255,255,255,0.25)', fontFamily: 'Helvetica Neue' },
+  stats: { fontSize: 10, color: 'rgba(255,255,255,0.2)', textAlign: 'center', marginTop: 6, fontFamily: 'Menlo' },
 })
