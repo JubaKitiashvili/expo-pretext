@@ -372,10 +372,11 @@ function materializeDeferredSingleCharRun(
   return materialized
 }
 
-function endsWithArabicNoSpacePunctuation(segment: string): boolean {
-  if (!containsArabicScript(segment) || segment.length === 0) return false
-  const lastCodePoint = getLastCodePoint(segment)
-  return lastCodePoint !== null && arabicNoSpaceTrailingPunctuation.has(lastCodePoint)
+function hasArabicNoSpacePunctuation(
+  containsArabic: boolean,
+  lastCodePoint: string | null,
+): boolean {
+  return containsArabic && lastCodePoint !== null && arabicNoSpaceTrailingPunctuation.has(lastCodePoint)
 }
 
 function endsWithMyanmarMedialGlue(segment: string): boolean {
@@ -896,6 +897,7 @@ function buildMergedSegmentation(
 ): MergedSegmentation {
   let mergedLen = 0
   const mergedTexts: string[] = []
+  const mergedTextParts: string[][] = []
   const mergedWordLike: boolean[] = []
   const mergedKinds: SegmentBreakKind[] = []
   const mergedStarts: number[] = []
@@ -903,6 +905,11 @@ function buildMergedSegmentation(
   // merges stay O(1) instead of re-scanning the accumulated segment each time.
   const mergedSingleCharRunChars: (string | null)[] = []
   const mergedSingleCharRunLengths: number[] = []
+  const mergedContainsCJK: boolean[] = []
+  const mergedContainsArabicScript: boolean[] = []
+  const mergedEndsWithClosingQuote: boolean[] = []
+  const mergedEndsWithMyanmarMedialGlue: boolean[] = []
+  const mergedHasArabicNoSpacePunctuation: boolean[] = []
 
   // Compute start offsets from segments (native module provides segments but not offsets)
   let offset = 0
@@ -915,70 +922,73 @@ function buildMergedSegmentation(
     for (const piece of splitSegmentByBreakKind(seg, wordLike, segStart, whiteSpaceProfile)) {
       const isText = piece.kind === 'text'
       const repeatableSingleCharRunChar = getRepeatableSingleCharRunChar(piece.text, piece.isWordLike, piece.kind)
+      const pieceContainsCJK = isCJK(piece.text)
+      const pieceContainsArabicScript = containsArabicScript(piece.text)
+      const pieceLastCodePoint = getLastCodePoint(piece.text)
+      const pieceEndsWithClosingQuote = endsWithClosingQuote(piece.text)
+      const pieceEndsWithMyanmarMedialGlue = endsWithMyanmarMedialGlue(piece.text)
       const prevIndex = mergedLen - 1
+
+      function appendPieceToPrevious(): void {
+        if (mergedSingleCharRunChars[prevIndex] !== null) {
+          mergedTextParts[prevIndex] = [
+            materializeDeferredSingleCharRun(
+              mergedTexts,
+              mergedSingleCharRunChars,
+              mergedSingleCharRunLengths,
+              prevIndex,
+            ),
+          ]
+          mergedSingleCharRunChars[prevIndex] = null
+        }
+        mergedTextParts[prevIndex]!.push(piece.text)
+        mergedWordLike[prevIndex] = mergedWordLike[prevIndex]! || piece.isWordLike
+        mergedContainsCJK[prevIndex] = mergedContainsCJK[prevIndex]! || pieceContainsCJK
+        mergedContainsArabicScript[prevIndex] =
+          mergedContainsArabicScript[prevIndex]! || pieceContainsArabicScript
+        mergedEndsWithClosingQuote[prevIndex] = pieceEndsWithClosingQuote
+        mergedEndsWithMyanmarMedialGlue[prevIndex] = pieceEndsWithMyanmarMedialGlue
+        mergedHasArabicNoSpacePunctuation[prevIndex] = hasArabicNoSpacePunctuation(
+          mergedContainsArabicScript[prevIndex]!,
+          pieceLastCodePoint,
+        )
+      }
 
       if (
         profile.carryCJKAfterClosingQuote &&
         isText &&
         mergedLen > 0 &&
         mergedKinds[prevIndex] === 'text' &&
-        isCJK(piece.text) &&
-        isCJK(mergedTexts[prevIndex]!) &&
-        endsWithClosingQuote(mergedTexts[prevIndex]!)
+        pieceContainsCJK &&
+        mergedContainsCJK[prevIndex] &&
+        mergedEndsWithClosingQuote[prevIndex]!
       ) {
-        mergedTexts[prevIndex] = materializeDeferredSingleCharRun(
-          mergedTexts,
-          mergedSingleCharRunChars,
-          mergedSingleCharRunLengths,
-          prevIndex,
-        ) + piece.text
-        mergedWordLike[prevIndex] = mergedWordLike[prevIndex]! || piece.isWordLike
-        mergedSingleCharRunChars[prevIndex] = null
+        appendPieceToPrevious()
       } else if (
         isText &&
         mergedLen > 0 &&
         mergedKinds[prevIndex] === 'text' &&
         isCJKLineStartProhibitedSegment(piece.text) &&
-        isCJK(mergedTexts[prevIndex]!)
+        mergedContainsCJK[prevIndex]
       ) {
-        mergedTexts[prevIndex] = materializeDeferredSingleCharRun(
-          mergedTexts,
-          mergedSingleCharRunChars,
-          mergedSingleCharRunLengths,
-          prevIndex,
-        ) + piece.text
-        mergedWordLike[prevIndex] = mergedWordLike[prevIndex]! || piece.isWordLike
-        mergedSingleCharRunChars[prevIndex] = null
+        appendPieceToPrevious()
       } else if (
         isText &&
         mergedLen > 0 &&
         mergedKinds[prevIndex] === 'text' &&
-        endsWithMyanmarMedialGlue(mergedTexts[prevIndex]!)
+        mergedEndsWithMyanmarMedialGlue[prevIndex]
       ) {
-        mergedTexts[prevIndex] = materializeDeferredSingleCharRun(
-          mergedTexts,
-          mergedSingleCharRunChars,
-          mergedSingleCharRunLengths,
-          prevIndex,
-        ) + piece.text
-        mergedWordLike[prevIndex] = mergedWordLike[prevIndex]! || piece.isWordLike
-        mergedSingleCharRunChars[prevIndex] = null
+        appendPieceToPrevious()
       } else if (
         isText &&
         mergedLen > 0 &&
         mergedKinds[prevIndex] === 'text' &&
         piece.isWordLike &&
-        containsArabicScript(piece.text) &&
-        endsWithArabicNoSpacePunctuation(mergedTexts[prevIndex]!)
+        pieceContainsArabicScript &&
+        mergedHasArabicNoSpacePunctuation[prevIndex]
       ) {
-        mergedTexts[prevIndex] = materializeDeferredSingleCharRun(
-          mergedTexts,
-          mergedSingleCharRunChars,
-          mergedSingleCharRunLengths,
-          prevIndex,
-        ) + piece.text
+        appendPieceToPrevious()
         mergedWordLike[prevIndex] = true
-        mergedSingleCharRunChars[prevIndex] = null
       } else if (
         repeatableSingleCharRunChar !== null &&
         mergedLen > 0 &&
@@ -996,20 +1006,23 @@ function buildMergedSegmentation(
           (piece.text === '-' && mergedWordLike[prevIndex]!)
         )
       ) {
-        mergedTexts[prevIndex] = materializeDeferredSingleCharRun(
-          mergedTexts,
-          mergedSingleCharRunChars,
-          mergedSingleCharRunLengths,
-          prevIndex,
-        ) + piece.text
-        mergedSingleCharRunChars[prevIndex] = null
+        appendPieceToPrevious()
       } else {
         mergedTexts[mergedLen] = piece.text
+        mergedTextParts[mergedLen] = [piece.text]
         mergedWordLike[mergedLen] = piece.isWordLike
         mergedKinds[mergedLen] = piece.kind
         mergedStarts[mergedLen] = piece.start
         mergedSingleCharRunChars[mergedLen] = repeatableSingleCharRunChar
         mergedSingleCharRunLengths[mergedLen] = repeatableSingleCharRunChar === null ? 0 : 1
+        mergedContainsCJK[mergedLen] = pieceContainsCJK
+        mergedContainsArabicScript[mergedLen] = pieceContainsArabicScript
+        mergedEndsWithClosingQuote[mergedLen] = pieceEndsWithClosingQuote
+        mergedEndsWithMyanmarMedialGlue[mergedLen] = pieceEndsWithMyanmarMedialGlue
+        mergedHasArabicNoSpacePunctuation[mergedLen] = hasArabicNoSpacePunctuation(
+          pieceContainsArabicScript,
+          pieceLastCodePoint,
+        )
         mergedLen++
       }
     }
@@ -1017,8 +1030,15 @@ function buildMergedSegmentation(
 
   for (let i = 0; i < mergedLen; i++) {
     if (mergedSingleCharRunChars[i] !== null) {
-      materializeDeferredSingleCharRun(mergedTexts, mergedSingleCharRunChars, mergedSingleCharRunLengths, i)
+      mergedTexts[i] = materializeDeferredSingleCharRun(
+        mergedTexts,
+        mergedSingleCharRunChars,
+        mergedSingleCharRunLengths,
+        i,
+      )
+      continue
     }
+    mergedTexts[i] = joinTextParts(mergedTextParts[i]!)
   }
 
   for (let i = 1; i < mergedLen; i++) {
