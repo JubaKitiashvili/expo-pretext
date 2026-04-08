@@ -103,9 +103,29 @@ const heights = measureHeights(
 
 | Function | Description |
 |---|---|
-| `prepareInlineFlow(items)` | Mixed fonts, @mention pills, chips. |
-| `walkInlineFlowLines(prepared, maxWidth, onLine)` | Line walker for inline fragments. |
-| `measureInlineFlow(prepared, maxWidth)` | Height for inline fragment stream. |
+| `prepareInlineFlow(items)` | Mixed fonts, @mention pills, chips. Returns opaque PreparedInlineFlow. |
+| `walkInlineFlowLines(prepared, maxWidth, onLine)` | Line walker for inline fragments. Calls `onLine(fragments[], y, lineHeight)` per line. |
+| `measureInlineFlow(prepared, maxWidth)` | Total height for inline fragment stream. |
+
+### Streaming API
+
+For AI chat and real-time text append scenarios without hooks:
+
+| Function | Description |
+|---|---|
+| `prepareStreaming(key, text, style, options?)` | Optimized prepare for growing text. Warms cache with new suffix, reuses previous segments. `key` is any object used to track state. |
+| `clearStreamingState(key)` | Clean up streaming state when conversation resets. |
+
+### Obstacle Layout API
+
+For flowing text around shapes (circles, rectangles) — editorial/magazine layouts:
+
+| Function | Description |
+|---|---|
+| `layoutColumn(prepared, options)` | Flow text in a column with obstacles. Returns `{ lines, height }`. |
+| `carveTextLineSlots(lineY, lineHeight, maxWidth, obstacles)` | Compute available text slots for a line, avoiding obstacles. |
+| `circleIntervalForBand(circle, bandTop, bandBottom)` | Horizontal interval a circle occupies at a given vertical band. |
+| `rectIntervalForBand(rect, bandTop, bandBottom)` | Horizontal interval a rectangle occupies at a given vertical band. |
 
 ### Types
 
@@ -130,6 +150,15 @@ type InlineFlowItem = {
   atomic?: boolean      // no breaking inside (pills, chips)
   extraWidth?: number   // padding/border chrome
 }
+```
+
+### Obstacle Layout Types
+
+```ts
+type CircleObstacle = { type: 'circle'; cx: number; cy: number; r: number }
+type RectObstacle = { type: 'rect'; x: number; y: number; width: number; height: number }
+type LayoutRegion = { x: number; width: number }
+type PositionedLine = { text: string; x: number; y: number; width: number }
 ```
 
 ### Utilities
