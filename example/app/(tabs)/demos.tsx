@@ -14,6 +14,14 @@ import { AsciiArtDemo } from '../../components/demos/AsciiArt'
 
 const demos = [
   {
+    id: 'editorial',
+    title: 'Editorial Engine',
+    api: 'layoutNextLine() + prepareWithSegments()',
+    level: 'Advanced',
+    desc: 'Text reflows around draggable obstacles in real-time',
+    component: EditorialEngineDemo,
+  },
+  {
     id: 'tight-bubbles',
     title: 'Tight Chat Bubbles',
     api: 'walkLineRanges() + layout()',
@@ -28,14 +36,6 @@ const demos = [
     level: 'Beginner',
     desc: 'Expand/collapse with pre-computed heights — zero layout shift',
     component: AccordionDemo,
-  },
-  {
-    id: 'editorial',
-    title: 'Editorial Engine',
-    api: 'layoutNextLine() + prepareWithSegments()',
-    level: 'Advanced',
-    desc: 'Text reflows around draggable obstacles in real-time',
-    component: EditorialEngineDemo,
   },
   {
     id: 'masonry',
@@ -56,9 +56,9 @@ const demos = [
   {
     id: 'markdown-chat',
     title: 'Markdown Chat',
-    api: 'useFlashListHeights() + tight-wrap',
-    level: 'Intermediate',
-    desc: '500 messages, FlashList virtualized, tight-wrapped bubbles with binary search',
+    api: 'prepare() + layout() + FlashList',
+    level: 'Advanced',
+    desc: '10,000 messages with rich markdown — headings, code, quotes, lists, tight-wrap',
     component: MarkdownChatDemo,
   },
   {
@@ -89,7 +89,7 @@ export default function DemosScreen() {
       navigation.setOptions({
         headerTitle: demo.title,
         headerLeft: () => (
-          <Pressable onPress={() => setActiveDemo(null)} style={{ paddingRight: 8 }}>
+          <Pressable onPress={() => setActiveDemo(null)} style={{ paddingLeft: 16 }}>
             <Text style={{ fontSize: 16, color: '#007AFF' }}>← Demos</Text>
           </Pressable>
         ),
@@ -114,8 +114,6 @@ export default function DemosScreen() {
 
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>expo-pretext Demos</Text>
-      <Text style={styles.subtitle}>Every API in action</Text>
       <ScrollView contentContainerStyle={styles.list}>
         {demos.map(demo => (
           <Pressable

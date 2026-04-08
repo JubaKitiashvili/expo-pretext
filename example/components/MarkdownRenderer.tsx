@@ -238,7 +238,7 @@ const RenderBlocks = memo(function RenderBlocks({
 })
 
 // ─── Main Component ──────────────────────────────────────
-export const MarkdownRenderer = memo(function MarkdownRenderer({
+function MarkdownRendererInner({
   content,
   variant = 'light',
   tightWrap = false,
@@ -286,4 +286,6 @@ export const MarkdownRenderer = memo(function MarkdownRenderer({
       <RenderBlocks blocks={blocks} theme={theme} onLinkPress={handleLinkPress} />
     </View>
   )
-})
+}
+
+export const MarkdownRenderer = memo(MarkdownRendererInner)

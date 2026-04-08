@@ -178,9 +178,17 @@ Full Unicode support via native OS segmenters:
 - Emoji — compound graphemes, flags, ZWJ sequences
 - Mixed scripts in a single string
 
-## Credits
+## Inspiration & Credits
 
-Based on [Pretext](https://github.com/chenglou/pretext) by Cheng Lou, which builds on Sebastian Markbage's [text-layout](https://github.com/nicolo-ribaudo/text-layout) research.
+expo-pretext is a React Native / Expo port of [Pretext](https://github.com/chenglou/pretext) by Cheng Lou. The original Pretext is a web-based text measurement library — expo-pretext brings the same core idea (predict text dimensions before rendering) to the native mobile world, using iOS TextKit and Android TextPaint for measurement instead of DOM APIs.
+
+Key differences from the original:
+- **Native measurement** via Expo modules (iOS `NSString.size`, Android `TextPaint.measureText`)
+- **React Native hooks** (`useTextHeight`, `useFlashListHeights`) for declarative usage
+- **Streaming optimizations** for AI chat use cases
+- **Rich inline flow** for mixed-font content (pills, badges, @mentions)
+
+Pretext itself builds on Sebastian Markbage's [text-layout](https://github.com/nicolo-ribaudo/text-layout) research.
 
 ## License
 
