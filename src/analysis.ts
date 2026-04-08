@@ -344,12 +344,14 @@ function splitTrailingForwardStickyCluster(text: string): { head: string, tail: 
   }
 }
 
-function isRepeatedSingleCharRun(segment: string, ch: string): boolean {
-  if (segment.length === 0) return false
-  for (const part of segment) {
-    if (part !== ch) return false
-  }
-  return true
+function getRepeatableSingleCharRunChar(
+  text: string,
+  isWordLike: boolean,
+  kind: SegmentBreakKind,
+): string | null {
+  return kind === 'text' && !isWordLike && text.length === 1 && text !== '-' && text !== '\u2014'
+    ? text
+    : null
 }
 
 function endsWithArabicNoSpacePunctuation(segment: string): boolean {
@@ -879,6 +881,9 @@ function buildMergedSegmentation(
   const mergedWordLike: boolean[] = []
   const mergedKinds: SegmentBreakKind[] = []
   const mergedStarts: number[] = []
+  // Track repeatable single-char punctuation runs structurally so identical
+  // merges stay O(1) instead of re-scanning the accumulated segment each time.
+  const mergedSingleCharRunChars: (string | null)[] = []
 
   // Compute start offsets from segments (native module provides segments but not offsets)
   let offset = 0
@@ -890,6 +895,7 @@ function buildMergedSegmentation(
 
     for (const piece of splitSegmentByBreakKind(seg, wordLike, segStart, whiteSpaceProfile)) {
       const isText = piece.kind === 'text'
+      const repeatableSingleCharRunChar = getRepeatableSingleCharRunChar(piece.text, piece.isWordLike, piece.kind)
 
       if (
         profile.carryCJKAfterClosingQuote &&
@@ -902,6 +908,7 @@ function buildMergedSegmentation(
       ) {
         mergedTexts[mergedLen - 1] += piece.text
         mergedWordLike[mergedLen - 1] = mergedWordLike[mergedLen - 1]! || piece.isWordLike
+        mergedSingleCharRunChars[mergedLen - 1] = null
       } else if (
         isText &&
         mergedLen > 0 &&
@@ -911,6 +918,7 @@ function buildMergedSegmentation(
       ) {
         mergedTexts[mergedLen - 1] += piece.text
         mergedWordLike[mergedLen - 1] = mergedWordLike[mergedLen - 1]! || piece.isWordLike
+        mergedSingleCharRunChars[mergedLen - 1] = null
       } else if (
         isText &&
         mergedLen > 0 &&
@@ -919,6 +927,7 @@ function buildMergedSegmentation(
       ) {
         mergedTexts[mergedLen - 1] += piece.text
         mergedWordLike[mergedLen - 1] = mergedWordLike[mergedLen - 1]! || piece.isWordLike
+        mergedSingleCharRunChars[mergedLen - 1] = null
       } else if (
         isText &&
         mergedLen > 0 &&
@@ -929,15 +938,12 @@ function buildMergedSegmentation(
       ) {
         mergedTexts[mergedLen - 1] += piece.text
         mergedWordLike[mergedLen - 1] = true
+        mergedSingleCharRunChars[mergedLen - 1] = null
       } else if (
-        isText &&
-        !piece.isWordLike &&
+        repeatableSingleCharRunChar !== null &&
         mergedLen > 0 &&
         mergedKinds[mergedLen - 1] === 'text' &&
-        piece.text.length === 1 &&
-        piece.text !== '-' &&
-        piece.text !== '\u2014' &&
-        isRepeatedSingleCharRun(mergedTexts[mergedLen - 1]!, piece.text)
+        mergedSingleCharRunChars[mergedLen - 1] === repeatableSingleCharRunChar
       ) {
         mergedTexts[mergedLen - 1] += piece.text
       } else if (
@@ -951,11 +957,13 @@ function buildMergedSegmentation(
         )
       ) {
         mergedTexts[mergedLen - 1] += piece.text
+        mergedSingleCharRunChars[mergedLen - 1] = null
       } else {
         mergedTexts[mergedLen] = piece.text
         mergedWordLike[mergedLen] = piece.isWordLike
         mergedKinds[mergedLen] = piece.kind
         mergedStarts[mergedLen] = piece.start
+        mergedSingleCharRunChars[mergedLen] = repeatableSingleCharRunChar
         mergedLen++
       }
     }
