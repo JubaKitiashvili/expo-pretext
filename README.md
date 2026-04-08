@@ -4,6 +4,32 @@ DOM-free multiline text height prediction for React Native. Port of [Pretext](ht
 
 Predict text heights **before rendering** — no `onLayout`, no layout jumps, no guesswork. Works with FlashList, streaming AI chat, and any layout that needs text dimensions upfront.
 
+## Demos
+
+<table>
+  <tr>
+    <td align="center"><strong>AI Chat</strong></td>
+    <td align="center"><strong>Accuracy</strong></td>
+    <td align="center"><strong>Editorial Engine</strong></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <video src="https://github.com/JubaKitiashvili/expo-pretext/raw/main/assets/demos/ai-chat.mp4" width="240" />
+    </td>
+    <td align="center">
+      <video src="https://github.com/JubaKitiashvili/expo-pretext/raw/main/assets/demos/accuracy.mp4" width="240" />
+    </td>
+    <td align="center">
+      <video src="https://github.com/JubaKitiashvili/expo-pretext/raw/main/assets/demos/editorial-engine.mp4" width="240" />
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><sub>FlashList + streaming + markdown</sub></td>
+    <td align="center"><sub>Predicted vs actual height</sub></td>
+    <td align="center"><sub>Text reflow around obstacles</sub></td>
+  </tr>
+</table>
+
 ## Installation
 
 ```sh
