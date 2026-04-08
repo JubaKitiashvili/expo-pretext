@@ -20,7 +20,7 @@ function ChatBubble({ message, maxWidth }: { message: ChatMessage; maxWidth: num
         isUser ? styles.userBubble : styles.assistantBubble,
       ]}
     >
-      <MarkdownRenderer content={message.content} isUser={isUser} />
+      <MarkdownRenderer content={message.content} variant={isUser ? 'dark' : 'light'} />
       {message.reactions && (
         <Text style={styles.reactions}>{message.reactions.join(' ')}</Text>
       )}
@@ -34,7 +34,7 @@ function StreamingBubble({ text, maxWidth }: { text: string; maxWidth: number })
 
   return (
     <View style={[styles.bubble, styles.assistantBubble, styles.streamingBubble, { minHeight: height + 24 }]}>
-      <MarkdownRenderer content={text} />
+      <MarkdownRenderer content={text} variant="light" />
       <View style={styles.cursor} />
     </View>
   )
