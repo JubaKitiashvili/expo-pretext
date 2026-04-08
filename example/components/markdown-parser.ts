@@ -23,13 +23,24 @@ export type MdSpan =
   | { t: 'code'; v: string }
   | { t: 'link'; v: string; url: string }
 
-// ─── Parse cache ─────────────────────────────────────────
+// ─── Parse cache (LRU, max 500 entries) ─────────────────
+const PARSE_CACHE_MAX = 500
 const parseCache = new Map<string, MdBlock[]>()
 
 export function parseMarkdown(md: string): MdBlock[] {
   const cached = parseCache.get(md)
-  if (cached) return cached
+  if (cached) {
+    // Move to end (most recently used)
+    parseCache.delete(md)
+    parseCache.set(md, cached)
+    return cached
+  }
   const result = parseBlocks(md)
+  if (parseCache.size >= PARSE_CACHE_MAX) {
+    // Evict oldest entry
+    const oldest = parseCache.keys().next().value!
+    parseCache.delete(oldest)
+  }
   parseCache.set(md, result)
   return result
 }

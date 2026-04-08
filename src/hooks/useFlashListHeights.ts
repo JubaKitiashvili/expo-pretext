@@ -65,7 +65,7 @@ export function useFlashListHeights<T>(
         }
       }
     }
-  }, [data.length, style.fontFamily, style.fontSize, maxWidth])
+  }, [data.length, getText, style.fontFamily, style.fontSize, maxWidth])
 
   const estimatedItemSize = useMemo(() => lineHeight * 2, [lineHeight])
 

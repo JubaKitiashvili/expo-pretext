@@ -6,7 +6,7 @@ import {
   layout,
   type PrepareOptions as LayoutPrepareOptions,
 } from './layout'
-import { cacheNativeResult, tryResolveAllFromCache, clearJSCache } from './cache'
+import { cacheNativeResult, clearJSCache } from './cache'
 import { textStyleToFontDescriptor, getFontKey, getLineHeight, warnIfFontNotLoaded } from './font-utils'
 import { getEngineProfile } from './engine-profile'
 import type {
@@ -17,8 +17,6 @@ import type {
   NativeSegmentResult,
   LayoutResult,
 } from './types'
-
-const SYNC_THRESHOLD = 5000
 
 // --- Analysis profile bridge ---
 
@@ -116,9 +114,7 @@ function segmentAndMeasureWithCache(
     ? { whiteSpace: options.whiteSpace, locale: options.locale }
     : undefined
 
-  const result = text.length > SYNC_THRESHOLD
-    ? native.segmentAndMeasure(text, font, nativeOptions)
-    : native.segmentAndMeasure(text, font, nativeOptions)
+  const result = native.segmentAndMeasure(text, font, nativeOptions)
 
   const fontKey = getFontKey(style)
   cacheNativeResult(fontKey, result.segments, result.widths)

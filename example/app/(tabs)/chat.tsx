@@ -9,8 +9,6 @@ import { useTextHeight, useFlashListHeights } from 'expo-pretext'
 const textStyle = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
 
 function ChatBubble({ message, maxWidth }: { message: ChatMessage; maxWidth: number }) {
-  // expo-pretext predicts height before rendering — no onLayout needed
-  const predictedHeight = useTextHeight(message.content, textStyle, maxWidth)
   const isUser = message.role === 'user'
 
   return (

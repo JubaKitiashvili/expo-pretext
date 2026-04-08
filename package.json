@@ -6,19 +6,40 @@
   "types": "src/index.ts",
   "license": "MIT",
   "author": "Juba Kitiashvili",
+  "homepage": "https://github.com/JubaKitiashvili/expo-pretext#readme",
   "repository": {
     "type": "git",
     "url": "https://github.com/JubaKitiashvili/expo-pretext"
+  },
+  "bugs": {
+    "url": "https://github.com/JubaKitiashvili/expo-pretext/issues"
   },
   "keywords": [
     "react-native",
     "expo",
     "text-measurement",
     "text-layout",
+    "text-height",
     "virtualization",
     "flashlist",
-    "pretext"
+    "pretext",
+    "ai-chat",
+    "streaming"
   ],
+  "files": [
+    "src/",
+    "ios/",
+    "android/",
+    "expo-module.config.json",
+    "README.md",
+    "LICENSE",
+    "CHANGELOG.md"
+  ],
+  "scripts": {
+    "test": "bun test src/__tests__/",
+    "test:all": "bun test",
+    "typecheck": "tsc --noEmit"
+  },
   "peerDependencies": {
     "expo": ">=52.0.0",
     "react": ">=18.0.0",
