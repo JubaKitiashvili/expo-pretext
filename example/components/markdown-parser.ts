@@ -23,6 +23,79 @@ export type MdSpan =
   | { t: 'code'; v: string }
   | { t: 'link'; v: string; url: string }
 
+// ─── Parse cache ─────────────────────────────────────────
+const parseCache = new Map<string, MdBlock[]>()
+
+export function parseMarkdown(md: string): MdBlock[] {
+  const cached = parseCache.get(md)
+  if (cached) return cached
+  const result = parseBlocks(md)
+  parseCache.set(md, result)
+  return result
+}
+
+export function clearParseCache() { parseCache.clear() }
+
+function parseBlocks(md: string): MdBlock[] {
+  const lines = md.split('\n')
+  const blocks: MdBlock[] = []
+  let i = 0
+
+  while (i < lines.length) {
+    const line = lines[i]!
+
+    // Empty line
+    if (line.trim() === '') { i++; continue }
+
+    // Code fence
+    const fence = line.match(/^```(\w*)/)
+    if (fence) {
+      const lang = fence[1] || ''
+      const code: string[] = []
+      i++
+      while (i < lines.length && !lines[i]!.startsWith('```')) {
+        code.push(lines[i]!)
+        i++
+      }
+      i++ // skip closing
+      blocks.push({ type: 'code', lang, text: code.join('\n') })
+      continue
+    }
+
+    // Heading
+    const hm = line.match(/^(#{1,3})\s+(.+)/)
+    if (hm) {
+      blocks.push({ type: 'heading', level: Math.min(3, hm[1]!.length) as 1 | 2 | 3, spans: parseSpans(hm[2]!) })
+      i++
+      continue
+    }
+
+    // Horizontal rule
+    if (/^---+$/.test(line.trim())) {
+      blocks.push({ type: 'rule' })
+      i++
+      continue
+    }
+
+    // (blockquotes, lists, tables, images — added in later tasks)
+
+    // Paragraph — collect until blank line or block-level start
+    const pLines: string[] = []
+    while (i < lines.length && lines[i]!.trim() !== '' && !lines[i]!.startsWith('```') &&
+      !lines[i]!.startsWith('#') && !lines[i]!.startsWith('>') &&
+      !/^[-*]\s/.test(lines[i]!) && !/^\d+\.\s/.test(lines[i]!) && !/^---+$/.test(lines[i]!.trim()) &&
+      !/^\|/.test(lines[i]!) && !/^!\[/.test(lines[i]!)) {
+      pLines.push(lines[i]!)
+      i++
+    }
+    if (pLines.length > 0) {
+      blocks.push({ type: 'paragraph', spans: parseSpans(pLines.join(' ')) })
+    }
+  }
+
+  return blocks
+}
+
 // ─── Inline span parser ──────────────────────────────────
 export function parseSpans(text: string): MdSpan[] {
   const spans: MdSpan[] = []
