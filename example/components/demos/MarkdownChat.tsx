@@ -342,7 +342,7 @@ export function MarkdownChatDemo() {
     <View style={s.container}>
       <View style={s.infoBanner}>
         <Text style={s.infoText}>
-          {TOTAL_COUNT.toLocaleString()} messages \u00B7 virtualized \u00B7 tight-wrap \u00B7 rich markdown
+          {TOTAL_COUNT.toLocaleString()} messages · virtualized · tight-wrap · rich markdown
         </Text>
       </View>
       <FlatList
