@@ -73,8 +73,7 @@ export type PreparedCore = {
   kinds: SegmentBreakKind[]
   simpleLineWalkFastPath: boolean
   segLevels: Int8Array | null
-  breakableWidths: (number[] | null)[]
-  breakablePrefixWidths: (number[] | null)[]
+  breakableFitAdvances: (number[] | null)[]
   discretionaryHyphenWidth: number
   tabStopAdvance: number
   chunks: PreparedLineChunk[]
@@ -116,8 +115,7 @@ function createEmptyPrepared(
     kinds: [],
     simpleLineWalkFastPath: true,
     segLevels: null,
-    breakableWidths: [],
-    breakablePrefixWidths: [],
+    breakableFitAdvances: [],
     discretionaryHyphenWidth: 0,
     tabStopAdvance: 0,
     chunks: [],
@@ -365,8 +363,7 @@ function buildFromAnalysis(
   const kinds: SegmentBreakKind[] = []
   let simpleLineWalkFastPath = analysis.chunks.length <= 1
   const segStarts = includeSegments ? [] as number[] : null
-  const breakableWidths: (number[] | null)[] = []
-  const breakablePrefixWidths: (number[] | null)[] = []
+  const breakableFitAdvances: (number[] | null)[] = []
   const segments = includeSegments ? [] as string[] : null
   const preparedStartByAnalysisIndex = Array.from<number>({ length: analysis.len })
 
@@ -377,8 +374,7 @@ function buildFromAnalysis(
     lineEndPaintAdvance: number,
     kind: SegmentBreakKind,
     start: number,
-    breakable: number[] | null,
-    breakablePrefix: number[] | null,
+    breakableFitAdvance: number[] | null,
   ): void {
     if (kind !== 'text' && kind !== 'space' && kind !== 'zero-width-break') {
       simpleLineWalkFastPath = false
@@ -388,8 +384,7 @@ function buildFromAnalysis(
     lineEndPaintAdvances.push(lineEndPaintAdvance)
     kinds.push(kind)
     segStarts?.push(start)
-    breakableWidths.push(breakable)
-    breakablePrefixWidths.push(breakablePrefix)
+    breakableFitAdvances.push(breakableFitAdvance)
     if (segments !== null) segments.push(text)
   }
 
@@ -413,11 +408,7 @@ function buildFromAnalysis(
         : width
 
     if (allowOverflowBreaks && wordLike && text.length > 1) {
-      const graphemeWidths = getGraphemeWidthsFromMap(text, width, widthMap)
-      const graphemePrefixWidths =
-        engineProfile.preferPrefixWidthsForBreakableRuns || isNumericRunSegment(text)
-          ? buildPrefixWidths(graphemeWidths)
-          : null
+      const fitAdvances = getGraphemeWidthsFromMap(text, width, widthMap)
       pushSegment(
         text,
         width,
@@ -425,8 +416,7 @@ function buildFromAnalysis(
         lineEndPaintAdvance,
         kind,
         start,
-        graphemeWidths,
-        graphemePrefixWidths,
+        fitAdvances,
       )
       return
     }
@@ -438,7 +428,6 @@ function buildFromAnalysis(
       lineEndPaintAdvance,
       kind,
       start,
-      null,
       null,
     )
   }
@@ -459,18 +448,17 @@ function buildFromAnalysis(
         segKind,
         segStart,
         null,
-        null,
       )
       continue
     }
 
     if (segKind === 'hard-break') {
-      pushSegment(segText, 0, 0, 0, segKind, segStart, null, null)
+      pushSegment(segText, 0, 0, 0, segKind, segStart, null)
       continue
     }
 
     if (segKind === 'tab') {
-      pushSegment(segText, 0, 0, 0, segKind, segStart, null, null)
+      pushSegment(segText, 0, 0, 0, segKind, segStart, null)
       continue
     }
 
@@ -511,8 +499,7 @@ function buildFromAnalysis(
     kinds,
     simpleLineWalkFastPath,
     segLevels,
-    breakableWidths,
-    breakablePrefixWidths,
+    breakableFitAdvances,
     discretionaryHyphenWidth,
     tabStopAdvance,
     chunks,
