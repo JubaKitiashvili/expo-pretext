@@ -4,29 +4,32 @@
 
 ---
 
-## P0 — v0.3.0 (ship-blocking)
+## ~~P0 — v0.3.x (DONE)~~
 
-### Port upstream performance fixes
+### ~~Port upstream performance fixes~~ ✅
 
-All fixes address O(n^2) → O(n) regressions on long texts. Critical for AI chat where assistant messages can be 5k+ characters.
+All 8 fixes ported in v0.3.0:
 
-- [ ] Quadratic punctuation merges — `analysis.ts` [chenglou/pretext@30854d79]
-- [ ] CJK keep-all merges linear — `analysis.ts` + `build.ts` [chenglou/pretext@eb3bbbe5]
-- [ ] Degenerate breakable runs linear — `line-break.ts` [chenglou/pretext@39013c40]
-- [ ] Restore cached prefix fits — `line-break.ts` [chenglou/pretext@2ff48ab8]
-- [ ] Defer punctuation materialization — `analysis.ts` [chenglou/pretext@2148b904]
-- [ ] Arabic no-space merges linear — `analysis.ts` [chenglou/pretext@4cb8b244]
-- [ ] Make prepare worst-case scans linear — `analysis.ts` + `layout.ts` [chenglou/pretext@f0a326d0]
-- [ ] Deduplicate isCJK test, remove no-op pre-wrap replace — `analysis.ts` [chenglou/pretext@8823e3d7]
+- [x] Quadratic punctuation merges — `analysis.ts`
+- [x] CJK keep-all merges linear — `analysis.ts` + `build.ts`
+- [x] Degenerate breakable runs linear — `line-break.ts`
+- [x] Restore cached prefix fits — `line-break.ts`
+- [x] Defer punctuation materialization — `analysis.ts`
+- [x] Arabic no-space merges linear — `analysis.ts`
+- [x] Make prepare worst-case scans linear — `analysis.ts` + `build.ts`
+- [x] Deduplicate isCJK test, remove no-op pre-wrap replace — `analysis.ts`
 
-### Core test coverage
+### ~~Core test coverage~~ ✅
 
-The library's core algorithms have no automated tests. This is the biggest quality gap.
+220 automated tests across all core modules (v0.3.1):
 
-- [ ] `line-break.ts` — line-breaking edge cases (long words, zero-width spaces, soft hyphens)
-- [ ] `analysis.ts` — text analysis, CJK detection, kinsoku rules, whitespace normalization
-- [ ] `streaming.ts` — append detection, cache warming, state management
-- [ ] Integration test: `prepare()` + `layout()` round-trip accuracy vs native `measureTextHeight`
+- [x] `line-break.ts` — 38 tests (wrapping, overflow, spaces, walk, step)
+- [x] `analysis.ts` — 5 perf regression tests
+- [x] `streaming.ts` — 24 tests (append detection, cache, multi-key, rapid tokens)
+- [x] `rich-inline.ts` — 25 tests (atomic, extraWidth, mixed fonts, fragments)
+- [x] `hooks.ts` — 22 tests (prepare+layout pipeline, batch, segments, natural width)
+- [x] `layout.ts` — 28 tests (core engine)
+- [x] Integration: prepare() + layout() round-trip
 
 ---
 
@@ -54,10 +57,10 @@ The #1 use case deserves dedicated optimization.
 - [ ] Fabric / TurboModules — verify native bridge under new architecture
 - [ ] Expo SDK 54 — compatibility testing when released
 
-### Testing (extended)
+### ~~Testing (extended)~~ ✅ (done in v0.3.1)
 
-- [ ] `rich-inline.ts` — inline flow layout with mixed fonts and atomic elements
-- [ ] Hook tests with mocked native module (useTextHeight, useFlashListHeights, usePreparedText)
+- [x] `rich-inline.ts` — 25 tests
+- [x] Hook tests — 22 tests (prepare/layout pipeline)
 - [ ] `useFlashListHeights` batch API usage (currently measures one-by-one instead of using `measureHeights`)
 
 ---
