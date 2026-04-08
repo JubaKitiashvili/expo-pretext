@@ -49,5 +49,8 @@ export type {
   LayoutColumnResult,
 } from './obstacle-layout'
 
+// --- Streaming ---
+export { prepareStreaming, clearStreamingState } from './streaming'
+
 // --- Utilities ---
 export { clearCache, setLocale } from './layout'
