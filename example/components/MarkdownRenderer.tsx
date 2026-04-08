@@ -69,6 +69,24 @@ const CODE_BLOCK_PAD = 12
 
 const BODY_STYLE = { fontFamily: 'System', fontSize: 14, lineHeight: 22 }
 
+const STATUS_COLORS: Record<string, string> = {
+  ready: '#34C759',
+  done: '#34C759',
+  complete: '#34C759',
+  passed: '#34C759',
+  'in progress': '#FF9500',
+  pending: '#FF9500',
+  testing: '#007AFF',
+  review: '#007AFF',
+  failed: '#FF3B30',
+  blocked: '#FF3B30',
+  error: '#FF3B30',
+}
+
+function getStatusColor(text: string): string | undefined {
+  return STATUS_COLORS[text]
+}
+
 // ─── Inline Spans ────────────────────────────────────────
 function RenderSpans({
   spans, theme, onLinkPress,
@@ -196,12 +214,23 @@ const RenderBlock = memo(function RenderBlock({
           </View>
           {/* Rows */}
           {block.rows.map((row, ri) => (
-            <View key={ri} style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: theme.tableBorderColor }}>
-              {row.map((cell, ci) => (
-                <View key={ci} style={{ flex: 1, padding: 8, borderRightWidth: ci < row.length - 1 ? 1 : 0, borderRightColor: theme.tableBorderColor }}>
-                  <RenderSpans spans={cell} theme={theme} onLinkPress={onLinkPress} />
-                </View>
-              ))}
+            <View key={ri} style={{ flexDirection: 'row', borderTopWidth: 1, borderTopColor: theme.tableBorderColor, backgroundColor: ri % 2 === 1 ? (theme.textColor === '#ffffff' ? 'rgba(255,255,255,0.02)' : 'rgba(0,0,0,0.015)') : undefined }}>
+              {row.map((cell, ci) => {
+                const text = cell.map(s => s.v).join('').toLowerCase()
+                const statusColor = getStatusColor(text)
+                return (
+                  <View key={ci} style={{ flex: 1, padding: 8, borderRightWidth: ci < row.length - 1 ? 1 : 0, borderRightColor: theme.tableBorderColor }}>
+                    {statusColor ? (
+                      <View style={{ flexDirection: 'row', alignItems: 'center', gap: 6 }}>
+                        <View style={{ width: 7, height: 7, borderRadius: 4, backgroundColor: statusColor }} />
+                        <RenderSpans spans={cell} theme={theme} onLinkPress={onLinkPress} />
+                      </View>
+                    ) : (
+                      <RenderSpans spans={cell} theme={theme} onLinkPress={onLinkPress} />
+                    )}
+                  </View>
+                )
+              })}
             </View>
           ))}
         </View>
