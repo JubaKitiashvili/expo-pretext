@@ -194,6 +194,115 @@ function parseTableRow(line: string): MdSpan[][] {
     .map(cell => parseSpans(cell.trim()))
 }
 
+// ─── Height estimation config ────────────────────────────
+export type HeightConfig = {
+  blockGap: number
+  listIndent: number
+  quoteIndent: number
+  codeBlockPad: number
+  bodyFontSize: number
+  bodyLineHeight: number
+}
+
+const DEFAULT_CONFIG: HeightConfig = {
+  blockGap: 10,
+  listIndent: 18,
+  quoteIndent: 18,
+  codeBlockPad: 12,
+  bodyFontSize: 14,
+  bodyLineHeight: 22,
+}
+
+export function estimateBlocksHeight(
+  blocks: MdBlock[],
+  width: number,
+  config?: Partial<HeightConfig>,
+): number {
+  const c = { ...DEFAULT_CONFIG, ...config }
+  let h = 0
+  for (let i = 0; i < blocks.length; i++) {
+    if (i > 0) h += c.blockGap
+    h += estimateBlockHeight(blocks[i]!, width, c)
+  }
+  return h
+}
+
+function estimateBlockHeight(block: MdBlock, width: number, c: HeightConfig): number {
+  switch (block.type) {
+    case 'paragraph': {
+      const text = spansToPlain(block.spans)
+      return estimateLines(text, c.bodyFontSize, width) * c.bodyLineHeight
+    }
+    case 'heading': {
+      const text = spansToPlain(block.spans)
+      const fs = block.level === 1 ? 20 : block.level === 2 ? 17 : 15
+      const lh = block.level === 1 ? 28 : block.level === 2 ? 25 : 22
+      return estimateLines(text, fs, width) * lh
+    }
+    case 'code': {
+      const lineCount = block.text.split('\n').length
+      return lineCount * 18 + c.codeBlockPad * 2 + (block.lang ? 18 : 0)
+    }
+    case 'quote':
+      return estimateBlocksHeight(block.blocks, width - c.quoteIndent, c)
+    case 'list': {
+      let total = 0
+      for (let i = 0; i < block.items.length; i++) {
+        if (i > 0) total += 4
+        total += estimateBlocksHeight(block.items[i]!.blocks, width - c.listIndent, c)
+      }
+      return total
+    }
+    case 'table': {
+      const rowHeight = c.bodyLineHeight
+      return rowHeight + block.rows.length * rowHeight + (block.rows.length + 1)
+    }
+    case 'image':
+      return 48
+    case 'rule':
+      return 18
+  }
+}
+
+function estimateLines(text: string, fontSize: number, width: number): number {
+  if (width <= 0 || text.length === 0) return 1
+  const avgCharWidth = fontSize * 0.48
+  const charsPerLine = Math.max(1, Math.floor(width / avgCharWidth))
+  return Math.max(1, Math.ceil(text.length / charsPerLine))
+}
+
+function spansToPlain(spans: MdSpan[]): string {
+  return spans.map(s => s.v).join('')
+}
+
+// ─── Utility ─────────────────────────────────────────────
+export function blocksToPlainText(blocks: MdBlock[]): string {
+  return blocks.map(blockToPlain).join('\n')
+}
+
+function blockToPlain(block: MdBlock): string {
+  switch (block.type) {
+    case 'paragraph':
+    case 'heading':
+      return spansToPlain(block.spans)
+    case 'code':
+      return block.text
+    case 'quote':
+      return blocksToPlainText(block.blocks)
+    case 'list':
+      return block.items.map(item => blocksToPlainText(item.blocks)).join('\n')
+    case 'table':
+      return [
+        block.headers.map(h => spansToPlain(h)).join(' | '),
+        ...block.rows.map(r => r.map(c => spansToPlain(c)).join(' | ')),
+      ].join('\n')
+    case 'image':
+      return block.alt
+    case 'rule':
+      return ''
+  }
+}
+
 // ─── Inline span parser ──────────────────────────────────
 export function parseSpans(text: string): MdSpan[] {
   const spans: MdSpan[] = []

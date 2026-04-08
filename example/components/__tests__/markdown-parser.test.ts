@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'bun:test'
-import { parseSpans, parseMarkdown } from '../markdown-parser'
+import { parseSpans, parseMarkdown, estimateBlocksHeight, blocksToPlainText } from '../markdown-parser'
 
 describe('parseSpans', () => {
   test('plain text', () => {
@@ -265,5 +265,76 @@ describe('parseMarkdown — images', () => {
     expect(result[0]!.type).toBe('paragraph')
     expect(result[1]!.type).toBe('image')
     expect(result[2]!.type).toBe('paragraph')
+  })
+})
+
+describe('blocksToPlainText', () => {
+  test('paragraph', () => {
+    const blocks = parseMarkdown('hello **world**')
+    expect(blocksToPlainText(blocks)).toBe('hello world')
+  })
+
+  test('multiple blocks', () => {
+    const blocks = parseMarkdown('# Title\n\nparagraph')
+    expect(blocksToPlainText(blocks)).toBe('Title\nparagraph')
+  })
+
+  test('code block', () => {
+    const blocks = parseMarkdown('```ts\nconst x = 1\n```')
+    expect(blocksToPlainText(blocks)).toBe('const x = 1')
+  })
+
+  test('list', () => {
+    const blocks = parseMarkdown('- one\n- two')
+    expect(blocksToPlainText(blocks)).toBe('one\ntwo')
+  })
+})
+
+describe('estimateBlocksHeight', () => {
+  test('single short paragraph', () => {
+    const blocks = parseMarkdown('hello')
+    const h = estimateBlocksHeight(blocks, 300)
+    expect(h).toBe(22) // 1 line * lineHeight 22
+  })
+
+  test('code block height includes padding', () => {
+    const blocks = parseMarkdown('```\nline1\nline2\n```')
+    const h = estimateBlocksHeight(blocks, 300)
+    // 2 lines * 18 + 12 * 2 padding = 60
+    expect(h).toBe(60)
+  })
+
+  test('code block with lang label adds height', () => {
+    const blocks = parseMarkdown('```ts\nline1\n```')
+    const h = estimateBlocksHeight(blocks, 300)
+    // 1 line * 18 + 12 * 2 padding + 18 lang label = 60
+    expect(h).toBe(60)
+  })
+
+  test('multiple blocks add gap', () => {
+    const blocks = parseMarkdown('hello\n\nworld')
+    const h = estimateBlocksHeight(blocks, 300)
+    // 2 paragraphs * 22 + 10 gap = 54
+    expect(h).toBe(54)
+  })
+
+  test('image placeholder height', () => {
+    const blocks = parseMarkdown('![pic](url)')
+    const h = estimateBlocksHeight(blocks, 300)
+    expect(h).toBe(48)
+  })
+
+  test('horizontal rule', () => {
+    const blocks = parseMarkdown('---')
+    const h = estimateBlocksHeight(blocks, 300)
+    expect(h).toBe(18)
+  })
+
+  test('table height', () => {
+    const blocks = parseMarkdown('| A | B |\n| - | - |\n| 1 | 2 |\n| 3 | 4 |')
+    const h = estimateBlocksHeight(blocks, 300)
+    // rowHeight(22) + 2 rows * rowHeight(22) + (rows.length + 1) borders
+    // = 22 + 44 + 3 = 69
+    expect(h).toBe(69)
   })
 })
