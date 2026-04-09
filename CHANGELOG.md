@@ -1,5 +1,20 @@
 # Changelog
 
+## 0.6.0 — 2026-04-09
+
+### Added
+
+- **`fitFontSize(text, style, boxWidth, boxHeight)`** — Find the largest font size that fits text in a box. Binary search over prepare()+layout().
+- **`truncateText(text, style, maxWidth, maxLines)`** — Truncate text to fit N lines with ellipsis. Returns `{ text, truncated, lineCount }`.
+- **`customBreakRules`** option in `PrepareOptions` — Post-processing callback to override line break opportunities (e.g., break at `/` in URLs).
+- **`useMultiStreamLayout(streams, style, maxWidth)`** — Hook for multiple parallel AI streaming responses with independent height tracking.
+- **`SegmentBreakKind`** type exported for use with customBreakRules callback.
+- **`TruncationResult`** type exported.
+
+### Tests
+
+- 259 automated tests (was 245)
+
 ## 0.5.0 — 2026-04-09
 
 ### Added
