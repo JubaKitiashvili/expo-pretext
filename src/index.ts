@@ -77,12 +77,10 @@ export { computeZoomLayout } from './zoom'
 export type { ZoomLayoutResult } from './zoom'
 
 // --- Animated (requires react-native-reanimated) ---
-export { useAnimatedTextHeight } from './hooks/useAnimatedTextHeight'
-export type { HeightAnimationConfig } from './hooks/useAnimatedTextHeight'
-export { useCollapsibleHeight } from './hooks/useCollapsibleHeight'
-export type { CollapsibleHeightResult } from './hooks/useCollapsibleHeight'
-export { usePinchToZoomText } from './hooks/usePinchToZoomText'
-export type { PinchToZoomResult } from './hooks/usePinchToZoomText'
+// Import from 'expo-pretext/animated' to avoid requiring reanimated for non-animated usage:
+//   import { useAnimatedTextHeight, useCollapsibleHeight, usePinchToZoomText } from 'expo-pretext/animated'
+// Or import directly from hook files:
+//   import { useAnimatedTextHeight } from 'expo-pretext/src/hooks/useAnimatedTextHeight'
 
 // --- Engine Profile ---
 export { getEngineProfile, setEngineProfile, ENGINE_PROFILES } from './engine-profile'
