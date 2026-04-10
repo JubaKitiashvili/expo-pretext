@@ -63,3 +63,27 @@ describe('analysis performance', () => {
     expect(elapsed).toBeLessThan(500)
   })
 })
+
+describe('merge pipeline efficiency (upstream #119 triage)', () => {
+  test('plain text without URLs/numbers passes through merge pipeline', () => {
+    const plainText = 'The quick brown fox jumps over the lazy dog'
+    const segments = plainText.split(/(\s+)/)
+    const isWordLike = segments.map(s => !/^\s+$/.test(s))
+    const profile = { carryCJKAfterClosingQuote: false }
+
+    const result = analyzeText(segments, isWordLike, profile)
+    expect(result.texts.length).toBeGreaterThan(0)
+  })
+
+  test('URL-containing text runs URL merge pass', () => {
+    // Simulate how a segmenter splits a URL: scheme, separator, and host/path
+    // as separate segments — mergeUrlLikeRuns should collapse them into one
+    const segments = ['Visit', ' ', 'https:', '//', 'example.com', '/path', ' ', 'for', ' ', 'info']
+    const isWordLike = segments.map(s => !/^\s+$/.test(s))
+    const profile = { carryCJKAfterClosingQuote: false }
+
+    const result = analyzeText(segments, isWordLike, profile)
+    // mergeUrlLikeRuns collapses 'https:', '//', 'example.com', '/path' into one segment
+    expect(result.texts.length).toBeLessThan(segments.length)
+  })
+})
