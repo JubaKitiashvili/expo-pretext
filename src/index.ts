@@ -59,5 +59,11 @@ export { prepareStreaming, clearStreamingState } from './streaming'
 export { fitFontSize, truncateText } from './text-utils'
 export type { TruncationResult } from './text-utils'
 
+// --- Typewriter ---
+export { buildTypewriterFrames } from './typewriter'
+export type { TypewriterFrame } from './typewriter'
+export { useTypewriterLayout } from './hooks/useTypewriterLayout'
+export type { TypewriterLayoutResult } from './hooks/useTypewriterLayout'
+
 // --- Utilities ---
 export { clearCache, setLocale } from './layout'
