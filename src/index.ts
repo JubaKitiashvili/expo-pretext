@@ -51,6 +51,8 @@ export type {
   PositionedLine,
   LayoutColumnResult,
 } from './obstacle-layout'
+export { useObstacleLayout } from './hooks/useObstacleLayout'
+export type { ObstacleLayoutResult } from './hooks/useObstacleLayout'
 
 // --- Streaming ---
 export { prepareStreaming, clearStreamingState } from './streaming'
