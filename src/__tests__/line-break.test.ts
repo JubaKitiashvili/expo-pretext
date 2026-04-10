@@ -1,3 +1,5 @@
+globalThis.__DEV__ = false
+
 // line-break.test.ts
 // Tests for the core line-breaking algorithm:
 //   countPreparedLines, walkPreparedLines, layoutNextLineRange,
@@ -18,6 +20,8 @@ import {
   type LineBreakCursor,
 } from '../line-break'
 import { analyzeText } from '../analysis'
+import { prepareWithSegments } from '../prepare'
+import { layoutWithLines } from '../layout'
 import type { TextStyle, NativeSegmentResult } from '../types'
 import type { InternalPreparedText } from '../build'
 import type { PreparedLineBreakData } from '../line-break'
@@ -410,5 +414,29 @@ describe('stepPreparedLineGeometry', () => {
     const p = asBreakData(makePrepared('Hello'))
     const cursor: LineBreakCursor = { segmentIndex: 0, graphemeIndex: 0 }
     expect(() => stepPreparedLineGeometry(p, cursor, 0)).not.toThrow()
+  })
+})
+
+// ---------------------------------------------------------------------------
+// currency symbol line-breaking (upstream #105 triage)
+// ---------------------------------------------------------------------------
+
+describe('currency symbol line-breaking (upstream #105 triage)', () => {
+  test('currency symbol stays with number: $100', () => {
+    const text = 'The price is $100 for this item on sale today'
+    const prepared = prepareWithSegments(text, STYLE)
+    const result = layoutWithLines(prepared, 120)
+    const has100 = result.lines.some(l => l.text.includes('$100') || l.text.includes('100'))
+    expect(has100).toBe(true)
+  })
+
+  test('various currency symbols do not cause crashes', () => {
+    const texts = ['Price: $50', 'Cost: €120', 'Value: ¥5000', 'Total: £75.50']
+    for (const text of texts) {
+      const prepared = prepareWithSegments(text, STYLE)
+      const result = layoutWithLines(prepared, 80)
+      expect(result.lineCount).toBeGreaterThan(0)
+      expect(result.lines.length).toBe(result.lineCount)
+    }
   })
 })
