@@ -121,6 +121,27 @@ const heights = measureHeights(
 | `usePreparedText(text, style)` | Returns PreparedText handle for manual layout. |
 | `measureHeights(texts, style, maxWidth)` | Batch: texts in, heights out. |
 
+### AI Chat & Streaming API
+
+| Function | Description |
+|---|---|
+| `useStreamingLayout(text, style, maxWidth)` | Returns `{ height, lineCount, lastLineWidth, doesNextTokenWrap }`. |
+| `useMultiStreamLayout(streams, style, maxWidth)` | Multiple parallel AI streaming responses with independent tracking. |
+| `useTypewriterLayout(text, style, maxWidth)` | Token-by-token reveal with `advance()`, `reset()`, `seekTo()`. |
+| `useTextMorphing(fromText, toText, style, maxWidth)` | Line-by-line transition from "Thinking..." to final response. |
+| `prepareStreaming(key, text, style, options?)` | Low-level: optimized prepare for growing text. |
+| `clearStreamingState(key)` | Clean up streaming state when conversation resets. |
+| `measureCodeBlockHeight(code, style, maxWidth)` | Monospace code block height with `pre-wrap` whitespace. |
+
+### Animation API (requires react-native-reanimated)
+
+| Function | Description |
+|---|---|
+| `useAnimatedTextHeight(text, style, maxWidth, animConfig?)` | Reanimated SharedValue height with timing/spring animation. |
+| `useCollapsibleHeight(expanded, collapsed, style, maxWidth, isExpanded)` | Pre-computed expand/collapse heights with smooth animation. |
+| `usePinchToZoomText(text, style, maxWidth, options?)` | Per-frame fontSize scaling via pinch gesture. 120+ layouts/frame. |
+| `computeZoomLayout(text, style, maxWidth, scale, options?)` | Pure computation: fontSize/height at any zoom scale. |
+
 ### Power API (Pretext-compatible)
 
 | Function | Description |
@@ -138,28 +159,27 @@ const heights = measureHeights(
 | Function | Description |
 |---|---|
 | `prepareInlineFlow(items)` | Mixed fonts, @mention pills, chips. Returns opaque PreparedInlineFlow. |
-| `walkInlineFlowLines(prepared, maxWidth, onLine)` | Line walker for inline fragments. Calls `onLine(fragments[], y, lineHeight)` per line. |
+| `walkInlineFlowLines(prepared, maxWidth, onLine)` | Line walker for inline fragments. |
 | `measureInlineFlow(prepared, maxWidth)` | Total height for inline fragment stream. |
-
-### Streaming API
-
-For AI chat and real-time text append scenarios without hooks:
-
-| Function | Description |
-|---|---|
-| `prepareStreaming(key, text, style, options?)` | Optimized prepare for growing text. Warms cache with new suffix, reuses previous segments. `key` is any object used to track state. |
-| `clearStreamingState(key)` | Clean up streaming state when conversation resets. |
 
 ### Obstacle Layout API
 
-For flowing text around shapes (circles, rectangles) — editorial/magazine layouts:
+| Function | Description |
+|---|---|
+| `useObstacleLayout(text, style, region, circles?, rects?)` | React hook for editorial text-around-obstacles at 60fps. |
+| `layoutColumn(prepared, start, region, lineHeight, circles?, rects?)` | Low-level: flow text in a column with obstacles. |
+| `carveTextLineSlots(base, blocked, minSlotWidth?)` | Compute available text slots by subtracting obstacles. |
+| `circleIntervalForBand(cx, cy, r, bandTop, bandBottom)` | Horizontal interval a circle occupies at a given line band. |
+| `rectIntervalForBand(rect, bandTop, bandBottom)` | Horizontal interval a rectangle occupies at a given line band. |
+
+### Text Utilities
 
 | Function | Description |
 |---|---|
-| `layoutColumn(prepared, options)` | Flow text in a column with obstacles. Returns `{ lines, height }`. |
-| `carveTextLineSlots(lineY, lineHeight, maxWidth, obstacles)` | Compute available text slots for a line, avoiding obstacles. |
-| `circleIntervalForBand(circle, bandTop, bandBottom)` | Horizontal interval a circle occupies at a given vertical band. |
-| `rectIntervalForBand(rect, bandTop, bandBottom)` | Horizontal interval a rectangle occupies at a given vertical band. |
+| `fitFontSize(text, style, boxWidth, boxHeight)` | Binary search for largest font size that fits in a box. |
+| `truncateText(text, style, maxWidth, maxLines)` | Truncate to N lines with ellipsis. |
+| `buildTypewriterFrames(lines, text, lineHeight)` | Pre-compute typewriter reveal frames from layout lines. |
+| `buildTextMorph(fromLines, toLines, lineHeight)` | Compute morph transition data between two text states. |
 
 ### Types
 
@@ -176,23 +196,8 @@ type PrepareOptions = {
   whiteSpace?: 'normal' | 'pre-wrap'
   locale?: string
   accuracy?: 'fast' | 'exact'
+  customBreakRules?: (segment, index, kind) => SegmentBreakKind
 }
-
-type InlineFlowItem = {
-  text: string
-  style: TextStyle
-  atomic?: boolean      // no breaking inside (pills, chips)
-  extraWidth?: number   // padding/border chrome
-}
-```
-
-### Obstacle Layout Types
-
-```ts
-type CircleObstacle = { type: 'circle'; cx: number; cy: number; r: number }
-type RectObstacle = { type: 'rect'; x: number; y: number; width: number; height: number }
-type LayoutRegion = { x: number; width: number }
-type PositionedLine = { text: string; x: number; y: number; width: number }
 ```
 
 ### Utilities

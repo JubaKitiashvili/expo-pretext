@@ -1,5 +1,40 @@
 # Changelog
 
+## 0.7.0 — 2026-04-10
+
+### Animation & AI Suite
+
+This milestone release completes Tier 1 (AI Chat) and Tier 2 (Flagship Demos) of the v0.7 roadmap.
+
+### Added (v0.6.1–v0.6.5)
+
+- **`useTypewriterLayout(text, style, maxWidth)`** — Token-by-token text reveal hook with `advance()`, `reset()`, `seekTo()`. Pre-computes all frames from layout lines.
+- **`buildTypewriterFrames(lines, text, lineHeight)`** — Pure computation for typewriter animation frames.
+- **`measureCodeBlockHeight(code, style, maxWidth)`** — Monospace code block height prediction with `whiteSpace: 'pre-wrap'`.
+- **`useObstacleLayout(text, style, region, circles?, rects?)`** — React hook wrapping `layoutColumn()` for editorial text-around-obstacles at 60fps.
+- **`useTextMorphing(fromText, toText, style, maxWidth)`** — Line-by-line text transition animation between two states (e.g., "Thinking..." to final response).
+- **`buildTextMorph(fromLines, toLines, lineHeight)`** — Pure morph transition computation with `heightAt(progress)` and `visibleLinesAt(progress)` interpolation.
+- **`useAnimatedTextHeight(text, style, maxWidth, animConfig?)`** — Reanimated SharedValue height with timing/spring animation for streaming text.
+- **`useCollapsibleHeight(expanded, collapsed, style, maxWidth, isExpanded)`** — Pre-computed expand/collapse heights with Reanimated animation.
+- **`usePinchToZoomText(text, style, maxWidth, options?)`** — Per-frame fontSize scaling via pinch gesture. `layout()` at 0.0002ms = 120+ recalculations per frame. First on React Native.
+- **`computeZoomLayout(text, style, maxWidth, scale, options?)`** — Pure fontSize/height computation at any zoom scale with min/max clamping.
+
+### Dependencies
+
+- **`react-native-reanimated >= 3.0.0`** added as optional peer dependency (for animated hooks only).
+
+### Upstream Triage
+
+Triaged 4 upstream chenglou/pretext issues against our native-backed implementation:
+- #120 (CJK inline overflow) — not reproducible (native segmenters handle correctly)
+- #121 (layoutNextLine mismatch) — not reproducible (16/16 consistency tests pass)
+- #119 (analysis merge optimization) — low-priority port, safe but not urgent
+- #105 (currency symbol line-break) — not applicable (no currency logic needed)
+
+### Tests
+
+- 308 automated tests (was 231 at v0.6.0)
+
 ## 0.6.0 — 2026-04-09
 
 ### Added
