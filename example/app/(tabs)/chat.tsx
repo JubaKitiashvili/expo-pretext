@@ -4,7 +4,7 @@ import { FlashList } from '@shopify/flash-list'
 import { mockMessages, mockStreamTokens, type ChatMessage } from '../../data/mock-messages'
 import { MarkdownRenderer } from '../../components/MarkdownRenderer'
 import { markdownSample } from '../../data/sample-texts'
-import { useTextHeight, useFlashListHeights } from 'expo-pretext'
+import { useTextHeight, useFlashListHeights, useStreamingLayout } from 'expo-pretext'
 
 const textStyle = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
 
@@ -29,11 +29,17 @@ function ChatBubble({ message, maxWidth }: { message: ChatMessage; maxWidth: num
 function StreamingBubble({ text, maxWidth }: { text: string; maxWidth: number }) {
   // Streaming: useTextHeight auto-detects append pattern, uses incremental extend
   const height = useTextHeight(text, textStyle, maxWidth)
+  const streaming = useStreamingLayout(text, textStyle, maxWidth)
 
   return (
-    <View style={[styles.bubble, styles.assistantBubble, styles.streamingBubble, { minHeight: height + 24 }]}>
-      <MarkdownRenderer content={text} variant="light" />
-      <View style={styles.cursor} />
+    <View>
+      <View style={[styles.bubble, styles.assistantBubble, styles.streamingBubble, { minHeight: height + 24 }]}>
+        <MarkdownRenderer content={text} variant="light" />
+        <View style={styles.cursor} />
+      </View>
+      <Text style={styles.streamingInfo}>
+        {streaming.lineCount} lines · last line {Math.round(streaming.lastLineWidth)}px
+      </Text>
     </View>
   )
 }
@@ -145,4 +151,11 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   streamBtnText: { color: '#fff', fontSize: 16, fontWeight: '600' },
+  streamingInfo: {
+    fontSize: 11,
+    color: '#888',
+    textAlign: 'center',
+    fontFamily: 'Menlo',
+    marginTop: 4,
+  },
 })
