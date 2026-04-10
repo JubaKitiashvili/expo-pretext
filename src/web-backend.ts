@@ -19,6 +19,7 @@ export interface WebBackendModule {
   measureTextHeight(text: string, font: FontDescriptor, maxWidth: number, lineHeight: number): { height: number; lineCount: number }
   clearNativeCache(): void
   setNativeCacheSize(size: number): void
+  getFontMetrics(font: FontDescriptor): { ascender: number; descender: number; xHeight: number; capHeight: number; lineGap: number }
 }
 
 // ─── Canvas Context (lazy singleton) ─────────────────────
@@ -167,6 +168,29 @@ export function createWebBackend(): WebBackendModule {
 
     setNativeCacheSize(size) {
       webCacheMaxSize = size
+    },
+
+    getFontMetrics(font) {
+      const ctx = getMeasureContext()
+      if (!ctx) {
+        // Rough estimates based on fontSize
+        return {
+          ascender: font.fontSize * 0.8,
+          descender: font.fontSize * -0.2,
+          xHeight: font.fontSize * 0.52,
+          capHeight: font.fontSize * 0.72,
+          lineGap: 0,
+        }
+      }
+      applyFont(ctx, font)
+      const metrics = ctx.measureText('x')
+      return {
+        ascender: metrics.fontBoundingBoxAscent ?? font.fontSize * 0.8,
+        descender: -(metrics.fontBoundingBoxDescent ?? font.fontSize * 0.2),
+        xHeight: metrics.actualBoundingBoxAscent ?? font.fontSize * 0.52,
+        capHeight: font.fontSize * 0.72, // Canvas doesn't expose cap-height
+        lineGap: 0,
+      }
     },
   }
 }

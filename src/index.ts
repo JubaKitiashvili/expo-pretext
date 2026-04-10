@@ -86,6 +86,10 @@ export type { ZoomLayoutResult } from './zoom'
 export { getEngineProfile, setEngineProfile, ENGINE_PROFILES } from './engine-profile'
 export type { EngineProfile } from './engine-profile'
 
+// --- Font Metrics ---
+export { getFontMetrics } from './font-utils'
+export type { FontMetrics } from './font-utils'
+
 // --- Accessibility ---
 export { getFontScale, onFontScaleChange, clearAllCaches } from './accessibility'
 

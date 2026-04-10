@@ -51,6 +51,10 @@ export interface ExpoPretextNativeModule extends InstanceType<typeof NativeModul
   clearNativeCache(): void
 
   setNativeCacheSize(size: number): void
+
+  getFontMetrics(
+    font: FontDescriptor
+  ): { ascender: number; descender: number; xHeight: number; capHeight: number; lineGap: number }
 }
 
 let cachedModule: ExpoPretextNativeModule | null | undefined = undefined

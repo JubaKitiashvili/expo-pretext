@@ -78,6 +78,19 @@ class ExpoPretextModule : Module() {
         Function("setNativeCacheSize") { size: Int ->
             maxCacheSize = size
         }
+
+        // ── getFontMetrics ─────────────────────────────────────────────
+        Function("getFontMetrics") { font: Map<String, Any> ->
+            val paint = getOrCreatePaint(font)
+            val metrics = paint.fontMetrics
+            mapOf(
+                "ascender" to -metrics.ascent.toDouble(),  // Android ascent is negative
+                "descender" to metrics.descent.toDouble(),
+                "xHeight" to (paint.textSize * 0.52).toDouble(),  // approximate x-height
+                "capHeight" to (paint.textSize * 0.72).toDouble(),  // approximate cap-height
+                "lineGap" to metrics.leading.toDouble(),
+            )
+        }
     }
 
     // ── Core implementation ─────────────────────────────────────────────────

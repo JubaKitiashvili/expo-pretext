@@ -120,6 +120,18 @@ public class ExpoPretext: Module {
       self.maxCacheSize = max(size, 100) // floor at 100 to avoid thrashing
     }
 
+    // getFontMetrics(font) -> { ascender, descender, xHeight, capHeight, lineGap }
+    Function("getFontMetrics") { (fontDesc: [String: Any]) -> [String: Any] in
+      let font = self.resolveFont(fontDesc)
+      return [
+        "ascender": Double(font.ascender),
+        "descender": Double(font.descender),
+        "xHeight": Double(font.xHeight),
+        "capHeight": Double(font.capHeight),
+        "lineGap": Double(font.leading),
+      ]
+    }
+
     // measureTextHeight(text, font, maxWidth, lineHeight) -> { height, lineCount }
     // Uses NSLayoutManager (TextKit) — same layout engine as RN Text
     Function("measureTextHeight") {
