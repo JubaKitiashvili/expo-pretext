@@ -20,7 +20,7 @@ const MIN_SCALE = 0.5
 const MAX_SCALE = 3.0
 
 // Reserved space at the bottom for the control panel (chips + slider + footer)
-const BOTTOM_PANEL_HEIGHT = 240
+const BOTTOM_PANEL_HEIGHT = 280
 const CONTAINER_PADDING = 16
 
 export function PinchToZoomDemo() {
@@ -136,40 +136,71 @@ export function PinchToZoomDemo() {
         </Pressable>
       </ScrollView>
 
-      {/* Fixed bottom control panel — chips + slider + footer, always visible */}
+      {/* Fixed bottom control panel — metrics grid + slider + footer */}
       <View style={styles.bottomPanel}>
-        <View style={styles.infoRow}>
-          <View style={styles.chip}>
-            <Text style={styles.chipKey}>scale</Text>
-            <Text style={styles.chipVal}>{scale.toFixed(2)}x</Text>
-          </View>
-          <View style={styles.chip}>
-            <Text style={styles.chipKey}>fontSize</Text>
-            <Text style={styles.chipVal}>{Math.round(zoomedStyle.fontSize)}px</Text>
-          </View>
-          <View style={styles.chip}>
-            <Text style={styles.chipKey}>height</Text>
-            <Text style={styles.chipVal}>{Math.round(accurateHeight)}px</Text>
-          </View>
-          <View style={styles.chip}>
-            <Text style={styles.chipKey}>lines</Text>
-            <Text style={styles.chipVal}>{accurateLineCount}</Text>
+        {/* Top divider bar */}
+        <View style={styles.panelHandle} />
+
+        {/* Metrics header */}
+        <View style={styles.metricsHeader}>
+          <Text style={styles.metricsTitle}>LAYOUT METRICS</Text>
+          <View style={styles.livePill}>
+            <View style={styles.liveDot} />
+            <Text style={styles.liveText}>LIVE · 0.0002ms</Text>
           </View>
         </View>
 
-        <View style={styles.sliderLabels}>
-          <Text style={styles.sliderLabel}>{MIN_SCALE.toFixed(1)}x</Text>
-          <Text style={styles.sliderLabel}>{MAX_SCALE.toFixed(1)}x</Text>
-        </View>
-        <View {...sliderPan.panHandlers} style={styles.sliderContainer}>
-          <View style={styles.sliderTrack} pointerEvents="none">
-            <View style={[styles.sliderFill, { width: thumbPosition + TRACK_PAD / 2 }]} />
-            <View style={[styles.sliderThumb, { left: thumbPosition }]} />
+        {/* Metrics grid — 4 cells in a row */}
+        <View style={styles.metricsGrid}>
+          <View style={styles.metricCell}>
+            <Text style={styles.metricLabel}>SCALE</Text>
+            <Text style={styles.metricValue}>{scale.toFixed(2)}<Text style={styles.metricUnit}>x</Text></Text>
+          </View>
+          <View style={styles.metricDivider} />
+          <View style={styles.metricCell}>
+            <Text style={styles.metricLabel}>FONT</Text>
+            <Text style={styles.metricValue}>{Math.round(zoomedStyle.fontSize)}<Text style={styles.metricUnit}>px</Text></Text>
+          </View>
+          <View style={styles.metricDivider} />
+          <View style={styles.metricCell}>
+            <Text style={styles.metricLabel}>HEIGHT</Text>
+            <Text style={styles.metricValue}>{Math.round(accurateHeight)}<Text style={styles.metricUnit}>px</Text></Text>
+          </View>
+          <View style={styles.metricDivider} />
+          <View style={styles.metricCell}>
+            <Text style={styles.metricLabel}>LINES</Text>
+            <Text style={styles.metricValue}>{accurateLineCount}</Text>
           </View>
         </View>
 
+        {/* Slider with inline value */}
+        <View style={styles.sliderSection}>
+          <View style={styles.sliderHeader}>
+            <Text style={styles.sliderTitle}>ZOOM</Text>
+            <View style={styles.sliderValueBadge}>
+              <Text style={styles.sliderValueText}>{scale.toFixed(2)}x</Text>
+            </View>
+          </View>
+
+          <View {...sliderPan.panHandlers} style={styles.sliderContainer}>
+            <View style={styles.sliderTrack} pointerEvents="none">
+              <View style={[styles.sliderFill, { width: thumbPosition + TRACK_PAD / 2 }]} />
+              <View style={[styles.sliderThumb, { left: thumbPosition }]}>
+                <View style={styles.sliderThumbInner} />
+              </View>
+            </View>
+          </View>
+
+          <View style={styles.sliderLabels}>
+            <Text style={styles.sliderLabel}>{MIN_SCALE.toFixed(1)}x</Text>
+            <Text style={styles.sliderLabelMid}>1.0x</Text>
+            <Text style={styles.sliderLabel}>{MAX_SCALE.toFixed(1)}x</Text>
+          </View>
+        </View>
+
+        {/* Footer */}
         <Text style={styles.footerText}>
-          usePinchToZoomText() · layout() at 0.0002ms per scale change
+          usePinchToZoomText() → native TextKit measurement
         </Text>
       </View>
     </View>
@@ -214,62 +245,140 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     paddingHorizontal: CONTAINER_PADDING,
-    paddingTop: 16,
+    paddingTop: 8,
     paddingBottom: 20,
-    backgroundColor: '#0a0a0c',
+    backgroundColor: '#0d0d12',
     borderTopWidth: 1,
-    borderTopColor: '#1a1a1e',
+    borderTopColor: 'rgba(255,211,105,0.15)',
     height: BOTTOM_PANEL_HEIGHT,
+    shadowColor: '#000',
+    shadowOpacity: 0.8,
+    shadowRadius: 20,
+    shadowOffset: { width: 0, height: -8 },
   },
-  infoRow: {
+  panelHandle: {
+    alignSelf: 'center',
+    width: 36,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: 'rgba(255,211,105,0.25)',
+    marginBottom: 14,
+  },
+  metricsHeader: {
     flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 10,
-    justifyContent: 'center',
-  },
-  chip: {
-    flexDirection: 'row',
-    alignItems: 'baseline',
-    backgroundColor: '#000',
-    borderWidth: 2,
-    borderColor: '#ffd369',
-    paddingHorizontal: 16,
-    paddingVertical: 10,
-    borderRadius: 999,
-    gap: 10,
-    shadowColor: '#ffd369',
-    shadowOpacity: 0.4,
-    shadowRadius: 8,
-    shadowOffset: { width: 0, height: 0 },
-  },
-  chipKey: {
-    fontFamily: 'Menlo',
-    fontSize: 13,
-    color: '#fff',
-    fontWeight: '700',
-    letterSpacing: 0.5,
-  },
-  chipVal: {
-    fontFamily: 'Menlo',
-    fontSize: 20,
-    color: '#ffd369',
-    fontWeight: '800',
-  },
-  sliderLabels: {
-    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'space-between',
-    marginTop: 20,
-    paddingHorizontal: 2,
+    marginBottom: 10,
+    paddingHorizontal: 4,
   },
-  sliderLabel: {
+  metricsTitle: {
+    fontFamily: 'Menlo',
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.55)',
+    letterSpacing: 1.5,
+  },
+  livePill: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 6,
+    backgroundColor: 'rgba(74,158,93,0.15)',
+    borderWidth: 1,
+    borderColor: 'rgba(74,158,93,0.5)',
+    paddingHorizontal: 8,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  liveDot: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#4a9e5d',
+  },
+  liveText: {
     fontFamily: 'Menlo',
     fontSize: 9,
-    color: 'rgba(255,255,255,0.4)',
+    fontWeight: '700',
+    color: '#6dd184',
+    letterSpacing: 0.5,
+  },
+  metricsGrid: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#1a1a22',
+    borderWidth: 1,
+    borderColor: 'rgba(255,211,105,0.18)',
+    borderRadius: 14,
+    paddingVertical: 12,
+    paddingHorizontal: 4,
+    shadowColor: '#ffd369',
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
+    shadowOffset: { width: 0, height: 0 },
+  },
+  metricCell: {
+    flex: 1,
+    alignItems: 'center',
+    paddingHorizontal: 4,
+  },
+  metricDivider: {
+    width: 1,
+    height: 36,
+    backgroundColor: 'rgba(255,255,255,0.08)',
+  },
+  metricLabel: {
+    fontFamily: 'Menlo',
+    fontSize: 9,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.5)',
+    letterSpacing: 1,
+    marginBottom: 4,
+  },
+  metricValue: {
+    fontFamily: 'Menlo',
+    fontSize: 19,
+    fontWeight: '800',
+    color: '#ffd369',
+    letterSpacing: -0.3,
+  },
+  metricUnit: {
+    fontSize: 11,
+    fontWeight: '600',
+    color: 'rgba(255,211,105,0.6)',
+  },
+  sliderSection: {
+    marginTop: 16,
+  },
+  sliderHeader: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: 10,
+    paddingHorizontal: 4,
+  },
+  sliderTitle: {
+    fontFamily: 'Menlo',
+    fontSize: 10,
+    fontWeight: '700',
+    color: 'rgba(255,255,255,0.55)',
+    letterSpacing: 1.5,
+  },
+  sliderValueBadge: {
+    backgroundColor: '#ffd369',
+    paddingHorizontal: 10,
+    paddingVertical: 3,
+    borderRadius: 999,
+  },
+  sliderValueText: {
+    fontFamily: 'Menlo',
+    fontSize: 11,
+    fontWeight: '800',
+    color: '#0a0a0c',
+    letterSpacing: 0.3,
   },
   sliderContainer: {
-    height: 40,
+    height: 32,
     justifyContent: 'center',
-    marginTop: 4,
   },
   sliderTrack: {
     height: 6,
@@ -284,26 +393,56 @@ const styles = StyleSheet.create({
     height: 6,
     backgroundColor: '#ffd369',
     borderRadius: 3,
+    shadowColor: '#ffd369',
+    shadowOpacity: 0.6,
+    shadowRadius: 6,
+    shadowOffset: { width: 0, height: 0 },
   },
   sliderThumb: {
     position: 'absolute',
-    top: -9,
-    width: 24,
-    height: 24,
-    borderRadius: 12,
+    top: -11,
+    width: 28,
+    height: 28,
+    borderRadius: 14,
     backgroundColor: '#ffd369',
-    borderWidth: 2,
+    borderWidth: 3,
     borderColor: '#0a0a0c',
     shadowColor: '#ffd369',
-    shadowOpacity: 0.6,
-    shadowRadius: 4,
+    shadowOpacity: 0.7,
+    shadowRadius: 8,
     shadowOffset: { width: 0, height: 0 },
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sliderThumbInner: {
+    width: 6,
+    height: 6,
+    borderRadius: 3,
+    backgroundColor: '#0a0a0c',
+  },
+  sliderLabels: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginTop: 6,
+    paddingHorizontal: 2,
+  },
+  sliderLabel: {
+    fontFamily: 'Menlo',
+    fontSize: 9,
+    color: 'rgba(255,255,255,0.4)',
+  },
+  sliderLabelMid: {
+    fontFamily: 'Menlo',
+    fontSize: 9,
+    color: 'rgba(255,211,105,0.6)',
+    fontWeight: '700',
   },
   footerText: {
     fontFamily: 'Menlo',
     fontSize: 9,
-    color: 'rgba(255,255,255,0.35)',
-    marginTop: 8,
+    color: 'rgba(255,255,255,0.3)',
+    marginTop: 10,
     textAlign: 'center',
+    letterSpacing: 0.3,
   },
 })
