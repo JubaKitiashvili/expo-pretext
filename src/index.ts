@@ -93,5 +93,15 @@ export type { FontMetrics } from './font-utils'
 // --- Accessibility ---
 export { getFontScale, onFontScaleChange, clearAllCaches } from './accessibility'
 
+// --- Developer Tools ---
+export { compareDebugMeasurement, DEBUG_ACCURACY_COLORS } from './debug'
+export type { DebugMeasurement } from './debug'
+export { PretextDebugOverlay } from './components/PretextDebugOverlay'
+export type { PretextDebugOverlayProps } from './components/PretextDebugOverlay'
+export { buildHeightSnapshot, compareHeightSnapshots } from './snapshot'
+export type { HeightSnapshot, HeightSnapshotEntry, SnapshotComparison } from './snapshot'
+export { prepareWithBudget, PrepareBudgetTracker } from './perf-budget'
+export type { BudgetedPrepareResult } from './perf-budget'
+
 // --- Utilities ---
 export { clearCache, setLocale } from './layout'

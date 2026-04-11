@@ -33,6 +33,10 @@ import { buildTextMorph } from '../morphing'
 import { computeZoomLayout } from '../zoom'
 import { getEngineProfile, setEngineProfile, ENGINE_PROFILES } from '../engine-profile'
 import { getFontScale, clearAllCaches } from '../accessibility'
+import { getFontMetrics } from '../font-utils'
+import { compareDebugMeasurement } from '../debug'
+import { buildHeightSnapshot, compareHeightSnapshots } from '../snapshot'
+import { prepareWithBudget, PrepareBudgetTracker } from '../perf-budget'
 
 const STYLE = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
 const TEXT = 'The quick brown fox jumps over the lazy dog near the river on a sunny day'
@@ -118,5 +122,43 @@ describe('v0.7.x integration — all APIs work together', () => {
     const zoomed = computeZoomLayout(TEXT, STYLE, 200, 1.5)
     expect(zoomed.fontSize).toBe(24)
     expect(zoomed.height).toBeGreaterThan(responseLayout.height)
+  })
+
+  test('font metrics', () => {
+    const metrics = getFontMetrics(STYLE)
+    expect(metrics.ascender).toBeGreaterThan(0)
+    expect(metrics.descender).toBeLessThan(0)
+    expect(metrics.xHeight).toBeGreaterThan(0)
+    expect(metrics.capHeight).toBeGreaterThan(metrics.xHeight)
+  })
+
+  test('debug measurement comparison', () => {
+    const prepared = prepare(TEXT, STYLE)
+    const predicted = layout(prepared, 200).height
+    const exact = compareDebugMeasurement(predicted, predicted)
+    expect(exact.accuracy).toBe('exact')
+    const wrong = compareDebugMeasurement(predicted, predicted * 1.5)
+    expect(wrong.accuracy).toBe('wrong')
+  })
+
+  test('snapshot build + compare', () => {
+    const texts = ['Hello', 'World', TEXT]
+    const a = buildHeightSnapshot(texts, STYLE, 200)
+    const b = buildHeightSnapshot(texts, STYLE, 200)
+    const cmp = compareHeightSnapshots(a, b)
+    expect(cmp.match).toBe(true)
+    expect(a.entries.length).toBe(3)
+  })
+
+  test('performance budget', () => {
+    const result = prepareWithBudget(TEXT, STYLE, 100)
+    expect(result.prepared).toBeDefined()
+    expect(result.elapsedMs).toBeGreaterThanOrEqual(0)
+    expect(typeof result.budgetExceeded).toBe('boolean')
+
+    const tracker = new PrepareBudgetTracker()
+    tracker.record(result.elapsedMs)
+    expect(tracker.sampleCount).toBe(1)
+    expect(tracker.averageMs()).toBe(result.elapsedMs)
   })
 })
