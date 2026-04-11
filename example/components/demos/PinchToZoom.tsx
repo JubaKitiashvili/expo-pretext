@@ -1,9 +1,8 @@
-import { useState, useCallback } from 'react'
+import { useState, useCallback, useMemo } from 'react'
 import { View, Text, StyleSheet, useWindowDimensions, PanResponder, Pressable, ScrollView } from 'react-native'
-import { GestureHandlerRootView, Gesture, GestureDetector } from 'react-native-gesture-handler'
-import { runOnJS } from 'react-native-reanimated'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { usePinchToZoomText } from 'expo-pretext/animated'
+import { useTextHeight } from 'expo-pretext'
 
 const SAMPLE_TEXT = "Pinch or drag the slider to zoom this text. On every scale change, the fontSize is scaled and the layout is recomputed in pure arithmetic. layout() runs in 0.0002ms — 120+ recalculations per frame, no reflow, no thrashing."
 
@@ -13,8 +12,14 @@ const MAX_SCALE = 3.0
 
 export function PinchToZoomDemo() {
   const { width } = useWindowDimensions()
-  // container padding 16 + bubble padding 16 per side = 64 total
-  const maxWidth = width - 64
+
+  // Measured text content width — updated by onLayout on the ScrollView content.
+  // We subtract a small safety margin because native TextKit wraps slightly
+  // tighter than the library's JS line-break prediction (it accounts for
+  // sub-pixel kerning, word-break heuristics, and trailing whitespace differently).
+  const SAFETY_MARGIN = 4
+  const [measuredWidth, setMeasuredWidth] = useState(width - 64)
+  const maxWidth = Math.max(50, measuredWidth - SAFETY_MARGIN)
 
   const [scale, setScale] = useState(1)
 
@@ -34,15 +39,6 @@ export function PinchToZoomDemo() {
       return next
     })
   }, [zoom])
-
-  // Pinch gesture — works on real devices with 2 fingers. On Simulator, use
-  // Option+click to emulate pinch, or tap the bubble to cycle discrete levels.
-  const pinchGesture = Gesture.Pinch()
-    .onUpdate(e => {
-      const clamped = Math.max(MIN_SCALE, Math.min(MAX_SCALE, e.scale))
-      runOnJS(setScale)(clamped)
-      runOnJS(zoom.onPinchUpdate)(clamped)
-    })
 
   // Slider drag — continuous scale control
   const SLIDER_W = width - 64
@@ -69,26 +65,43 @@ export function PinchToZoomDemo() {
   }))
 
   const thumbPosition = ((scale - MIN_SCALE) / (MAX_SCALE - MIN_SCALE)) * trackWidth
-  const currentLayout = zoom.layoutAtScale(scale)
+
+  // Use useTextHeight (native TextKit path) for accurate height reporting that
+  // matches the rendered text. computeZoomLayout uses the JS line-break
+  // algorithm which can disagree with TextKit by a line or two on iOS.
+  const zoomedStyle = useMemo(() => {
+    const fontSize = Math.max(8, Math.min(48, BASE_STYLE.fontSize * scale))
+    const lineHeight = BASE_STYLE.lineHeight * (fontSize / BASE_STYLE.fontSize)
+    return { ...BASE_STYLE, fontSize, lineHeight }
+  }, [scale])
+  const accurateHeight = useTextHeight(SAMPLE_TEXT, zoomedStyle, maxWidth)
+  const accurateLineCount = Math.max(1, Math.round(accurateHeight / zoomedStyle.lineHeight))
 
   return (
-    <GestureHandlerRootView style={styles.container}>
+    <View style={styles.container}>
       <Text style={styles.hint}>Tap the bubble or drag the slider to zoom</Text>
 
-      <Pressable onPress={cycleZoom}>
-        <GestureDetector gesture={pinchGesture}>
-          <Animated.View style={styles.bubble}>
-            <ScrollView
-              style={styles.bubbleScroll}
-              contentContainerStyle={styles.bubbleScrollContent}
-              showsVerticalScrollIndicator={false}
-            >
-              <Animated.Text style={[styles.bubbleText, textStyle]}>
-                {SAMPLE_TEXT}
-              </Animated.Text>
-            </ScrollView>
-          </Animated.View>
-        </GestureDetector>
+      <Pressable onPress={cycleZoom} style={styles.bubble}>
+        <ScrollView
+          style={styles.bubbleScroll}
+          contentContainerStyle={styles.bubbleScrollContent}
+          showsVerticalScrollIndicator={false}
+          scrollEnabled={false}
+        >
+          <View
+            style={styles.textWrap}
+            onLayout={e => {
+              const w = e.nativeEvent.layout.width
+              if (w > 0 && Math.abs(w - measuredWidth) > 0.5) {
+                setMeasuredWidth(w)
+              }
+            }}
+          >
+            <Animated.Text style={[styles.bubbleText, textStyle]}>
+              {SAMPLE_TEXT}
+            </Animated.Text>
+          </View>
+        </ScrollView>
       </Pressable>
 
       {/* Info chips */}
@@ -99,15 +112,15 @@ export function PinchToZoomDemo() {
         </View>
         <View style={styles.chip}>
           <Text style={styles.chipKey}>fontSize</Text>
-          <Text style={styles.chipVal}>{Math.round(currentLayout.fontSize)}px</Text>
+          <Text style={styles.chipVal}>{Math.round(zoomedStyle.fontSize)}px</Text>
         </View>
         <View style={styles.chip}>
           <Text style={styles.chipKey}>height</Text>
-          <Text style={styles.chipVal}>{Math.round(currentLayout.height)}px</Text>
+          <Text style={styles.chipVal}>{Math.round(accurateHeight)}px</Text>
         </View>
         <View style={styles.chip}>
           <Text style={styles.chipKey}>lines</Text>
-          <Text style={styles.chipVal}>{currentLayout.lineCount}</Text>
+          <Text style={styles.chipVal}>{accurateLineCount}</Text>
         </View>
       </View>
 
@@ -129,7 +142,7 @@ export function PinchToZoomDemo() {
       <Text style={styles.infoText}>
         layout() at 0.0002ms = 120+ layouts per frame possible
       </Text>
-    </GestureHandlerRootView>
+    </View>
   )
 }
 
@@ -141,6 +154,9 @@ const styles = StyleSheet.create({
     color: 'rgba(255,255,255,0.5)',
     textAlign: 'center',
     marginBottom: 12,
+  },
+  bubbleWrap: {
+    position: 'relative',
   },
   bubble: {
     backgroundColor: '#1a1a1e',
@@ -155,6 +171,9 @@ const styles = StyleSheet.create({
   },
   bubbleScrollContent: {
     padding: 16,
+  },
+  textWrap: {
+    width: '100%',
   },
   bubbleText: {
     fontFamily: 'Helvetica Neue',
