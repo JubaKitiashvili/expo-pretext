@@ -19,6 +19,10 @@ const BASE_STYLE = { fontFamily: 'Helvetica Neue', fontSize: 16, lineHeight: 24 
 const MIN_SCALE = 0.5
 const MAX_SCALE = 3.0
 
+// Reserved space at the bottom for the control panel (chips + slider + footer)
+const BOTTOM_PANEL_HEIGHT = 240
+const CONTAINER_PADDING = 16
+
 export function PinchToZoomDemo() {
   const { width } = useWindowDimensions()
 
@@ -35,7 +39,6 @@ export function PinchToZoomDemo() {
   })
 
   // Tap to cycle discrete zoom levels — works on Simulator and any device.
-  // Uses functional state update so we always read the latest scale.
   const cycleZoom = useCallback(() => {
     setScale(prev => {
       const levels = [1.0, 1.5, 2.0, 2.5, 0.8, 1.0]
@@ -64,13 +67,14 @@ export function PinchToZoomDemo() {
   const sliderPan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
     onMoveShouldSetPanResponder: () => true,
-    onPanResponderGrant: (e) => updateFromSlider(e.nativeEvent.locationX, 'grant'),
-    onPanResponderMove: (e, gestureState) => {
-      // Use gestureState-derived x instead of nativeEvent.locationX which can
-      // oscillate between touch history entries on iOS. moveX is absolute, so
-      // we subtract the slider container's absolute x offset. Since the slider
-      // is flush with container padding (16), subtract 16.
-      const x = gestureState.moveX - 16
+    onPanResponderGrant: (e) => {
+      // Use pageX minus container padding — avoids locationX oscillation caused
+      // by the nested thumb view capturing hit-test events at different origins.
+      const x = e.nativeEvent.pageX - CONTAINER_PADDING
+      updateFromSlider(x, 'grant')
+    },
+    onPanResponderMove: (_e, gestureState) => {
+      const x = gestureState.moveX - CONTAINER_PADDING
       updateFromSlider(x, 'move')
     },
     onPanResponderTerminationRequest: () => false,
@@ -94,14 +98,12 @@ export function PinchToZoomDemo() {
   const accurateHeight = useTextHeight(SAMPLE_TEXT, zoomedStyle, maxWidth)
   const accurateLineCount = Math.max(1, Math.round(accurateHeight / zoomedStyle.lineHeight))
 
-  // Render-tracking log: fires on every re-render so we can see flicker sequences.
-  // Also tracks render count and elapsed time since mount.
+  // Render-tracking log: fires on every state change so we can see flicker sequences.
   const renderCountRef = useRef(0)
   renderCountRef.current++
   const mountTimeRef = useRef<number>(Date.now())
   const elapsed = Date.now() - mountTimeRef.current
 
-  // Log on state change (not every render) — useEffect only fires when deps change
   useEffect(() => {
     log('RENDER', {
       renderN: renderCountRef.current,
@@ -119,63 +121,68 @@ export function PinchToZoomDemo() {
     <View style={styles.container}>
       <Text style={styles.hint}>Tap the bubble or drag the slider to zoom</Text>
 
-      <Pressable onPress={cycleZoom} style={styles.bubble}>
-        <ScrollView
-          style={styles.bubbleScroll}
-          contentContainerStyle={styles.bubbleScrollContent}
-          showsVerticalScrollIndicator={false}
-          scrollEnabled={true}
-        >
-          <Animated.Text style={[styles.bubbleText, textStyle]}>
-            {SAMPLE_TEXT}
-          </Animated.Text>
-        </ScrollView>
-      </Pressable>
+      {/* Scrollable bubble region — grows with text, reserves bottom space for panel */}
+      <ScrollView
+        style={styles.scrollArea}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        <Pressable onPress={cycleZoom}>
+          <View style={styles.bubble}>
+            <Animated.Text style={[styles.bubbleText, textStyle]}>
+              {SAMPLE_TEXT}
+            </Animated.Text>
+          </View>
+        </Pressable>
+      </ScrollView>
 
-      {/* Info chips */}
-      <View style={styles.infoRow}>
-        <View style={styles.chip}>
-          <Text style={styles.chipKey}>scale</Text>
-          <Text style={styles.chipVal}>{scale.toFixed(2)}x</Text>
+      {/* Fixed bottom control panel — chips + slider + footer, always visible */}
+      <View style={styles.bottomPanel}>
+        <View style={styles.infoRow}>
+          <View style={styles.chip}>
+            <Text style={styles.chipKey}>scale</Text>
+            <Text style={styles.chipVal}>{scale.toFixed(2)}x</Text>
+          </View>
+          <View style={styles.chip}>
+            <Text style={styles.chipKey}>fontSize</Text>
+            <Text style={styles.chipVal}>{Math.round(zoomedStyle.fontSize)}px</Text>
+          </View>
+          <View style={styles.chip}>
+            <Text style={styles.chipKey}>height</Text>
+            <Text style={styles.chipVal}>{Math.round(accurateHeight)}px</Text>
+          </View>
+          <View style={styles.chip}>
+            <Text style={styles.chipKey}>lines</Text>
+            <Text style={styles.chipVal}>{accurateLineCount}</Text>
+          </View>
         </View>
-        <View style={styles.chip}>
-          <Text style={styles.chipKey}>fontSize</Text>
-          <Text style={styles.chipVal}>{Math.round(zoomedStyle.fontSize)}px</Text>
-        </View>
-        <View style={styles.chip}>
-          <Text style={styles.chipKey}>height</Text>
-          <Text style={styles.chipVal}>{Math.round(accurateHeight)}px</Text>
-        </View>
-        <View style={styles.chip}>
-          <Text style={styles.chipKey}>lines</Text>
-          <Text style={styles.chipVal}>{accurateLineCount}</Text>
-        </View>
-      </View>
 
-      {/* Slider */}
-      <View style={styles.sliderLabels}>
-        <Text style={styles.sliderLabel}>{MIN_SCALE.toFixed(1)}x</Text>
-        <Text style={styles.sliderLabel}>{MAX_SCALE.toFixed(1)}x</Text>
-      </View>
-      <View {...sliderPan.panHandlers} style={styles.sliderContainer}>
-        <View style={styles.sliderTrack}>
-          <View style={[styles.sliderFill, { width: thumbPosition + TRACK_PAD / 2 }]} />
-          <View style={[styles.sliderThumb, { left: thumbPosition }]} />
+        <View style={styles.sliderLabels}>
+          <Text style={styles.sliderLabel}>{MIN_SCALE.toFixed(1)}x</Text>
+          <Text style={styles.sliderLabel}>{MAX_SCALE.toFixed(1)}x</Text>
         </View>
-      </View>
+        <View {...sliderPan.panHandlers} style={styles.sliderContainer}>
+          <View style={styles.sliderTrack} pointerEvents="none">
+            <View style={[styles.sliderFill, { width: thumbPosition + TRACK_PAD / 2 }]} />
+            <View style={[styles.sliderThumb, { left: thumbPosition }]} />
+          </View>
+        </View>
 
-      <Text style={styles.infoText}>
-        usePinchToZoomText() · computeZoomLayout() on every scale change
-      </Text>
-      <Text style={styles.infoText}>
-        layout() at 0.0002ms = 120+ layouts per frame possible
-      </Text>
+        <Text style={styles.footerText}>
+          usePinchToZoomText() · layout() at 0.0002ms per scale change
+        </Text>
+      </View>
     </View>
   )
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#0a0a0c', padding: 16 },
+  container: {
+    flex: 1,
+    backgroundColor: '#0a0a0c',
+    paddingHorizontal: CONTAINER_PADDING,
+    paddingTop: CONTAINER_PADDING,
+  },
   hint: {
     fontFamily: 'Menlo',
     fontSize: 11,
@@ -183,31 +190,40 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 12,
   },
-  bubbleWrap: {
-    position: 'relative',
+  scrollArea: {
+    flex: 1,
+    marginBottom: BOTTOM_PANEL_HEIGHT,
+  },
+  scrollContent: {
+    paddingBottom: 20,
   },
   bubble: {
     backgroundColor: '#1a1a1e',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#2a2a32',
-    height: 280, // fixed height — content scrolls internally when zoomed
-    overflow: 'hidden',
-  },
-  bubbleScroll: {
-    flex: 1,
-  },
-  bubbleScrollContent: {
     padding: 16,
   },
   bubbleText: {
     fontFamily: 'Helvetica Neue',
     color: '#e8e4dc',
   },
+  bottomPanel: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+    paddingHorizontal: CONTAINER_PADDING,
+    paddingTop: 16,
+    paddingBottom: 20,
+    backgroundColor: '#0a0a0c',
+    borderTopWidth: 1,
+    borderTopColor: '#1a1a1e',
+    height: BOTTOM_PANEL_HEIGHT,
+  },
   infoRow: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    marginTop: 20,
     gap: 10,
     justifyContent: 'center',
   },
@@ -283,11 +299,11 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     shadowOffset: { width: 0, height: 0 },
   },
-  infoText: {
+  footerText: {
     fontFamily: 'Menlo',
     fontSize: 9,
     color: 'rgba(255,255,255,0.35)',
-    marginTop: 6,
+    marginTop: 8,
     textAlign: 'center',
   },
 })
