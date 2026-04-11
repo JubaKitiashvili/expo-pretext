@@ -1,5 +1,46 @@
 # Changelog
 
+## 0.8.0 — 2026-04-11
+
+### Production Ready Milestone
+
+This milestone release completes Tier 3 (Production Readiness) and Tier 4 (DX)
+of the v0.7 roadmap. expo-pretext is now ready for shipping to App Store and
+Play Store with full animation suite, accessibility support, cross-platform
+consistency mode, font metrics API, and developer tools.
+
+### Added (v0.7.1–v0.7.4)
+
+**Tier 3 — Production Readiness:**
+- **`getFontScale()`** — Snapshot of current system font scale
+- **`onFontScaleChange(callback)`** — Listener for iOS Dynamic Type / Android Font Size changes. Returns unsubscribe function.
+- **`clearAllCaches()`** — Full JS + native cache invalidation (more thorough than `clearCache()`)
+- **`ENGINE_PROFILES`** — Pre-defined profiles: `ios`, `android`, `consistent`, `web`
+- **`setEngineProfile(profile)`** — Override platform defaults for cross-platform consistency or custom tuning
+- **`getEngineProfile()`** — Now exported as public API
+- **`EngineProfile`** type exported
+- **`getFontMetrics(style)`** — Native font metrics (ascender, descender, xHeight, capHeight, lineGap) from iOS UIFont and Android Paint.FontMetrics with web Canvas fallback
+- **`FontMetrics`** type exported
+
+**Tier 4 — Developer Tools:**
+- **`<PretextDebugOverlay>`** — React component showing predicted vs actual text heights with colored borders (green/yellow/orange/red by accuracy)
+- **`compareDebugMeasurement(predicted, actual)`** — Pure accuracy comparison with `exact`/`close`/`loose`/`wrong` categorization
+- **`DEBUG_ACCURACY_COLORS`** — Color constants for each accuracy level
+- **`buildHeightSnapshot(texts, style, width)`** — Deterministic snapshot for CI regression detection
+- **`compareHeightSnapshots(expected, actual)`** — Snapshot diff with per-entry mismatch details
+- **`prepareWithBudget(text, style, budgetMs)`** — Timing-bounded prepare() with elapsed time metadata
+- **`PrepareBudgetTracker`** — Running average tracker for prepare() timings
+
+### Native Module Additions
+
+- iOS: `getFontMetrics` function using UIFont ascender/descender/xHeight/capHeight/leading
+- Android: `getFontMetrics` function using Paint.FontMetrics with textSize-based xHeight/capHeight approximation
+
+### Tests
+
+- 381 automated tests (was 324 at v0.7.0)
+- New integration test suite verifying all v0.7.x APIs work together
+
 ## 0.7.0 — 2026-04-10
 
 ### Animation & AI Suite

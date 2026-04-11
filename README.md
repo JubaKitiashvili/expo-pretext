@@ -2,7 +2,9 @@
 
 DOM-free multiline text height prediction for React Native. Port of [Pretext](https://github.com/chenglou/pretext).
 
-Predict text heights **before rendering** — no `onLayout`, no layout jumps, no guesswork. Works with FlashList, streaming AI chat, and any layout that needs text dimensions upfront.
+Predict text heights **before rendering** — no `onLayout`, no layout jumps, no guesswork. Works with FlashList, streaming AI chat, typewriter effects, text-around-obstacles layouts, pinch-to-zoom, Dynamic Type, and any layout that needs text dimensions upfront.
+
+**Production-ready in v0.8.0** — 381 tests, 17 new APIs since v0.6.0, full animation suite, accessibility support, cross-platform reconciliation, and developer tools.
 
 ## Demos
 
