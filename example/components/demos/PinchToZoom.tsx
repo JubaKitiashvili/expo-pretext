@@ -1,8 +1,17 @@
-import { useState, useCallback, useMemo } from 'react'
+import { useState, useCallback, useMemo, useEffect, useRef } from 'react'
 import { View, Text, StyleSheet, useWindowDimensions, PanResponder, Pressable, ScrollView } from 'react-native'
 import Animated, { useAnimatedStyle } from 'react-native-reanimated'
 import { usePinchToZoomText } from 'expo-pretext/animated'
 import { useTextHeight } from 'expo-pretext'
+
+// Tag all logs so you can filter Metro output: `grep PINCH` or use Metro filter
+const LOG_TAG = '[PINCH]'
+
+function log(...args: unknown[]) {
+  const ts = new Date().toISOString().slice(11, 23) // HH:MM:SS.mmm
+  // eslint-disable-next-line no-console
+  console.log(LOG_TAG, ts, ...args)
+}
 
 const SAMPLE_TEXT = "Pinch or drag the slider to zoom this text. On every scale change, the fontSize is scaled and the layout is recomputed in pure arithmetic. layout() runs in 0.0002ms — 120+ recalculations per frame, no reflow, no thrashing."
 
@@ -32,6 +41,7 @@ export function PinchToZoomDemo() {
       const levels = [1.0, 1.5, 2.0, 2.5, 0.8, 1.0]
       const idx = levels.findIndex(v => v > prev + 0.001)
       const next = idx === -1 ? levels[0]! : levels[idx]!
+      log('TAP cycleZoom', { from: prev.toFixed(3), to: next.toFixed(3) })
       zoom.onPinchUpdate(next)
       return next
     })
@@ -42,19 +52,29 @@ export function PinchToZoomDemo() {
   const TRACK_PAD = 12
   const trackWidth = SLIDER_W - TRACK_PAD * 2
 
-  const updateFromSlider = useCallback((locationX: number) => {
+  const updateFromSlider = useCallback((locationX: number, phase: 'grant' | 'move') => {
     const x = Math.max(0, Math.min(trackWidth, locationX - TRACK_PAD))
     const t = x / trackWidth
     const s = MIN_SCALE + t * (MAX_SCALE - MIN_SCALE)
+    log(`SLIDER ${phase}`, { locationX: locationX.toFixed(1), t: t.toFixed(3), scale: s.toFixed(3) })
     setScale(s)
     zoom.onPinchUpdate(s)
   }, [trackWidth, zoom])
 
-  const sliderPan = PanResponder.create({
+  const sliderPan = useMemo(() => PanResponder.create({
     onStartShouldSetPanResponder: () => true,
-    onPanResponderGrant: (e) => updateFromSlider(e.nativeEvent.locationX),
-    onPanResponderMove: (e) => updateFromSlider(e.nativeEvent.locationX),
-  })
+    onMoveShouldSetPanResponder: () => true,
+    onPanResponderGrant: (e) => updateFromSlider(e.nativeEvent.locationX, 'grant'),
+    onPanResponderMove: (e, gestureState) => {
+      // Use gestureState-derived x instead of nativeEvent.locationX which can
+      // oscillate between touch history entries on iOS. moveX is absolute, so
+      // we subtract the slider container's absolute x offset. Since the slider
+      // is flush with container padding (16), subtract 16.
+      const x = gestureState.moveX - 16
+      updateFromSlider(x, 'move')
+    },
+    onPanResponderTerminationRequest: () => false,
+  }), [updateFromSlider])
 
   const textStyle = useAnimatedStyle(() => ({
     fontSize: zoom.animatedFontSize.value,
@@ -73,6 +93,27 @@ export function PinchToZoomDemo() {
   }, [scale])
   const accurateHeight = useTextHeight(SAMPLE_TEXT, zoomedStyle, maxWidth)
   const accurateLineCount = Math.max(1, Math.round(accurateHeight / zoomedStyle.lineHeight))
+
+  // Render-tracking log: fires on every re-render so we can see flicker sequences.
+  // Also tracks render count and elapsed time since mount.
+  const renderCountRef = useRef(0)
+  renderCountRef.current++
+  const mountTimeRef = useRef<number>(Date.now())
+  const elapsed = Date.now() - mountTimeRef.current
+
+  // Log on state change (not every render) — useEffect only fires when deps change
+  useEffect(() => {
+    log('RENDER', {
+      renderN: renderCountRef.current,
+      elapsedMs: elapsed,
+      scale: scale.toFixed(3),
+      fontSize: zoomedStyle.fontSize.toFixed(2),
+      lineHeight: zoomedStyle.lineHeight.toFixed(2),
+      height: accurateHeight.toFixed(1),
+      lines: accurateLineCount,
+      maxWidth,
+    })
+  }, [scale, zoomedStyle.fontSize, zoomedStyle.lineHeight, accurateHeight, accurateLineCount, maxWidth, elapsed])
 
   return (
     <View style={styles.container}>
