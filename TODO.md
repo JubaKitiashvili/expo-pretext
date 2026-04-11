@@ -57,6 +57,22 @@
 
 - [x] **prepare() batch throughput** — measureHeights pre-warm, flushPending dedup, getAnalysisProfile hoist
 
+## ~~Example App Polish — v0.8.2 (DONE)~~ ✅
+
+- [x] **Pinch to Zoom** redesigned — fixed-height bubble + internal scroll, metrics grid, interactive slider, tap-to-cycle, `useTextHeight` for native TextKit accuracy
+- [x] **Breakout Text (PRETEXT BREAKER)** arcade game — live prose background reflowing around ball and bricks via `layoutColumn()` at 60fps, rigid-body brick physics, power modifiers, game over overlay
+- [x] **Text Path** — animated sine curve with per-character tangent rotation, HSL gradient, amplitude slider, wave cycling
+- [x] **Umbrella Reflow** — layered umbrella casting shadow column that blocks Matrix rain at 60fps
+- [x] Fixed `PanResponder` slider drag oscillation across 3 demos (use `gestureState.moveX`, not `nativeEvent.locationX`)
+- [x] Fixed onLayout feedback loops and gesture handler conflicts
+- [x] Removed Rich Inline Flow demo pending cleaner API solution
+
+## ~~README & Docs — v0.8.3 (DONE)~~ ✅
+
+- [x] Two hero demo reels (720w @ 30fps) replacing three-up thumbnail grid
+- [x] MarkdownChat example polish — white assistant bubble, darker background, proper max-width cap
+- [x] Rewrote production-ready tagline for outside readers
+
 ---
 
 ## Deferred (wait for user feedback before implementing)
@@ -73,9 +89,12 @@ good enough for typical use cases, and real-world impact is unproven.
 
 ### Demo app enhancements
 
-- [ ] Typewriter demo using `useTypewriterLayout`
-- [ ] Text morphing demo ("Thinking..." → response transition)
-- [ ] Pinch-to-zoom demo using `usePinchToZoomText`
+- [x] Typewriter demo using `useTypewriterLayout`
+- [x] Text morphing demo ("Thinking..." → response transition)
+- [x] Pinch-to-zoom demo using `usePinchToZoomText`
+- [x] Breakout Text arcade game (flagship `layoutColumn()` demo)
+- [x] Text Path with per-character tangent rotation
+- [x] Umbrella Reflow (Matrix rain + shadow blocking)
 - [ ] Accessibility demo with `onFontScaleChange`
 - [ ] Debug overlay demo showing predicted vs actual
 - [ ] Snapshot testing example in CI
