@@ -11,6 +11,10 @@ import { I18nDemo } from '../../components/demos/I18n'
 import { MarkdownChatDemo } from '../../components/demos/MarkdownChat'
 import { JustificationComparisonDemo } from '../../components/demos/JustificationComparison'
 import { AsciiArtDemo } from '../../components/demos/AsciiArt'
+import { TypewriterDemo } from '../../components/demos/Typewriter'
+import { TextMorphingDemo } from '../../components/demos/TextMorphing'
+import { PinchToZoomDemo } from '../../components/demos/PinchToZoom'
+import { CollapsibleDemo } from '../../components/demos/Collapsible'
 
 const demos = [
   {
@@ -76,6 +80,38 @@ const demos = [
     level: 'Intermediate',
     desc: 'Character-level width measurement — monospace vs proportional font comparison',
     component: AsciiArtDemo,
+  },
+  {
+    id: 'typewriter',
+    title: 'Typewriter Effect',
+    api: 'useTypewriterLayout()',
+    level: 'Intermediate',
+    desc: 'Token-by-token reveal with pre-computed line wrapping — AI chat streaming',
+    component: TypewriterDemo,
+  },
+  {
+    id: 'text-morphing',
+    title: 'Text Morphing',
+    api: 'useTextMorphing()',
+    level: 'Intermediate',
+    desc: '"Thinking..." → response transition with line-by-line interpolation',
+    component: TextMorphingDemo,
+  },
+  {
+    id: 'pinch-zoom',
+    title: 'Pinch to Zoom',
+    api: 'usePinchToZoomText()',
+    level: 'Advanced',
+    desc: 'Per-frame fontSize scaling — 120+ layouts per frame via layout() at 0.0002ms',
+    component: PinchToZoomDemo,
+  },
+  {
+    id: 'collapsible',
+    title: 'Collapsible Section',
+    api: 'useCollapsibleHeight()',
+    level: 'Beginner',
+    desc: 'Expand/collapse with pre-computed heights and smooth Reanimated animation',
+    component: CollapsibleDemo,
   },
 ]
 
