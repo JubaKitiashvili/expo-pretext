@@ -48,9 +48,20 @@ type Brick = {
   h: number
   color: string
   alive: boolean
+  // Physics: when the ball hits a brick it enters "falling" state — it
+  // detaches from the grid and becomes a rigid body with gravity, bouncing
+  // off walls and the paddle just like the ball. Still acts as a text obstacle.
+  falling: boolean
+  vx: number
+  vy: number
 }
 
 type Ball = { x: number; y: number; vx: number; vy: number; r: number }
+
+// Physics constants
+const GRAVITY = 0.35
+const BRICK_BOUNCE_DAMPING = 0.72
+const BRICK_FRICTION = 0.985
 
 export function BreakoutTextDemo() {
   const { width } = useWindowDimensions()
@@ -86,6 +97,9 @@ export function BreakoutTextDemo() {
         x, y, w, h: BRICK_H,
         color: BRICK_COLORS[i % BRICK_COLORS.length]!,
         alive: true,
+        falling: false,
+        vx: 0,
+        vy: 0,
       })
       x += w + BRICK_H_GAP
     }
@@ -132,6 +146,57 @@ export function BreakoutTextDemo() {
         setPowerLabel(null)
       }
 
+      // Update falling bricks (gravity + wall/paddle bounces + off-screen cleanup)
+      setBricks(prev => {
+        let anyChanged = false
+        const next: Brick[] = []
+        for (const br of prev) {
+          if (!br.falling) {
+            next.push(br)
+            continue
+          }
+          let { x, y, vx, vy } = br
+          vy += GRAVITY
+          vx *= BRICK_FRICTION
+          x += vx
+          y += vy
+
+          // Wall bounces
+          if (x < ARENA_PAD) {
+            x = ARENA_PAD
+            vx = -vx * BRICK_BOUNCE_DAMPING
+          }
+          if (x + br.w > stageW - ARENA_PAD) {
+            x = stageW - ARENA_PAD - br.w
+            vx = -vx * BRICK_BOUNCE_DAMPING
+          }
+
+          // Paddle collision (rect-vs-rect overlap on paddle top edge)
+          const pd = paddleRef.current
+          if (
+            y + br.h >= pd.y && y + br.h <= pd.y + pd.h + 8 &&
+            x + br.w > pd.x && x < pd.x + pd.w &&
+            vy > 0
+          ) {
+            y = pd.y - br.h
+            vy = -Math.abs(vy) * BRICK_BOUNCE_DAMPING
+            // Horizontal kick from where the brick landed on the paddle
+            const rel = ((x + br.w / 2) - (pd.x + pd.w / 2)) / (pd.w / 2)
+            vx += rel * 2.2
+          }
+
+          // Remove when fully below arena floor
+          if (y > arenaH + 40) {
+            anyChanged = true
+            continue
+          }
+
+          anyChanged = true
+          next.push({ ...br, x, y, vx, vy })
+        }
+        return anyChanged ? next : prev
+      })
+
       setBall(b => {
         let { x, y, vx, vy, r } = b
 
@@ -162,16 +227,16 @@ export function BreakoutTextDemo() {
           return { x: stageW / 2, y: arenaH - 60, vx: 2.6, vy: -2.6, r }
         }
 
-        // Brick collisions
+        // Brick collisions — transition from alive to falling instead of destroying
         setBricks(prev => {
-          let changed = false
+          let hit = false
           const next = prev.map(br => {
-            if (!br.alive) return br
+            if (!br.alive || br.falling) return br
             if (
               x + r >= br.x && x - r <= br.x + br.w &&
               y + r >= br.y && y - r <= br.y + br.h
             ) {
-              changed = true
+              hit = true
               vy = -vy
               if (Math.random() < 0.18) {
                 const powers = ['SLOW', 'MULTI', 'EXPAND'] as const
@@ -183,15 +248,22 @@ export function BreakoutTextDemo() {
                   setTimeout(() => setPaddle(pp => ({ ...pp, w: 100 })), 5000)
                 }
               }
-              return { ...br, alive: false }
+              // Transfer some of the ball's velocity to the brick, plus an upward pop
+              return {
+                ...br,
+                alive: false,
+                falling: true,
+                vx: vx * 0.4 + (Math.random() - 0.5) * 1.2,
+                vy: -2.2,
+              }
             }
             return br
           })
-          if (changed) {
+          if (hit) {
             setScore(s => s + 60 + level * 10)
             if (next.every(b => !b.alive)) setGameState('won')
           }
-          return changed ? next : prev
+          return hit ? next : prev
         })
 
         return { x, y, vx, vy, r }
@@ -202,18 +274,18 @@ export function BreakoutTextDemo() {
 
   const aliveCount = bricks.filter(b => b.alive).length
 
-  // Compute background prose reflowed around the ball, live bricks, and paddle.
-  // This runs on every frame (because ball/paddle state updates every ~16ms).
-  // layoutColumn() is pure arithmetic at ~0.0002ms per line — no reflow, no jank.
+  // Compute background prose reflowed around the ball, live bricks, falling
+  // bricks, and paddle. Runs every frame — layoutColumn() is pure arithmetic
+  // at ~0.0002ms per line so this is effectively free.
   const proseLines = useMemo(() => {
     const circles: CircleObstacle[] = [
       { cx: ball.x, cy: ball.y, r: ball.r + 6, hPad: 4, vPad: 2 },
     ]
     const rects: RectObstacle[] = [
-      // Live bricks as obstacles
-      ...bricks.filter(b => b.alive).map(b => ({
-        x: b.x, y: b.y, w: b.w, h: b.h,
-      })),
+      // Every brick that is still in the arena — both alive (grid) and falling
+      ...bricks
+        .filter(b => b.alive || b.falling)
+        .map(b => ({ x: b.x, y: b.y, w: b.w, h: b.h })),
       // Paddle as obstacle
       { x: paddle.x, y: paddle.y, w: paddle.w, h: paddle.h },
     ]
@@ -297,8 +369,8 @@ export function BreakoutTextDemo() {
           </Text>
         ))}
 
-        {/* Word bricks */}
-        {bricks.map(br => br.alive && (
+        {/* Word bricks — both alive (on grid) and falling (free bodies) */}
+        {bricks.map(br => (br.alive || br.falling) && (
           <View key={br.id} style={{
             position: 'absolute',
             left: br.x,
@@ -308,9 +380,14 @@ export function BreakoutTextDemo() {
             backgroundColor: br.color,
             borderRadius: 4,
             borderWidth: 1,
-            borderColor: 'rgba(255,255,255,0.25)',
+            borderColor: br.falling ? 'rgba(255,255,255,0.55)' : 'rgba(255,255,255,0.25)',
             justifyContent: 'center',
             alignItems: 'center',
+            opacity: br.falling ? 0.92 : 1,
+            shadowColor: br.color,
+            shadowOpacity: br.falling ? 0.6 : 0,
+            shadowRadius: br.falling ? 8 : 0,
+            shadowOffset: { width: 0, height: 0 },
           }}>
             <Text style={styles.brickText}>{br.text}</Text>
           </View>
