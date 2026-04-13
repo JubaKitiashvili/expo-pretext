@@ -11,7 +11,7 @@ import type { TextStyle } from '../types'
 export type InkSafeTextProps = Omit<TextProps, 'style'> & {
   /** Text style — must include fontFamily and fontSize */
   style: TextStyle
-  children: string | number
+  children: string | number | false | null | undefined
 }
 
 /**
@@ -35,11 +35,14 @@ export type InkSafeTextProps = Omit<TextProps, 'style'> & {
 export function InkSafeText({ children, style, ...textProps }: InkSafeTextProps) {
   const text = typeof children === 'string' ? children : String(children ?? '')
 
-  const mergedStyle = useMemo(() => {
-    const { padding, isOvershooting } = getInkSafePadding(text, style)
-    if (!isOvershooting) return style
-    return { ...style, ...padding }
-  }, [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle])
+  // Memoize only the padding on font properties. Spread style fresh so
+  // non-font props (color, lineHeight, etc.) are never stale.
+  const { padding, isOvershooting } = useMemo(
+    () => getInkSafePadding(text, style),
+    [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle],
+  )
+
+  const mergedStyle = isOvershooting ? { ...style, ...padding } : style
 
   return (
     <Text style={mergedStyle} {...textProps}>

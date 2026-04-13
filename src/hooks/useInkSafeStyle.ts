@@ -37,13 +37,18 @@ type InkSafeStyleResult = {
  * ```
  */
 export function useInkSafeStyle(text: string, style: TextStyle): InkSafeStyleResult {
-  return useMemo(() => {
-    const result = getInkSafePadding(text, style)
-    return {
-      style: { ...style, ...result.padding },
-      inkWidth: result.inkWidth,
-      isOvershooting: result.isOvershooting,
-      inkBounds: result.inkBounds,
-    }
-  }, [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle])
+  // Memoize only the padding computation on font properties that affect measurement.
+  // The full style is spread fresh each call so non-font props (color, lineHeight, etc.)
+  // are never stale.
+  const result = useMemo(
+    () => getInkSafePadding(text, style),
+    [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle],
+  )
+
+  return {
+    style: { ...style, ...result.padding },
+    inkWidth: result.inkWidth,
+    isOvershooting: result.isOvershooting,
+    inkBounds: result.inkBounds,
+  }
 }
