@@ -16,8 +16,6 @@ export default function TabLayout() {
       <Tabs.Screen name="bug-fixes" options={{ title: 'Bug Fixes' }} />
       <Tabs.Screen name="tools" options={{ title: 'Tools' }} />
       <Tabs.Screen name="chat" options={{ href: null }} />
-      <Tabs.Screen name="accuracy" options={{ href: null }} />
-      <Tabs.Screen name="text-bugs" options={{ href: null }} />
     </Tabs>
   )
 }
