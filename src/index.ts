@@ -19,6 +19,10 @@ export type {
   InlineFlowCursor,
   InlineFlowFragment,
   InlineFlowLine,
+  InkBounds,
+  InkMeasurementDebug,
+  InkSafePadding,
+  InkSafeResult,
 } from './types'
 
 // --- Simple API ---
@@ -89,6 +93,15 @@ export type { EngineProfile } from './engine-profile'
 // --- Font Metrics ---
 export { getFontMetrics } from './font-utils'
 export type { FontMetrics } from './font-utils'
+
+// --- Ink-bounds Measurement ---
+export { measureInkBounds, measureInkWidth, measureInkDebug, logInkDebugMessage } from './ink-width'
+
+// --- Ink-Safe Text ---
+export { getInkSafePadding } from './ink-safe'
+export { useInkSafeStyle } from './hooks/useInkSafeStyle'
+export { InkSafeText } from './components/InkSafeText'
+export type { InkSafeTextProps } from './components/InkSafeText'
 
 // --- Accessibility ---
 export { getFontScale, onFontScaleChange, clearAllCaches } from './accessibility'
