@@ -5,7 +5,7 @@
 
 import { NativeModule, requireNativeModule } from 'expo-modules-core'
 import { Platform } from 'react-native'
-import type { FontDescriptor, NativeSegmentResult } from './types'
+import type { FontDescriptor, InkBounds, InkMeasurementDebug, NativeSegmentResult } from './types'
 
 type MeasureNativeOptions = {
   whiteSpace?: string
@@ -51,6 +51,40 @@ export interface ExpoPretextNativeModule extends InstanceType<typeof NativeModul
   clearNativeCache(): void
 
   setNativeCacheSize(size: number): void
+
+  measureInkWidth(
+    text: string,
+    font: FontDescriptor
+  ): number
+
+  measureInkBounds(
+    text: string,
+    font: FontDescriptor
+  ): InkBounds
+
+  measureInkSafe?(
+    text: string,
+    font: FontDescriptor
+  ): {
+    left: number
+    top: number
+    right: number
+    bottom: number
+    width: number
+    height: number
+    advance: number
+    ascender: number
+    descender: number
+  }
+
+  measureInkDebug?(
+    text: string,
+    font: FontDescriptor
+  ): InkMeasurementDebug
+
+  logDebugMessage?(
+    message: string
+  ): void
 
   getFontMetrics(
     font: FontDescriptor

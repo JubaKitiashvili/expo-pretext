@@ -100,6 +100,73 @@ export type InlineFlowLine = {
   end: InlineFlowCursor
 }
 
+export type InkBounds = {
+  left: number
+  top: number
+  right: number
+  bottom: number
+  width: number
+  height: number
+}
+
+export type InkSafePadding = {
+  paddingLeft: number
+  paddingRight: number
+  paddingTop: number
+  paddingBottom: number
+}
+
+export type InkSafeResult = {
+  /** Padding to apply to the Text element */
+  padding: InkSafePadding
+  /** Total width including ink overshoot (advance + left pad + right pad) */
+  inkWidth: number
+  /** Advance width (standard cursor-movement width) */
+  advance: number
+  /** Raw ink bounds from native measurement */
+  inkBounds: InkBounds
+  /** True if any padding > 0 (text overshoots advance width) */
+  isOvershooting: boolean
+}
+
+export type InkMeasurementDebug = {
+  text: string
+  source: string
+  requestedFont: FontDescriptor
+  resolvedFont: {
+    fontName: string
+    familyName: string
+    pointSize: number
+    ascender: number
+    descender: number
+    leading: number
+    capHeight: number
+    xHeight: number
+    symbolicTraits: number
+  }
+  typographic: {
+    advance: number
+    ascent: number
+    descent: number
+    leading: number
+  }
+  rasterContext: {
+    padding: number
+    canvasWidth: number
+    canvasHeight: number
+    pixelWidth: number
+    pixelHeight: number
+    scale: number
+    originX: number
+    originY: number
+    contextCreated: boolean
+  }
+  rasterBounds: InkBounds | null
+  vectorBounds: InkBounds | null
+  advanceFallbackBounds: InkBounds | null
+  finalBounds: InkBounds
+}
+
 // Native module types (internal)
 export type FontDescriptor = {
   fontFamily: string
