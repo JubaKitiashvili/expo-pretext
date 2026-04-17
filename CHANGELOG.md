@@ -1,5 +1,34 @@
 # Changelog
 
+## 0.15.0 — 2026-04-17
+
+### Correctness hardening
+
+- **Property-based tests (fast-check)** — 16 new tests × hundreds of random
+  inputs assert the layout engine's invariants (height ≥ 0, `height ===
+  lineCount * lineHeight`, narrower width ⇒ ≥ lines, `prepare()` never
+  throws, etc.). +5,899 assertions.
+- **Error-handling audit** — 22 tests covering `maxWidth = {0, -1, NaN,
+  Infinity}`, `fontSize = {0, -10}`, lone surrogates, null bytes, 10 KB text,
+  whitespace-only, mixed RTL+LTR+CJK. No code changes needed — the engine
+  was already robust.
+
+### Cache eviction
+
+- **`widthCache` is now per-font LRU** (was unbounded `Map<Map>`) with a
+  configurable budget. Long-running chat sessions no longer grow memory
+  without limit.
+- New public API:
+  - `setCacheBudget(n)` — set the per-font LRU budget (default 10,000
+    entries, ~320 KB per font).
+  - `getCacheStats()` — introspect cache state for memory profiling.
+- New `src/lru.ts` — small generic LRU with recency-bump on hit,
+  immediate shrink on `setMaxSize`. Fully unit-tested.
+
+### Tests
+
+- 502 passing (was 447). `tsc --noEmit` clean.
+
 ## 0.14.0 — 2026-04-17
 
 ### Added

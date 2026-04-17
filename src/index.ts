@@ -119,3 +119,4 @@ export type { BudgetedPrepareResult } from './perf-budget'
 
 // --- Utilities ---
 export { clearCache, setLocale } from './layout'
+export { setCacheBudget, getCacheStats } from './cache'
