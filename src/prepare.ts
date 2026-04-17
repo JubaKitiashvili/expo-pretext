@@ -6,7 +6,7 @@ import {
   type PrepareOptions as LayoutPrepareOptions,
 } from './build'
 import { layout, measureNaturalWidth } from './layout'
-import { cacheNativeResult, clearJSCache } from './cache'
+import { cacheNativeResult, clearJSCache, tryResolveAllFromCache } from './cache'
 import { textStyleToFontDescriptor, getFontKey, getLineHeight, warnIfFontNotLoaded } from './font-utils'
 import { getEngineProfile } from './engine-profile'
 import type {
@@ -118,7 +118,11 @@ function segmentAndMeasureWithCache(
   const fontKey = getFontKey(style)
   cacheNativeResult(fontKey, result.segments, result.widths)
 
-  // Exact mode: re-measure merged segments after analysis
+  // Exact mode: re-measure merged segments after analysis so adjacent-segment
+  // kerning is captured in a single native pass per merged chunk. The fast
+  // path sums per-segment widths, which can drift by sub-pixel amounts at
+  // inter-segment boundaries for fonts with heavy kerning; 'exact' closes
+  // that gap at the cost of one extra native call.
   if (options?.accuracy === 'exact') {
     const profile = getAnalysisProfile()
     const analysis = analyzeText(
@@ -127,7 +131,17 @@ function segmentAndMeasureWithCache(
       profile,
       options?.whiteSpace,
     )
-    const mergedWidths = native.remeasureMerged(analysis.texts, font)
+
+    // Reuse any merged chunks already measured from a prior exact-mode call.
+    const cached = tryResolveAllFromCache(fontKey, analysis.texts)
+    const mergedWidths = cached ?? native.remeasureMerged(analysis.texts, font)
+
+    // Feed merged-chunk widths back into the shared cache so a repeat
+    // exact-mode call on the same text pays zero native cost.
+    if (!cached) {
+      cacheNativeResult(fontKey, analysis.texts, mergedWidths)
+    }
+
     return {
       segments: analysis.texts,
       isWordLike: analysis.isWordLike,

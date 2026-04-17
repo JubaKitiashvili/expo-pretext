@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.17.0 — 2026-04-17
+
+### Accuracy
+
+- **Exact-mode kerning cache** — `accuracy: 'exact'` (in `PrepareOptions`)
+  now feeds the re-measured merged-chunk widths back into the shared width
+  cache. A repeat `prepare(text, style, { accuracy: 'exact' })` on the
+  same text hits the cache and skips the extra `remeasureMerged` native
+  call. Previously every exact-mode call paid that cost.
+- JSDoc on `PrepareOptions.accuracy` now explicitly documents the
+  fast-vs-exact tradeoff: fast sums per-segment widths (sub-pixel drift
+  at inter-segment boundaries for heavy-kerning fonts); exact captures
+  the kerning natively with one extra call that caches after first use.
+
+### Tests
+
+- 537 passing (was 532). `tsc --noEmit` clean. Snapshot baseline
+  unchanged (JS-fallback output is deterministic; exact-mode caching is
+  a transparent optimization).
+
 ## 0.16.0 — 2026-04-17
 
 ### Correctness

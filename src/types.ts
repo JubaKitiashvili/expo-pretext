@@ -26,6 +26,17 @@ export type SegmentBreakKind =
 export type PrepareOptions = {
   whiteSpace?: WhiteSpaceMode
   locale?: string
+  /**
+   * Width-measurement mode.
+   *
+   * - `'fast'` (default) — sum per-segment widths from the native segmenter.
+   *   One native round-trip. Sub-pixel drift possible at inter-segment
+   *   boundaries for fonts with heavy kerning; typically imperceptible.
+   * - `'exact'` — re-measure merged chunks after analysis so adjacent-
+   *   segment kerning is captured natively. One extra native round-trip.
+   *   Subsequent calls on the same text hit the shared width cache and
+   *   skip the extra call.
+   */
   accuracy?: 'fast' | 'exact'
   customBreakRules?: (segment: string, index: number, kind: SegmentBreakKind) => SegmentBreakKind
 }
