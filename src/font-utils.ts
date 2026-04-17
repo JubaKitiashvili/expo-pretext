@@ -2,9 +2,34 @@
 import type { TextStyle, FontDescriptor } from './types'
 import { getNativeModule } from './ExpoPretext'
 
+/**
+ * Pick the first available font from a name or fallback chain.
+ *
+ * Accepts a single name or an array. System fonts (see `SYSTEM_FONTS`)
+ * are always considered available; custom fonts are checked via
+ * `expo-font`'s `isLoaded`. If none of the candidates is loaded, falls
+ * back to the last entry so that downstream native measurement still
+ * gets a concrete string (RN's text renderer does the same).
+ *
+ * @example
+ * ```ts
+ * resolveFontFamily('Inter')                     // → 'Inter'
+ * resolveFontFamily(['Inter', 'System'])         // → 'Inter' if loaded, else 'System'
+ * resolveFontFamily(['NotLoaded1', 'NotLoaded2']) // → 'NotLoaded2' (last entry)
+ * ```
+ */
+export function resolveFontFamily(family: string | string[]): string {
+  if (typeof family === 'string') return family
+  if (family.length === 0) return 'System'
+  for (const name of family) {
+    if (isFontLoaded(name)) return name
+  }
+  return family[family.length - 1]!
+}
+
 export function textStyleToFontDescriptor(style: TextStyle): FontDescriptor {
   return {
-    fontFamily: style.fontFamily,
+    fontFamily: resolveFontFamily(style.fontFamily),
     fontSize: style.fontSize,
     fontWeight: style.fontWeight,
     fontStyle: style.fontStyle,
@@ -14,7 +39,8 @@ export function textStyleToFontDescriptor(style: TextStyle): FontDescriptor {
 export function getFontKey(style: TextStyle): string {
   const weight = style.fontWeight ?? '400'
   const fStyle = style.fontStyle ?? 'normal'
-  return `${style.fontFamily}_${style.fontSize}_${weight}_${fStyle}`
+  const family = resolveFontFamily(style.fontFamily)
+  return `${family}_${style.fontSize}_${weight}_${fStyle}`
 }
 
 export function getLineHeight(style: TextStyle): number {
@@ -30,8 +56,13 @@ const SYSTEM_FONTS = [
   'Didot', 'Futura', 'Gill Sans', 'Menlo', 'Optima', 'Palatino',
 ]
 
+/**
+ * Check whether a font name is loaded (or a built-in system font).
+ *
+ * Queries `expo-font`'s registry when available; otherwise conservatively
+ * returns `true` so non-expo apps don't spam warnings.
+ */
 export function isFontLoaded(fontFamily: string): boolean {
-  // System fonts are always available
   if (SYSTEM_FONTS.includes(fontFamily)) return true
   try {
     const Font = require('expo-font')
@@ -41,13 +72,47 @@ export function isFontLoaded(fontFamily: string): boolean {
   }
 }
 
-export function warnIfFontNotLoaded(style: TextStyle): void {
-  if (__DEV__ && !isFontLoaded(style.fontFamily)) {
-    console.warn(
-      `[expo-pretext] Font "${style.fontFamily}" not loaded. ` +
-      `Heights will be inaccurate. Use Font.loadAsync() first.`
-    )
+/**
+ * Public alias of `isFontLoaded` — useful at app-startup boundaries.
+ *
+ * Accepts a single name or a fallback chain. For a chain, returns `true`
+ * if **any** candidate is loaded.
+ *
+ * @example
+ * ```ts
+ * if (!validateFont(['Inter', 'System'])) {
+ *   console.warn('No usable font — waiting for font load')
+ * }
+ * ```
+ */
+export function validateFont(family: string | string[]): boolean {
+  if (typeof family === 'string') return isFontLoaded(family)
+  for (const name of family) {
+    if (isFontLoaded(name)) return true
   }
+  return false
+}
+
+export function warnIfFontNotLoaded(style: TextStyle): void {
+  if (!__DEV__) return
+  const family = style.fontFamily
+  if (typeof family === 'string') {
+    if (!isFontLoaded(family)) {
+      console.warn(
+        `[expo-pretext] Font "${family}" not loaded. ` +
+        `Heights will be inaccurate. Use Font.loadAsync() first.`
+      )
+    }
+    return
+  }
+  // Chain: warn only if every candidate is missing.
+  for (const name of family) {
+    if (isFontLoaded(name)) return
+  }
+  console.warn(
+    `[expo-pretext] None of the fallback fonts [${family.map((n) => `"${n}"`).join(', ')}] ` +
+    `are loaded. Heights will be inaccurate. Use Font.loadAsync() first.`
+  )
 }
 
 /**

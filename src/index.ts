@@ -92,7 +92,7 @@ export { getEngineProfile, setEngineProfile, ENGINE_PROFILES } from './engine-pr
 export type { EngineProfile } from './engine-profile'
 
 // --- Font Metrics ---
-export { getFontMetrics } from './font-utils'
+export { getFontMetrics, validateFont, resolveFontFamily } from './font-utils'
 export type { FontMetrics } from './font-utils'
 
 // --- Ink-bounds Measurement ---

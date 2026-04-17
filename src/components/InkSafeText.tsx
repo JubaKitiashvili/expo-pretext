@@ -6,6 +6,7 @@
 import React, { useMemo } from 'react'
 import { Text, type TextProps } from 'react-native'
 import { getInkSafePadding } from '../ink-safe'
+import { resolveFontFamily } from '../font-utils'
 import type { TextStyle } from '../types'
 
 export type InkSafeTextProps = Omit<TextProps, 'style'> & {
@@ -42,7 +43,11 @@ export function InkSafeText({ children, style, ...textProps }: InkSafeTextProps)
     [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle],
   )
 
-  const mergedStyle = isOvershooting ? { ...style, ...padding } : style
+  // RN's Text accepts fontFamily as string — resolve any fallback chain
+  // down to a single name before handing the style off.
+  const resolvedFamily = resolveFontFamily(style.fontFamily)
+  const rnStyle = { ...style, fontFamily: resolvedFamily }
+  const mergedStyle = isOvershooting ? { ...rnStyle, ...padding } : rnStyle
 
   return (
     <Text style={mergedStyle} {...textProps}>

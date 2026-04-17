@@ -1,5 +1,37 @@
 # Changelog
 
+## 0.18.0 — 2026-04-17
+
+### Added
+
+- **Font fallback chain.** `TextStyle.fontFamily` now accepts a single name
+  **or** an array (`['Inter', 'System']`). The first loaded candidate is
+  picked via `isFontLoaded`; if none is loaded, the last entry is used so
+  downstream native measurement always gets a concrete string (RN does
+  the same).
+- **`validateFont(family)`** — public helper that returns `true` if a
+  single name or **any** name in a chain is loaded. Useful at app-startup
+  boundaries before kicking off measurement-heavy work.
+- **`resolveFontFamily(family)`** — exposed so callers can learn which
+  concrete family the chain resolved to (e.g., to match an analytics
+  event or a fallback warning).
+
+### Internal changes
+
+- `textStyleToFontDescriptor` and `getFontKey` now normalize arrays to a
+  single name; cache keys are stable across equivalent string / chain
+  representations.
+- `<InkSafeText>` resolves the chain before handing the style to RN's
+  `<Text>` (which accepts only `string`).
+- Italic-name detection in `getInkSafePadding` now inspects every entry
+  in a chain (e.g., `['PlayfairDisplay-BoldItalic', 'Georgia']`).
+
+### Tests
+
+- 554 passing (was 537). `tsc --noEmit` clean. Snapshot baseline
+  unchanged — fallback resolution is transparent when the first entry is
+  loaded (the common case).
+
 ## 0.17.0 — 2026-04-17
 
 ### Accuracy

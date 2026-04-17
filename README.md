@@ -4,7 +4,7 @@
 
 [![npm](https://img.shields.io/npm/v/expo-pretext.svg)](https://www.npmjs.com/package/expo-pretext)
 [![license](https://img.shields.io/npm/l/expo-pretext.svg)](./LICENSE)
-[![tests](https://img.shields.io/badge/tests-537%20passing-brightgreen.svg)](./src/__tests__)
+[![tests](https://img.shields.io/badge/tests-554%20passing-brightgreen.svg)](./src/__tests__)
 [![benchmarks](https://img.shields.io/badge/benchmarks-docs-blue.svg)](./docs/BENCHMARKS.md)
 
 <p align="center">

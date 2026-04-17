@@ -50,8 +50,11 @@ export function getInkSafePadding(text: string, style: TextStyle): InkSafeResult
   // Also check if the font family name contains "italic" (case-insensitive)
   // to catch custom fonts like "PlayfairDisplay-BoldItalic" where italic is
   // baked into the font file, not the fontStyle property.
+  const familyNames = typeof style.fontFamily === 'string'
+    ? [style.fontFamily]
+    : style.fontFamily
   const isItalic = style.fontStyle === 'italic' ||
-    /italic|oblique/i.test(style.fontFamily)
+    familyNames.some((name) => /italic|oblique/i.test(name))
 
   if (!isItalic) {
     const advance = estimateAdvance(text, style)

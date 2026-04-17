@@ -4,7 +4,18 @@
 // Prepared types are opaque — consumers use them as handles.
 
 export type TextStyle = {
-  fontFamily: string
+  /**
+   * Font family name, or a fallback chain.
+   *
+   * - `'Inter'` — single name. Used as-is.
+   * - `['Inter', 'System']` — chain. The first name that reports as
+   *   loaded (via `isFontLoaded`) is picked; the rest are ignored.
+   *
+   * System fonts (`'System'`, `'system'`, `'sans-serif'`, `'serif'`,
+   * `'monospace'`, and common built-ins like `'Helvetica'`,
+   * `'Georgia'`, `'Menlo'`) are always reported as loaded.
+   */
+  fontFamily: string | string[]
   fontSize: number
   lineHeight?: number
   fontWeight?: '400' | '500' | '600' | '700' | 'bold' | 'normal'
