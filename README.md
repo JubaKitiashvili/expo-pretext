@@ -70,30 +70,47 @@ function ChatBubble({ text, maxWidth }) {
 }
 ```
 
-### FlashList with exact heights
+### FlashList with exact heights (v2)
+
+`useFlashListHeights` pre-warms a height cache in the background and returns
+`getHeight(item)` — set it as an explicit height on the wrapping View inside
+`renderItem`. FlashList v2 skips the measurement pass when the height is known,
+eliminating first-paint jitter for plain-text lists.
 
 ```tsx
 import { useFlashListHeights } from 'expo-pretext'
 import { FlashList } from '@shopify/flash-list'
+import { View, Text } from 'react-native'
 
-function ChatScreen({ messages }) {
-  const { estimatedItemSize, overrideItemLayout } = useFlashListHeights(
+const STYLE = { fontFamily: 'Inter', fontSize: 16, lineHeight: 24 }
+const PAD_Y = 10
+
+function ChatScreen({ messages, width }) {
+  const { getHeight } = useFlashListHeights(
     messages,
     msg => msg.text,
-    { fontFamily: 'Inter', fontSize: 16, lineHeight: 24 },
-    containerWidth,
+    STYLE,
+    width,
   )
 
   return (
     <FlashList
       data={messages}
-      estimatedItemSize={estimatedItemSize}
-      overrideItemLayout={overrideItemLayout}
-      renderItem={renderMessage}
+      keyExtractor={m => m.id}
+      renderItem={({ item }) => (
+        <View style={{ height: getHeight(item) + PAD_Y * 2 }}>
+          <Text style={STYLE}>{item.text}</Text>
+        </View>
+      )}
     />
   )
 }
 ```
+
+> For plain `<Text>` content, `getHeight(item)` returns the exact rendered
+> height (FlashList v2 no longer accepts `estimatedItemSize` or a size-bearing
+> `overrideItemLayout`). For rich content like Markdown or mixed components,
+> let FlashList v2 auto-measure instead.
 
 ### Text reflow around a shape
 
@@ -254,7 +271,7 @@ Cross-platform drift between iOS, Android, and Web is bounded by `ENGINE_PROFILE
 | Expo Web | `CanvasRenderingContext2D.measureText` + `Intl.Segmenter` | Zero API changes |
 | Expo Go | JS estimates (no native measurement) | Use a dev build for production |
 
-Verified against FlashList 2.3.1, React Native 0.79.6, Expo SDK 53.
+Verified against FlashList 2.3.1, React Native 0.83, Expo SDK 55.
 
 ## Credits
 

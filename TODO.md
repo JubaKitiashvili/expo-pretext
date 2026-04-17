@@ -82,6 +82,13 @@
 - [x] MarkdownChat example polish — white assistant bubble, darker background, proper max-width cap
 - [x] Rewrote production-ready tagline for outside readers
 
+## ~~FlashList v2 migration — v0.11.0 (DONE)~~ ✅
+
+- [x] **`useFlashListHeights`** redesigned — returns `{ getHeight(item) }` for v2
+- [x] Removed stale hook usage from MarkdownChat and /chat demos (markdown ≠ text height)
+- [x] README updated with new pattern + guidance on plain-text vs rich content
+- [x] Closes GitHub issue #1
+
 ## ~~InkSafeText API + App Restructure — v0.10.0 (DONE)~~ ✅
 
 - [x] **`<InkSafeText>`** — drop-in `<Text>` replacement with auto italic-safe padding

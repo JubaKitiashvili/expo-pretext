@@ -5,7 +5,8 @@
 // the pipeline that each hook delegates to:
 //
 //   useTextHeight      → prepare() + layout()  (fallback path when native is absent)
-//   useFlashListHeights → measureSingleHeight() → prepare() + layout()
+//   useFlashListHeights → measureHeights() pre-warm + measureSingleHeight() on miss
+//                         (FlashList v2 API — returns { getHeight(item) })
 //   usePreparedText    → prepare()
 //
 // Since prepare.ts imports ExpoPretext → expo-modules-core → react-native,

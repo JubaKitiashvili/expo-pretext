@@ -2,7 +2,6 @@
 import { useCallback, memo } from 'react'
 import { View, Text, StyleSheet, useWindowDimensions } from 'react-native'
 import { FlashList } from '@shopify/flash-list'
-import { useFlashListHeights } from 'expo-pretext'
 import { MarkdownRenderer } from '../MarkdownRenderer'
 
 // ─── Constants ───────────────────────────────────────────
@@ -333,15 +332,6 @@ export function MarkdownChatDemo() {
   const userMax = Math.floor(laneWidth * BUBBLE_MAX_RATIO)
   const assistantMax = Math.floor(laneWidth * BUBBLE_MAX_RATIO)
 
-  const textStyle = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
-
-  const { estimatedItemSize, overrideItemLayout } = useFlashListHeights(
-    allMessages,
-    (msg: ChatMsg) => msg.markdown,
-    textStyle,
-    assistantMax,
-  )
-
   const renderItem = useCallback(
     ({ item }: { item: ChatMsg }) => (
       <ChatBubble msg={item} maxWidth={item.role === 'user' ? userMax : assistantMax} />
@@ -360,8 +350,6 @@ export function MarkdownChatDemo() {
         data={allMessages}
         renderItem={renderItem}
         keyExtractor={m => m.id}
-        estimatedItemSize={estimatedItemSize}
-        overrideItemLayout={overrideItemLayout}
       />
     </View>
   )

@@ -4,7 +4,7 @@ import { FlashList } from '@shopify/flash-list'
 import { mockMessages, mockStreamTokens, type ChatMessage } from '../../data/mock-messages'
 import { MarkdownRenderer } from '../../components/MarkdownRenderer'
 import { markdownSample } from '../../data/sample-texts'
-import { useTextHeight, useFlashListHeights, useStreamingLayout } from 'expo-pretext'
+import { useTextHeight, useStreamingLayout } from 'expo-pretext'
 
 const textStyle = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
 
@@ -51,14 +51,6 @@ export default function ChatScreen() {
   const [streamingText, setStreamingText] = useState('')
   const [isStreaming, setIsStreaming] = useState(false)
 
-  // expo-pretext: pre-computes heights for FlashList virtualization
-  const { estimatedItemSize, overrideItemLayout } = useFlashListHeights(
-    messages,
-    (msg: ChatMessage) => msg.content,
-    textStyle,
-    bubbleMaxWidth
-  )
-
   const startStreaming = useCallback(async () => {
     if (isStreaming) return
     setIsStreaming(true)
@@ -81,15 +73,13 @@ export default function ChatScreen() {
     <View style={styles.container}>
       <View style={styles.header}>
         <Text style={styles.headerText}>
-          {messages.length} messages | FlashList + useFlashListHeights
+          {messages.length} messages | FlashList v2
         </Text>
       </View>
 
       <FlashList
         data={messages}
         renderItem={renderMessage}
-        estimatedItemSize={estimatedItemSize}
-        overrideItemLayout={overrideItemLayout}
         keyExtractor={msg => msg.id}
       />
 

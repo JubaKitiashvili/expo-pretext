@@ -1,5 +1,44 @@
 # Changelog
 
+## 0.11.0 — 2026-04-17
+
+### Breaking
+
+- **`useFlashListHeights`** redesigned for **FlashList v2**. The v1 API
+  (`estimatedItemSize`, `overrideItemLayout` with `layout.size`) is gone in
+  FlashList v2, so the hook now returns `{ getHeight(item) }`. Set it as an
+  explicit `height` on the wrapping View inside `renderItem`; FlashList v2
+  skips a measurement frame and eliminates first-paint jitter.
+
+  ```tsx
+  const { getHeight } = useFlashListHeights(data, getText, style, width)
+
+  <FlashList
+    data={data}
+    renderItem={({ item }) => (
+      <View style={{ height: getHeight(item) + PADDING }}>
+        <Text style={style}>{getText(item)}</Text>
+      </View>
+    )}
+  />
+  ```
+
+  Use the hook for plain-text lists. For rich content (Markdown, mixed
+  components) where rendered height differs from text measurement, let
+  FlashList v2 auto-measure instead — don't pass an explicit height.
+
+  Closes [#1](https://github.com/JubaKitiashvili/expo-pretext/issues/1).
+
+### Example app
+
+- Removed stale `useFlashListHeights` calls from `MarkdownChat` and the
+  `/chat` demo — both render markdown, so FlashList v2's auto-measurement
+  is the correct path for them.
+
+### Tests
+
+- 447 automated tests (all passing).
+
 ## 0.10.0 — 2026-04-14
 
 ### Added

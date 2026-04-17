@@ -1,7 +1,7 @@
 import { View, Text, StyleSheet, Pressable, SectionList } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useState, useLayoutEffect, useEffect } from 'react'
-import { useNavigation, useLocalSearchParams } from 'expo-router'
+import { useState, useEffect } from 'react'
+import { useLocalSearchParams } from 'expo-router'
 
 // Import all demos
 import { TightBubblesDemo } from '../../components/demos/TightBubbles'
@@ -77,7 +77,6 @@ const allDemos = sections.flatMap(s => s.data)
 
 export default function DemosScreen() {
   const [activeDemo, setActiveDemo] = useState<string | null>(null)
-  const navigation = useNavigation()
   const params = useLocalSearchParams<{ open?: string }>()
 
   // Handle deep link from Home tab featured cards
@@ -87,32 +86,24 @@ export default function DemosScreen() {
     }
   }, [params.open])
 
-  useLayoutEffect(() => {
-    if (activeDemo) {
-      const demo = allDemos.find(d => d.id === activeDemo)
-      navigation.setOptions({
-        headerTitle: demo?.title ?? 'Demo',
-        headerLeft: () => (
-          <Pressable onPress={() => setActiveDemo(null)} style={{ paddingLeft: 16 }}>
-            <Text style={{ fontSize: 16, color: '#2563eb' }}>← Demos</Text>
-          </Pressable>
-        ),
-      })
-    } else {
-      navigation.setOptions({
-        headerTitle: 'Demos',
-        headerLeft: undefined,
-      })
-    }
-  }, [activeDemo, navigation])
-
   if (activeDemo) {
     const demo = allDemos.find(d => d.id === activeDemo)
     if (demo) {
       const DemoComponent = demo.component
       return (
-        <View style={styles.demoContainer}>
-          <DemoComponent />
+        <View style={styles.demoFullscreen}>
+          <SafeAreaView style={{ flex: 1 }} edges={['top', 'bottom']}>
+            <View style={styles.demoHeader}>
+              <Pressable onPress={() => setActiveDemo(null)} style={styles.backBtn}>
+                <Text style={styles.backText}>← Demos</Text>
+              </Pressable>
+              <Text style={styles.demoTitle}>{demo.title}</Text>
+              <View style={styles.backBtn} />
+            </View>
+            <View style={{ flex: 1 }}>
+              <DemoComponent />
+            </View>
+          </SafeAreaView>
         </View>
       )
     }
@@ -120,30 +111,47 @@ export default function DemosScreen() {
 
   return (
     <SafeAreaView style={styles.container} edges={['top']}>
-    <SectionList
-      style={styles.container}
-      contentContainerStyle={styles.list}
-      sections={sections}
-      keyExtractor={item => item.id}
-      stickySectionHeadersEnabled={false}
-      renderSectionHeader={({ section }) => (
-        <Text style={styles.sectionTitle}>{section.title}</Text>
-      )}
-      renderItem={({ item }) => (
-        <Pressable style={styles.card} onPress={() => setActiveDemo(item.id)}>
-          <Text style={styles.cardTitle}>{item.title}</Text>
-          <Text style={styles.cardApi}>{item.api}</Text>
-          <Text style={styles.cardDesc}>{item.desc}</Text>
-        </Pressable>
-      )}
-    />
+      <Text style={styles.screenTitle}>Demos</Text>
+      <SectionList
+        style={styles.container}
+        contentContainerStyle={styles.list}
+        sections={sections}
+        keyExtractor={item => item.id}
+        stickySectionHeadersEnabled={false}
+        renderSectionHeader={({ section }) => (
+          <Text style={styles.sectionTitle}>{section.title}</Text>
+        )}
+        renderItem={({ item }) => (
+          <Pressable style={styles.card} onPress={() => setActiveDemo(item.id)}>
+            <Text style={styles.cardTitle}>{item.title}</Text>
+            <Text style={styles.cardApi}>{item.api}</Text>
+            <Text style={styles.cardDesc}>{item.desc}</Text>
+          </Pressable>
+        )}
+      />
     </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5' },
-  demoContainer: { flex: 1 },
+  demoFullscreen: {
+    position: 'absolute', top: 0, left: 0, right: 0, bottom: 0,
+    backgroundColor: '#f5f5f5', zIndex: 100,
+  },
+  screenTitle: {
+    fontSize: 28, fontWeight: '800', color: '#1a1a1a',
+    paddingHorizontal: 20, paddingTop: 8, paddingBottom: 4,
+  },
+  demoHeader: {
+    flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between',
+    paddingHorizontal: 4, paddingVertical: 10,
+    borderBottomWidth: StyleSheet.hairlineWidth, borderBottomColor: '#ddd',
+    backgroundColor: '#f5f5f5',
+  },
+  backBtn: { width: 90, paddingLeft: 12 },
+  backText: { fontSize: 16, color: '#2563eb', fontWeight: '500' },
+  demoTitle: { fontSize: 17, fontWeight: '700', color: '#1a1a1a', textAlign: 'center', flex: 1 },
   list: { padding: 16, paddingBottom: 40 },
   sectionTitle: {
     fontSize: 13, fontWeight: '800', color: '#666',
