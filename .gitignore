@@ -4,10 +4,9 @@ dist/
 .expo/
 *.tsbuildinfo
 
-# Lock files
+# Lock files (bun/yarn ignored; npm lockfile committed for reproducible CI)
 bun.lock
 yarn.lock
-package-lock.json
 
 # Local dev planning
 docs/superpowers/
