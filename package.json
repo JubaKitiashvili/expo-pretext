@@ -1,6 +1,6 @@
 {
   "name": "expo-pretext",
-  "version": "0.15.0",
+  "version": "0.16.0",
   "description": "DOM-free multiline text height prediction for React Native. Port of Pretext.",
   "main": "src/index.ts",
   "types": "src/index.ts",
@@ -50,6 +50,8 @@
     "test:all": "bun test",
     "typecheck": "tsc --noEmit",
     "bench": "bun --preload ./src/__tests__/setup-mocks.ts scripts/bench.ts",
+    "snapshot": "bun --preload ./src/__tests__/setup-mocks.ts scripts/snapshot.ts",
+    "snapshot:update": "bun --preload ./src/__tests__/setup-mocks.ts scripts/snapshot.ts update",
     "prepublishOnly": "bun test src/__tests__/"
   },
   "engines": {

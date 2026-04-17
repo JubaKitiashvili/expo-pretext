@@ -1,5 +1,28 @@
 # Changelog
 
+## 0.16.0 — 2026-04-17
+
+### Correctness
+
+- **Bidi audit** — 30 targeted tests exercising the UBA rules implemented
+  in `src/bidi.ts`: pure LTR/RTL, mixed LTR+RTL with either paragraph
+  direction, European numerals in Arabic context (W2, W7), neutrals (N1,
+  N2), `AL → R`, NSM inheritance, surrogate-pair emoji, currency +
+  digits, tatweel, tri-script sentences (Hebrew + Arabic + Latin). No
+  bugs found — the implementation holds up.
+- **Height snapshot regression harness** — `scripts/snapshot.ts` writes a
+  deterministic 210-entry baseline (14 corpora × 3 styles × 5 widths) and
+  `bun run snapshot` checks any future run against it. CI runs this on
+  every PR; drift fails the job.
+- **`bun run snapshot:update`** — rewrites the baseline after intentional
+  engine changes; commit the updated JSON alongside the PR.
+- `docs/REGRESSION.md` explains both nets (CI snapshot + on-device Tools
+  accuracy check) and when each is authoritative.
+
+### Tests
+
+- 532 passing (was 502). `tsc --noEmit` clean.
+
 ## 0.15.0 — 2026-04-17
 
 ### Correctness hardening

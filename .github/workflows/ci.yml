@@ -35,5 +35,8 @@ jobs:
       - name: Tests
         run: bun test src/__tests__/
 
+      - name: Height snapshot (regression check)
+        run: bun run snapshot
+
       - name: Benchmarks (smoke)
         run: bun run bench > bench-output.txt && head -20 bench-output.txt

@@ -1,0 +1,1687 @@
+{
+  "version": 1,
+  "createdAt": "2026-04-17T18:53:41.339Z",
+  "total": 210,
+  "entries": [
+    {
+      "key": "english_16/24_160",
+      "corpus": "english",
+      "style": "16/24",
+      "width": 160,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "english_16/24_240",
+      "corpus": "english",
+      "style": "16/24",
+      "width": 240,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "english_16/24_320",
+      "corpus": "english",
+      "style": "16/24",
+      "width": 320,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "english_16/24_420",
+      "corpus": "english",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "english_16/24_640",
+      "corpus": "english",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "english_14/20_160",
+      "corpus": "english",
+      "style": "14/20",
+      "width": 160,
+      "height": 100,
+      "lineCount": 5
+    },
+    {
+      "key": "english_14/20_240",
+      "corpus": "english",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "english_14/20_320",
+      "corpus": "english",
+      "style": "14/20",
+      "width": 320,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "english_14/20_420",
+      "corpus": "english",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "english_14/20_640",
+      "corpus": "english",
+      "style": "14/20",
+      "width": 640,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "english_20/30_160",
+      "corpus": "english",
+      "style": "20/30",
+      "width": 160,
+      "height": 210,
+      "lineCount": 7
+    },
+    {
+      "key": "english_20/30_240",
+      "corpus": "english",
+      "style": "20/30",
+      "width": 240,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "english_20/30_320",
+      "corpus": "english",
+      "style": "20/30",
+      "width": 320,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "english_20/30_420",
+      "corpus": "english",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "english_20/30_640",
+      "corpus": "english",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "arabic_16/24_160",
+      "corpus": "arabic",
+      "style": "16/24",
+      "width": 160,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "arabic_16/24_240",
+      "corpus": "arabic",
+      "style": "16/24",
+      "width": 240,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "arabic_16/24_320",
+      "corpus": "arabic",
+      "style": "16/24",
+      "width": 320,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "arabic_16/24_420",
+      "corpus": "arabic",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "arabic_16/24_640",
+      "corpus": "arabic",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "arabic_14/20_160",
+      "corpus": "arabic",
+      "style": "14/20",
+      "width": 160,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "arabic_14/20_240",
+      "corpus": "arabic",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "arabic_14/20_320",
+      "corpus": "arabic",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "arabic_14/20_420",
+      "corpus": "arabic",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "arabic_14/20_640",
+      "corpus": "arabic",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "arabic_20/30_160",
+      "corpus": "arabic",
+      "style": "20/30",
+      "width": 160,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "arabic_20/30_240",
+      "corpus": "arabic",
+      "style": "20/30",
+      "width": 240,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "arabic_20/30_320",
+      "corpus": "arabic",
+      "style": "20/30",
+      "width": 320,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "arabic_20/30_420",
+      "corpus": "arabic",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "arabic_20/30_640",
+      "corpus": "arabic",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_16/24_160",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 160,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "chinese_16/24_240",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_16/24_320",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_16/24_420",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_16/24_640",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_14/20_160",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 160,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_14/20_240",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_14/20_320",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_14/20_420",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_14/20_640",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_20/30_160",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 160,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "chinese_20/30_240",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_20/30_320",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_20/30_420",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_20/30_640",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_16/24_160",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 160,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_16/24_240",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_16/24_320",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_16/24_420",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_16/24_640",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_14/20_160",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 160,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_14/20_240",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_14/20_320",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_14/20_420",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_14/20_640",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_20/30_160",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 160,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "japanese_20/30_240",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_20/30_320",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_20/30_420",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_20/30_640",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "georgian_16/24_160",
+      "corpus": "georgian",
+      "style": "16/24",
+      "width": 160,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "georgian_16/24_240",
+      "corpus": "georgian",
+      "style": "16/24",
+      "width": 240,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "georgian_16/24_320",
+      "corpus": "georgian",
+      "style": "16/24",
+      "width": 320,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "georgian_16/24_420",
+      "corpus": "georgian",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "georgian_16/24_640",
+      "corpus": "georgian",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "georgian_14/20_160",
+      "corpus": "georgian",
+      "style": "14/20",
+      "width": 160,
+      "height": 100,
+      "lineCount": 5
+    },
+    {
+      "key": "georgian_14/20_240",
+      "corpus": "georgian",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "georgian_14/20_320",
+      "corpus": "georgian",
+      "style": "14/20",
+      "width": 320,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "georgian_14/20_420",
+      "corpus": "georgian",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "georgian_14/20_640",
+      "corpus": "georgian",
+      "style": "14/20",
+      "width": 640,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "georgian_20/30_160",
+      "corpus": "georgian",
+      "style": "20/30",
+      "width": 160,
+      "height": 240,
+      "lineCount": 8
+    },
+    {
+      "key": "georgian_20/30_240",
+      "corpus": "georgian",
+      "style": "20/30",
+      "width": 240,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "georgian_20/30_320",
+      "corpus": "georgian",
+      "style": "20/30",
+      "width": 320,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "georgian_20/30_420",
+      "corpus": "georgian",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "georgian_20/30_640",
+      "corpus": "georgian",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "thai_16/24_160",
+      "corpus": "thai",
+      "style": "16/24",
+      "width": 160,
+      "height": 144,
+      "lineCount": 6
+    },
+    {
+      "key": "thai_16/24_240",
+      "corpus": "thai",
+      "style": "16/24",
+      "width": 240,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "thai_16/24_320",
+      "corpus": "thai",
+      "style": "16/24",
+      "width": 320,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "thai_16/24_420",
+      "corpus": "thai",
+      "style": "16/24",
+      "width": 420,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "thai_16/24_640",
+      "corpus": "thai",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "thai_14/20_160",
+      "corpus": "thai",
+      "style": "14/20",
+      "width": 160,
+      "height": 120,
+      "lineCount": 6
+    },
+    {
+      "key": "thai_14/20_240",
+      "corpus": "thai",
+      "style": "14/20",
+      "width": 240,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "thai_14/20_320",
+      "corpus": "thai",
+      "style": "14/20",
+      "width": 320,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "thai_14/20_420",
+      "corpus": "thai",
+      "style": "14/20",
+      "width": 420,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "thai_14/20_640",
+      "corpus": "thai",
+      "style": "14/20",
+      "width": 640,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "thai_20/30_160",
+      "corpus": "thai",
+      "style": "20/30",
+      "width": 160,
+      "height": 210,
+      "lineCount": 7
+    },
+    {
+      "key": "thai_20/30_240",
+      "corpus": "thai",
+      "style": "20/30",
+      "width": 240,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "thai_20/30_320",
+      "corpus": "thai",
+      "style": "20/30",
+      "width": 320,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "thai_20/30_420",
+      "corpus": "thai",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "thai_20/30_640",
+      "corpus": "thai",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_16/24_160",
+      "corpus": "emoji",
+      "style": "16/24",
+      "width": 160,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "emoji_16/24_240",
+      "corpus": "emoji",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_16/24_320",
+      "corpus": "emoji",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_16/24_420",
+      "corpus": "emoji",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_16/24_640",
+      "corpus": "emoji",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "emoji_14/20_160",
+      "corpus": "emoji",
+      "style": "14/20",
+      "width": 160,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "emoji_14/20_240",
+      "corpus": "emoji",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_14/20_320",
+      "corpus": "emoji",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_14/20_420",
+      "corpus": "emoji",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "emoji_14/20_640",
+      "corpus": "emoji",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "emoji_20/30_160",
+      "corpus": "emoji",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "emoji_20/30_240",
+      "corpus": "emoji",
+      "style": "20/30",
+      "width": 240,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "emoji_20/30_320",
+      "corpus": "emoji",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_20/30_420",
+      "corpus": "emoji",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "emoji_20/30_640",
+      "corpus": "emoji",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_16/24_160",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 160,
+      "height": 168,
+      "lineCount": 7
+    },
+    {
+      "key": "mixed_16/24_240",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 240,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "mixed_16/24_320",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 320,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "mixed_16/24_420",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 420,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_16/24_640",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_14/20_160",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 160,
+      "height": 120,
+      "lineCount": 6
+    },
+    {
+      "key": "mixed_14/20_240",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 240,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "mixed_14/20_320",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 320,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_14/20_420",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 420,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_14/20_640",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 640,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_20/30_160",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 160,
+      "height": 300,
+      "lineCount": 10
+    },
+    {
+      "key": "mixed_20/30_240",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 240,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "mixed_20/30_320",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 320,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "mixed_20/30_420",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_20/30_640",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "short_16/24_160",
+      "corpus": "short",
+      "style": "16/24",
+      "width": 160,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "short_16/24_240",
+      "corpus": "short",
+      "style": "16/24",
+      "width": 240,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "short_16/24_320",
+      "corpus": "short",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "short_16/24_420",
+      "corpus": "short",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "short_16/24_640",
+      "corpus": "short",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "short_14/20_160",
+      "corpus": "short",
+      "style": "14/20",
+      "width": 160,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "short_14/20_240",
+      "corpus": "short",
+      "style": "14/20",
+      "width": 240,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "short_14/20_320",
+      "corpus": "short",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "short_14/20_420",
+      "corpus": "short",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "short_14/20_640",
+      "corpus": "short",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "short_20/30_160",
+      "corpus": "short",
+      "style": "20/30",
+      "width": 160,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "short_20/30_240",
+      "corpus": "short",
+      "style": "20/30",
+      "width": 240,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "short_20/30_320",
+      "corpus": "short",
+      "style": "20/30",
+      "width": 320,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "short_20/30_420",
+      "corpus": "short",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "short_20/30_640",
+      "corpus": "short",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "empty_16/24_160",
+      "corpus": "empty",
+      "style": "16/24",
+      "width": 160,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_16/24_240",
+      "corpus": "empty",
+      "style": "16/24",
+      "width": 240,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_16/24_320",
+      "corpus": "empty",
+      "style": "16/24",
+      "width": 320,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_16/24_420",
+      "corpus": "empty",
+      "style": "16/24",
+      "width": 420,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_16/24_640",
+      "corpus": "empty",
+      "style": "16/24",
+      "width": 640,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_14/20_160",
+      "corpus": "empty",
+      "style": "14/20",
+      "width": 160,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_14/20_240",
+      "corpus": "empty",
+      "style": "14/20",
+      "width": 240,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_14/20_320",
+      "corpus": "empty",
+      "style": "14/20",
+      "width": 320,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_14/20_420",
+      "corpus": "empty",
+      "style": "14/20",
+      "width": 420,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_14/20_640",
+      "corpus": "empty",
+      "style": "14/20",
+      "width": 640,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_20/30_160",
+      "corpus": "empty",
+      "style": "20/30",
+      "width": 160,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_20/30_240",
+      "corpus": "empty",
+      "style": "20/30",
+      "width": 240,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_20/30_320",
+      "corpus": "empty",
+      "style": "20/30",
+      "width": 320,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_20/30_420",
+      "corpus": "empty",
+      "style": "20/30",
+      "width": 420,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "empty_20/30_640",
+      "corpus": "empty",
+      "style": "20/30",
+      "width": 640,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "single_word_16/24_160",
+      "corpus": "single_word",
+      "style": "16/24",
+      "width": 160,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "single_word_16/24_240",
+      "corpus": "single_word",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "single_word_16/24_320",
+      "corpus": "single_word",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_16/24_420",
+      "corpus": "single_word",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_16/24_640",
+      "corpus": "single_word",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_14/20_160",
+      "corpus": "single_word",
+      "style": "14/20",
+      "width": 160,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "single_word_14/20_240",
+      "corpus": "single_word",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "single_word_14/20_320",
+      "corpus": "single_word",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_14/20_420",
+      "corpus": "single_word",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_14/20_640",
+      "corpus": "single_word",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_20/30_160",
+      "corpus": "single_word",
+      "style": "20/30",
+      "width": 160,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "single_word_20/30_240",
+      "corpus": "single_word",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "single_word_20/30_320",
+      "corpus": "single_word",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "single_word_20/30_420",
+      "corpus": "single_word",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "single_word_20/30_640",
+      "corpus": "single_word",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_16/24_160",
+      "corpus": "many_newlines",
+      "style": "16/24",
+      "width": 160,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_16/24_240",
+      "corpus": "many_newlines",
+      "style": "16/24",
+      "width": 240,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_16/24_320",
+      "corpus": "many_newlines",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_16/24_420",
+      "corpus": "many_newlines",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_16/24_640",
+      "corpus": "many_newlines",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_14/20_160",
+      "corpus": "many_newlines",
+      "style": "14/20",
+      "width": 160,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_14/20_240",
+      "corpus": "many_newlines",
+      "style": "14/20",
+      "width": 240,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_14/20_320",
+      "corpus": "many_newlines",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_14/20_420",
+      "corpus": "many_newlines",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_14/20_640",
+      "corpus": "many_newlines",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_20/30_160",
+      "corpus": "many_newlines",
+      "style": "20/30",
+      "width": 160,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_20/30_240",
+      "corpus": "many_newlines",
+      "style": "20/30",
+      "width": 240,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_20/30_320",
+      "corpus": "many_newlines",
+      "style": "20/30",
+      "width": 320,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_20/30_420",
+      "corpus": "many_newlines",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "many_newlines_20/30_640",
+      "corpus": "many_newlines",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "only_whitespace_16/24_160",
+      "corpus": "only_whitespace",
+      "style": "16/24",
+      "width": 160,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_16/24_240",
+      "corpus": "only_whitespace",
+      "style": "16/24",
+      "width": 240,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_16/24_320",
+      "corpus": "only_whitespace",
+      "style": "16/24",
+      "width": 320,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_16/24_420",
+      "corpus": "only_whitespace",
+      "style": "16/24",
+      "width": 420,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_16/24_640",
+      "corpus": "only_whitespace",
+      "style": "16/24",
+      "width": 640,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_14/20_160",
+      "corpus": "only_whitespace",
+      "style": "14/20",
+      "width": 160,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_14/20_240",
+      "corpus": "only_whitespace",
+      "style": "14/20",
+      "width": 240,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_14/20_320",
+      "corpus": "only_whitespace",
+      "style": "14/20",
+      "width": 320,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_14/20_420",
+      "corpus": "only_whitespace",
+      "style": "14/20",
+      "width": 420,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_14/20_640",
+      "corpus": "only_whitespace",
+      "style": "14/20",
+      "width": 640,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_20/30_160",
+      "corpus": "only_whitespace",
+      "style": "20/30",
+      "width": 160,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_20/30_240",
+      "corpus": "only_whitespace",
+      "style": "20/30",
+      "width": 240,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_20/30_320",
+      "corpus": "only_whitespace",
+      "style": "20/30",
+      "width": 320,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_20/30_420",
+      "corpus": "only_whitespace",
+      "style": "20/30",
+      "width": 420,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "only_whitespace_20/30_640",
+      "corpus": "only_whitespace",
+      "style": "20/30",
+      "width": 640,
+      "height": 0,
+      "lineCount": 0
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_16/24_160",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "16/24",
+      "width": 160,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_16/24_240",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "16/24",
+      "width": 240,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_16/24_320",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_16/24_420",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_16/24_640",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_14/20_160",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "14/20",
+      "width": 160,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_14/20_240",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "14/20",
+      "width": 240,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_14/20_320",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_14/20_420",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_14/20_640",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_20/30_160",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "20/30",
+      "width": 160,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_20/30_240",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "20/30",
+      "width": 240,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_20/30_320",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "20/30",
+      "width": 320,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_20/30_420",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "mixed_scripts_rtl_ltr_20/30_640",
+      "corpus": "mixed_scripts_rtl_ltr",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    }
+  ]
+}
