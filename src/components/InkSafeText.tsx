@@ -13,6 +13,12 @@ export type InkSafeTextProps = Omit<TextProps, 'style'> & {
   /** Text style — must include fontFamily and fontSize */
   style: TextStyle
   children: string | number | false | null | undefined
+  /**
+   * Measure ink bounds for every text, not just italic. Set to `true` on
+   * Android 13+ with RN 0.78+ where non-italic descenders can clip. See
+   * [RN #49886], [RN #53286], [RN #56402]. Default: `false`.
+   */
+  strict?: boolean
 }
 
 /**
@@ -33,14 +39,14 @@ export type InkSafeTextProps = Omit<TextProps, 'style'> & {
  * </InkSafeText>
  * ```
  */
-export function InkSafeText({ children, style, ...textProps }: InkSafeTextProps) {
+export function InkSafeText({ children, style, strict, ...textProps }: InkSafeTextProps) {
   const text = typeof children === 'string' ? children : String(children ?? '')
 
   // Memoize only the padding on font properties. Spread style fresh so
   // non-font props (color, lineHeight, etc.) are never stale.
   const { padding, isOvershooting } = useMemo(
-    () => getInkSafePadding(text, style),
-    [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle],
+    () => getInkSafePadding(text, style, { strict }),
+    [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle, strict],
   )
 
   // RN's Text accepts fontFamily as string — resolve any fallback chain

@@ -3,7 +3,7 @@
 // Memoized by individual style properties (not object reference).
 
 import { useMemo } from 'react'
-import { getInkSafePadding } from '../ink-safe'
+import { getInkSafePadding, type InkSafeOptions } from '../ink-safe'
 import type { TextStyle, InkBounds } from '../types'
 
 type InkSafeStyleResult = {
@@ -36,13 +36,18 @@ type InkSafeStyleResult = {
  * </View>
  * ```
  */
-export function useInkSafeStyle(text: string, style: TextStyle): InkSafeStyleResult {
+export function useInkSafeStyle(
+  text: string,
+  style: TextStyle,
+  options?: InkSafeOptions,
+): InkSafeStyleResult {
+  const strict = options?.strict === true
   // Memoize only the padding computation on font properties that affect measurement.
   // The full style is spread fresh each call so non-font props (color, lineHeight, etc.)
   // are never stale.
   const result = useMemo(
-    () => getInkSafePadding(text, style),
-    [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle],
+    () => getInkSafePadding(text, style, options),
+    [text, style.fontFamily, style.fontSize, style.fontWeight, style.fontStyle, strict],
   )
 
   return {

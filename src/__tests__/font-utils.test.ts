@@ -39,11 +39,18 @@ describe('font-utils', () => {
 
   describe('getFontKey', () => {
     test('full style produces correct key', () => {
-      expect(getFontKey(baseStyle)).toBe('Inter_16_700_italic')
+      expect(getFontKey(baseStyle)).toBe('Inter_16_700_italic_0')
     })
 
     test('minimal style uses defaults', () => {
-      expect(getFontKey({ fontFamily: 'Arial', fontSize: 14 })).toBe('Arial_14_400_normal')
+      expect(getFontKey({ fontFamily: 'Arial', fontSize: 14 })).toBe('Arial_14_400_normal_0')
+    })
+
+    test('letterSpacing changes the key', () => {
+      const a = getFontKey({ fontFamily: 'Inter', fontSize: 16 })
+      const b = getFontKey({ fontFamily: 'Inter', fontSize: 16, letterSpacing: 2 })
+      expect(a).not.toBe(b)
+      expect(b).toBe('Inter_16_400_normal_2')
     })
 
     test('different weights produce different keys', () => {

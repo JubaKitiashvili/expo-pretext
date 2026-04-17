@@ -33,6 +33,7 @@ export function textStyleToFontDescriptor(style: TextStyle): FontDescriptor {
     fontSize: style.fontSize,
     fontWeight: style.fontWeight,
     fontStyle: style.fontStyle,
+    letterSpacing: style.letterSpacing,
   }
 }
 
@@ -40,11 +41,51 @@ export function getFontKey(style: TextStyle): string {
   const weight = style.fontWeight ?? '400'
   const fStyle = style.fontStyle ?? 'normal'
   const family = resolveFontFamily(style.fontFamily)
-  return `${family}_${style.fontSize}_${weight}_${fStyle}`
+  const ls = style.letterSpacing ?? 0
+  return `${family}_${style.fontSize}_${weight}_${fStyle}_${ls}`
 }
 
 export function getLineHeight(style: TextStyle): number {
   return style.lineHeight ?? style.fontSize * 1.2
+}
+
+/**
+ * Count code points in a string (surrogate-pair safe).
+ * Used to distribute `letterSpacing` across a segment's glyphs.
+ */
+export function codePointCount(s: string): number {
+  let n = 0
+  for (let i = 0; i < s.length; i++) {
+    const c = s.charCodeAt(i)
+    if (c >= 0xD800 && c <= 0xDBFF && i + 1 < s.length) {
+      const next = s.charCodeAt(i + 1)
+      if (next >= 0xDC00 && next <= 0xDFFF) i++
+    }
+    n++
+  }
+  return n
+}
+
+/**
+ * Adjust raw segment widths for `letterSpacing`.
+ *
+ * Mutates `widths` in place, adding `letterSpacing × codePointCount(segment)`
+ * to each segment. RN adds `letterSpacing` after every glyph — including
+ * the last one on a line (visible as trailing space), so we distribute it
+ * across all code points uniformly. The line-breaking engine tolerates
+ * the trailing-letterSpacing overhang via `lineFitEpsilon`.
+ *
+ * No-op when `letterSpacing` is 0 or undefined — the common case.
+ */
+export function applyLetterSpacingInPlace(
+  widths: number[],
+  segments: string[],
+  letterSpacing: number | undefined,
+): void {
+  if (!letterSpacing) return
+  for (let i = 0; i < widths.length; i++) {
+    widths[i]! += letterSpacing * codePointCount(segments[i]!)
+  }
 }
 
 const SYSTEM_FONTS = [

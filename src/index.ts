@@ -70,6 +70,10 @@ export type { TruncationResult, CodeBlockMeasurement } from './text-utils'
 export { compileHyphenationPatterns, hyphenate, hyphenateAndJoin } from './hyphenation'
 export type { CompiledHyphenationPatterns, CompileOptions } from './hyphenation'
 
+// --- Skia adapter ---
+export { measureRuns } from './skia-adapter'
+export type { TextRun, ParagraphMeasurement } from './skia-adapter'
+
 // --- Typewriter ---
 export { buildTypewriterFrames } from './typewriter'
 export type { TypewriterFrame } from './typewriter'
@@ -99,17 +103,36 @@ export type { EngineProfile } from './engine-profile'
 export { getFontMetrics, validateFont, resolveFontFamily } from './font-utils'
 export type { FontMetrics } from './font-utils'
 
+// --- Font Load Verification (silent-fallback detection) ---
+export { verifyFontsLoaded } from './verify-font'
+export type { FontLoadVerification } from './verify-font'
+
 // --- Ink-bounds Measurement ---
 export { measureInkBounds, measureInkWidth, measureInkDebug, logInkDebugMessage } from './ink-width'
 
 // --- Ink-Safe Text ---
 export { getInkSafePadding } from './ink-safe'
+export type { InkSafeOptions } from './ink-safe'
 export { useInkSafeStyle } from './hooks/useInkSafeStyle'
 export { InkSafeText } from './components/InkSafeText'
 export type { InkSafeTextProps } from './components/InkSafeText'
 
+// --- Truncated Text ---
+export { TruncatedText } from './components/TruncatedText'
+export type { TruncatedTextProps } from './components/TruncatedText'
+
+// --- Safe Text (line-by-line renderer) ---
+export { SafeText } from './components/SafeText'
+export type { SafeTextProps } from './components/SafeText'
+
 // --- Accessibility ---
 export { getFontScale, onFontScaleChange, clearAllCaches } from './accessibility'
+export {
+  enableAutoInvalidation,
+  disableAutoInvalidation,
+  notifyFontsLoaded,
+} from './auto-invalidate'
+export type { AutoInvalidateOptions } from './auto-invalidate'
 
 // --- Developer Tools ---
 export { compareDebugMeasurement, DEBUG_ACCURACY_COLORS } from './debug'
@@ -124,3 +147,10 @@ export type { BudgetedPrepareResult } from './perf-budget'
 // --- Utilities ---
 export { clearCache, setLocale } from './layout'
 export { setCacheBudget, getCacheStats } from './cache'
+
+// --- Kinsoku Shori (CJK line-break prohibitions) ---
+// Read-only sets exposing the characters forbidden at line start (closing
+// punctuation like 、。）」) and at line end (opening punctuation like （「『).
+// The engine applies these automatically; users can inspect them for
+// custom line-break logic.
+export { kinsokuStart, kinsokuEnd } from './analysis'

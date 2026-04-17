@@ -1,5 +1,59 @@
 # Changelog
 
+## 1.0.0 — 2026-04-17 — Production Ready 🎉
+
+First production-ready release. Closes the community-priority RN/Expo text-measurement gaps identified in April 2026 ecosystem research.
+
+### Added
+
+- **`letterSpacing` support** — `TextStyle.letterSpacing` now folds into
+  segment widths everywhere measurement runs (native + JS fallback + web
+  backend). Cache keys include it so different values don't collide.
+  Closes [RN #54823], [RN #46436].
+- **Auto cache invalidation** — `enableAutoInvalidation()` subscribes to
+  system font-scale changes and (optionally) polls `expo-font`'s load
+  registry. `notifyFontsLoaded()` for explicit invalidation from
+  `useFonts()` effects. No more manual `clearAllCaches()` at the app
+  level. Addresses [Expo #21885] (82 comments).
+- **`<InkSafeText strict>`** — new `strict` prop measures ink bounds for
+  every text, not just italic. Fixes Android 13+ / RN 0.78+ descender
+  clipping for non-italic text. Addresses [RN #49886], [RN #53286],
+  [RN #56402], [RN #15114].
+- **`<TruncatedText>`** — drop-in replacement for `numberOfLines` +
+  `ellipsizeMode` that computes the visible substring in JS. Supports
+  `tail` / `head` / `middle` modes, no background-color artifact on
+  the ellipsis, works identically on iOS / Android. Closes
+  [RN #19117], [RN #41405], [RN #37926].
+- **`<SafeText>` — FLAGSHIP** — line-by-line renderer that computes line
+  breaks via `layoutWithLines` and emits one `<Text>` per line. Bypasses
+  the entire Android wrap / cut-off regression cluster introduced in
+  RN 0.78+. Accessibility label is preserved on the wrapper View so
+  screenreaders read the full paragraph as one unit. Closes the cluster:
+  [RN #15114], [RN #49886], [RN #53286], [RN #53666], [RN #56402],
+  [RN #48921].
+- **Kinsoku Shori (CJK line-break prohibitions)** — comprehensive test
+  coverage of Japanese / Chinese line-start and line-end prohibitions.
+  Character sets (`kinsokuStart`, `kinsokuEnd`) exposed publicly so
+  custom logic can reuse them.
+- **`verifyFontsLoaded()`** — diagnostic that compares requested-font
+  advance vs System advance for a reference string. Detects the
+  silent-fallback regression in RN 0.83 New Arch. Addresses
+  [RN #54934], [RN #56309], [RN #54642].
+- **Skia adapter (`measureRuns`)** — per-run records (text, bounds,
+  advance, font descriptor) ready for a Skia Paragraph builder. Closes
+  the precise-glyph-bounds request on [Skia #3493], [Skia #3488],
+  [Skia #1736]. Measurement-only — doesn't require react-native-skia.
+
+### Tests
+
+- **621 passing** (was 577). `tsc --noEmit` clean. Snapshot baseline
+  unchanged — all additions are transparent to existing consumers.
+
+### Stability commitment
+
+v1.0.0 marks the API stable. All exports documented here are supported
+under semantic versioning: breaking changes only in major bumps.
+
 ## 0.19.0 — 2026-04-17
 
 ### Added

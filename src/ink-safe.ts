@@ -24,26 +24,51 @@ const ZERO_RESULT: InkSafeResult = {
 }
 
 /**
- * Compute italic-safe padding for a text string.
+ * Options for `getInkSafePadding` / `<InkSafeText>`.
+ */
+export type InkSafeOptions = {
+  /**
+   * When `true`, measure ink bounds for **every** text (not only italic).
+   *
+   * Useful when:
+   * - Android 13+ / RN 0.78+ clips descenders (`y`, `g`, `p`, `ж`, …)
+   *   even on non-italic text ([RN #49886], [RN #53286], [RN #56402]).
+   * - Fonts have unusual ascender/descender reach vs. advertised metrics.
+   * - Strict accessibility or design review requires pixel-exact fit.
+   *
+   * Defaults to `false` — non-italic text short-circuits with zero padding,
+   * which is the cheap common case that matches RN's `<Text>` rendering.
+   */
+  strict?: boolean
+}
+
+/**
+ * Compute safe padding for a text string so glyphs are not clipped at
+ * container boundaries.
  *
- * Returns padding values to apply to a `<Text>` element so italic/bold
- * glyphs don't get clipped at container boundaries.
+ * Default mode (backward-compatible): italic/oblique text gets a full ink
+ * measurement; non-italic text returns zero padding with no native calls.
  *
- * Fast path: non-italic text returns zero padding with no native calls.
- *
- * @param text - The text string to measure
- * @param style - TextStyle with fontFamily, fontSize, fontWeight, fontStyle
- * @returns Padding, ink width, advance width, ink bounds, and overshoot flag
+ * Strict mode (`{ strict: true }`): every text is measured. Use on
+ * Android 13+ with RN 0.78+ where descender clipping ([RN #49886],
+ * [RN #53286], [RN #56402]) affects non-italic text too.
  *
  * @example
  * ```ts
- * const { padding } = getInkSafePadding('fly', {
+ * // Italic-safe (default)
+ * const a = getInkSafePadding('fly', {
  *   fontFamily: 'Georgia', fontSize: 80, fontWeight: 'bold', fontStyle: 'italic',
  * })
- * // padding = { paddingLeft: 2.1, paddingRight: 5.3, paddingTop: 0, paddingBottom: 0 }
+ *
+ * // Strict: pad even non-italic text with real descenders
+ * const b = getInkSafePadding('typography', { fontFamily: 'Inter', fontSize: 16 }, { strict: true })
  * ```
  */
-export function getInkSafePadding(text: string, style: TextStyle): InkSafeResult {
+export function getInkSafePadding(
+  text: string,
+  style: TextStyle,
+  options?: InkSafeOptions,
+): InkSafeResult {
   if (!text) return ZERO_RESULT
 
   // Fast path: non-italic text almost never overshoots.
@@ -56,7 +81,9 @@ export function getInkSafePadding(text: string, style: TextStyle): InkSafeResult
   const isItalic = style.fontStyle === 'italic' ||
     familyNames.some((name) => /italic|oblique/i.test(name))
 
-  if (!isItalic) {
+  const strict = options?.strict === true
+
+  if (!isItalic && !strict) {
     const advance = estimateAdvance(text, style)
     return {
       padding: ZERO_PADDING,

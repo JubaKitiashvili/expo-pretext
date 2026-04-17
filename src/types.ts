@@ -20,6 +20,16 @@ export type TextStyle = {
   lineHeight?: number
   fontWeight?: '400' | '500' | '600' | '700' | 'bold' | 'normal'
   fontStyle?: 'normal' | 'italic'
+  /**
+   * Extra horizontal space added after each character (in points).
+   *
+   * Matches RN's `letterSpacing` semantics: adds `letterSpacing` pixels to
+   * every glyph's advance EXCEPT the last one on a line. Folded into
+   * segment widths during layout so wrapping and height prediction stay
+   * accurate. A cache-key component — different values produce
+   * independent measurements.
+   */
+  letterSpacing?: number
 }
 
 export type WhiteSpaceMode = 'normal' | 'pre-wrap'
@@ -195,6 +205,8 @@ export type FontDescriptor = {
   fontSize: number
   fontWeight?: string
   fontStyle?: string
+  /** Extra advance per glyph in points (RN's letterSpacing semantics). */
+  letterSpacing?: number
 }
 
 export type NativeSegmentResult = {

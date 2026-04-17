@@ -7,7 +7,7 @@ import {
 } from './build'
 import { layout, measureNaturalWidth } from './layout'
 import { cacheNativeResult, clearJSCache, tryResolveAllFromCache } from './cache'
-import { textStyleToFontDescriptor, getFontKey, getLineHeight, warnIfFontNotLoaded } from './font-utils'
+import { textStyleToFontDescriptor, getFontKey, getLineHeight, warnIfFontNotLoaded, applyLetterSpacingInPlace } from './font-utils'
 import { getEngineProfile } from './engine-profile'
 import type {
   TextStyle,
@@ -85,6 +85,7 @@ function flushPending(): void {
       )
       for (let i = 0; i < group.length; i++) {
         const result = results[i]!
+        applyLetterSpacingInPlace(result.widths, result.segments, group[i]!.style.letterSpacing)
         cacheNativeResult(fontKey, result.segments, result.widths)
         group[i]!.resolve(result)
       }
@@ -114,6 +115,7 @@ function segmentAndMeasureWithCache(
     : undefined
 
   const result = native.segmentAndMeasure(text, font, nativeOptions)
+  applyLetterSpacingInPlace(result.widths, result.segments, style.letterSpacing)
 
   const fontKey = getFontKey(style)
   cacheNativeResult(fontKey, result.segments, result.widths)
@@ -134,11 +136,14 @@ function segmentAndMeasureWithCache(
 
     // Reuse any merged chunks already measured from a prior exact-mode call.
     const cached = tryResolveAllFromCache(fontKey, analysis.texts)
-    const mergedWidths = cached ?? native.remeasureMerged(analysis.texts, font)
-
-    // Feed merged-chunk widths back into the shared cache so a repeat
-    // exact-mode call on the same text pays zero native cost.
-    if (!cached) {
+    let mergedWidths: number[]
+    if (cached) {
+      mergedWidths = cached
+    } else {
+      mergedWidths = native.remeasureMerged(analysis.texts, font)
+      applyLetterSpacingInPlace(mergedWidths, analysis.texts, style.letterSpacing)
+      // Feed merged-chunk widths back into the shared cache so a repeat
+      // exact-mode call on the same text pays zero native cost.
       cacheNativeResult(fontKey, analysis.texts, mergedWidths)
     }
 
@@ -157,10 +162,12 @@ function segmentAndMeasureWithCache(
 function estimateSegments(text: string, style: TextStyle): NativeSegmentResult {
   const words = text.split(/(\s+)/)
   const charWidth = style.fontSize * 0.55
+  const widths = words.map(w => w.length * charWidth)
+  applyLetterSpacingInPlace(widths, words, style.letterSpacing)
   return {
     segments: words,
     isWordLike: words.map(w => !/^\s+$/.test(w)),
-    widths: words.map(w => w.length * charWidth),
+    widths,
   }
 }
 
