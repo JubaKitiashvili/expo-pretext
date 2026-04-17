@@ -66,6 +66,10 @@ export { prepareStreaming, clearStreamingState } from './streaming'
 export { fitFontSize, truncateText, measureCodeBlockHeight } from './text-utils'
 export type { TruncationResult, CodeBlockMeasurement } from './text-utils'
 
+// --- Hyphenation ---
+export { compileHyphenationPatterns, hyphenate, hyphenateAndJoin } from './hyphenation'
+export type { CompiledHyphenationPatterns, CompileOptions } from './hyphenation'
+
 // --- Typewriter ---
 export { buildTypewriterFrames } from './typewriter'
 export type { TypewriterFrame } from './typewriter'

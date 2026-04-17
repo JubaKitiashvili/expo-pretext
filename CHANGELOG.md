@@ -1,5 +1,33 @@
 # Changelog
 
+## 0.19.0 — 2026-04-17
+
+### Added
+
+- **Hyphenation utility** — Liang-Knuth hyphenation algorithm exposed as
+  a pure function. New exports:
+  - `compileHyphenationPatterns(rawPatterns, { leftMin, rightMin, exceptions })`
+    — parses TeX-format patterns (`"hy3ph"`, `".un2"`, …) into a fast
+    lookup table.
+  - `hyphenate(word, patterns)` — returns the positions inside `word`
+    where a soft-hyphen break is allowed.
+  - `hyphenateAndJoin(word, patterns, separator?)` — convenience that
+    inserts U+00AD soft hyphens (or a custom separator) at every break.
+  - Supports an exception dictionary (`'as-so-ciate'`) that overrides the
+    pattern output for specific lowercased words.
+
+### Design note
+
+No language patterns ship with the library — they're 10–50 KB per
+language and most apps need only one. Bring your own via any TeX-format
+source (e.g., `hyphenation-patterns-en-us`). Keeps the core bundle tiny.
+
+### Tests
+
+- 577 passing (was 554). `tsc --noEmit` clean. Snapshot baseline
+  unchanged — the hyphenation utility is independent of the layout
+  engine.
+
 ## 0.18.0 — 2026-04-17
 
 ### Added
