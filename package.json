@@ -52,6 +52,8 @@
     "bench": "bun --preload ./src/__tests__/setup-mocks.ts scripts/bench.ts",
     "snapshot": "bun --preload ./src/__tests__/setup-mocks.ts scripts/snapshot.ts",
     "snapshot:update": "bun --preload ./src/__tests__/setup-mocks.ts scripts/snapshot.ts update",
+    "build:web": "cd example && npx expo export --platform web --output-dir dist",
+    "deploy:web": "npm run build:web && cd example/dist && vercel deploy --prod --yes",
     "prepublishOnly": "bun test src/__tests__/"
   },
   "engines": {
