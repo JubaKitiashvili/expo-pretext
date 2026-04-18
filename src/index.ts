@@ -125,6 +125,14 @@ export type { TruncatedTextProps } from './components/TruncatedText'
 export { SafeText } from './components/SafeText'
 export type { SafeTextProps } from './components/SafeText'
 
+// --- Balanced / Pretty Text (CSS text-wrap: balance / pretty) ---
+export { BalancedText } from './components/BalancedText'
+export type { BalancedTextProps } from './components/BalancedText'
+export { PrettyText } from './components/PrettyText'
+export type { PrettyTextProps } from './components/PrettyText'
+export { balanceLayout, balanceLayoutWithLines, prettyLayout, layoutWithWrap } from './text-wrap'
+export type { TextWrapMode, BalanceOptions, PrettyOptions } from './text-wrap'
+
 // --- Accessibility ---
 export { getFontScale, onFontScaleChange, clearAllCaches } from './accessibility'
 export {

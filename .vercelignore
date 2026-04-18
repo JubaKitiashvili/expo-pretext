@@ -1,0 +1,15 @@
+node_modules
+example/node_modules
+build
+dist
+.expo
+example/.expo
+ios
+android
+example/ios
+example/android
+.git
+.github
+src/__tests__
+scripts
+docs/snapshots

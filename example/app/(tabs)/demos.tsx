@@ -26,6 +26,7 @@ import { HeadlinesFeedDemo } from '../../components/demos/HeadlinesFeed'
 import { AccessibilityDemo } from '../../components/demos/Accessibility'
 import { DebugOverlayDemo } from '../../components/demos/DebugOverlay'
 import { SnapshotTestingDemo } from '../../components/demos/SnapshotTesting'
+import { BalancedDemo } from '../../components/demos/Balanced'
 import ChatScreen from './chat'
 
 type Demo = {
@@ -52,6 +53,7 @@ const sections: { title: string; data: Demo[] }[] = [
   {
     title: 'Text Effects',
     data: [
+      { id: 'balanced', title: 'Balanced Headlines', api: '<BalancedText> + <PrettyText>', desc: 'CSS text-wrap: balance / pretty, identical on iOS/Android/Web', component: BalancedDemo },
       { id: 'typewriter', title: 'Typewriter Effect', api: 'useTypewriterLayout()', desc: 'Token-by-token reveal with pre-computed line wrapping', component: TypewriterDemo },
       { id: 'text-morphing', title: 'Text Morphing', api: 'useTextMorphing()', desc: '"Thinking..." → response transition', component: TextMorphingDemo },
       { id: 'text-clock', title: 'Text Clock', api: 'prepare() + layout()', desc: 'Real-time clock with remeasurement every tick', component: TextClockDemo },

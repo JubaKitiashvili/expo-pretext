@@ -19,3 +19,4 @@ docs/superpowers/
 
 # Claude Code
 .claude/
+.vercel

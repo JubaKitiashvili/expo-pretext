@@ -6,8 +6,9 @@
 
 [![npm](https://img.shields.io/npm/v/expo-pretext.svg)](https://www.npmjs.com/package/expo-pretext)
 [![license](https://img.shields.io/npm/l/expo-pretext.svg)](./LICENSE)
-[![tests](https://img.shields.io/badge/tests-621%20passing-brightgreen.svg)](./src/__tests__)
+[![tests](https://img.shields.io/badge/tests-637%20passing-brightgreen.svg)](./src/__tests__)
 [![benchmarks](https://img.shields.io/badge/benchmarks-docs-blue.svg)](./docs/BENCHMARKS.md)
+[![live demo](https://img.shields.io/badge/live%20demo-expo--pretext.vercel.app-ffd369.svg)](https://expo-pretext.vercel.app)
 
 <p align="center">
   <img src="https://github.com/JubaKitiashvili/expo-pretext/raw/main/assets/demos/hero.gif" width="720" alt="expo-pretext demo reel" />
@@ -173,6 +174,32 @@ function ZoomableText({ text, maxWidth }) {
   return <Animated.Text style={[baseStyle, zoom.animatedStyle]}>{text}</Animated.Text>
 }
 ```
+
+### Balanced headlines + widow-free paragraphs (CSS `text-wrap: balance` / `pretty`)
+
+Chrome 114+ shipped `text-wrap: balance`; Safari 17.5 followed. Firefox took a year. On React Native, neither iOS nor Android has any equivalent. `<BalancedText>` / `<PrettyText>` ship both on every platform — pixel-identical across iOS, Android, and Expo Web. Under 10 µs per invocation.
+
+```tsx
+import { BalancedText, PrettyText } from 'expo-pretext'
+
+// Balanced — no lonely last word
+<BalancedText
+  style={{ fontFamily: 'Inter', fontSize: 32, fontWeight: '700', lineHeight: 40 }}
+  maxWidth={cardWidth}
+>
+  {headline}
+</BalancedText>
+
+// Pretty — widow-free paragraph tails
+<PrettyText
+  style={{ fontFamily: 'Georgia', fontSize: 16, lineHeight: 24 }}
+  maxWidth={columnWidth}
+>
+  {articleText}
+</PrettyText>
+```
+
+See the [live web playground](https://expo-pretext.vercel.app) — same demo on iOS, Android, and a browser at the URL above.
 
 ### Line-by-line rendering (bypasses Android wrap/cut-off bugs)
 

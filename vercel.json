@@ -1,7 +1,7 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "installCommand": "cd example && npm install --no-audit --no-fund",
-  "buildCommand": "cd example && npx expo export --platform web --output-dir dist",
+  "buildCommand": null,
+  "installCommand": null,
   "outputDirectory": "example/dist",
   "framework": null,
   "cleanUrls": true,

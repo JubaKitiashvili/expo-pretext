@@ -1,5 +1,43 @@
 # Changelog
 
+## 1.1.0 — 2026-04-18 — Balance + Pretty
+
+### Added
+
+- **`<BalancedText>`** — CSS `text-wrap: balance` semantics on every
+  platform. Eliminates the "lonely last word" pattern in headlines and
+  subtitles via a bisection search on container width (≤ 8 layout calls
+  per invocation, typically < 10 µs). Works identically on iOS, Android,
+  and Expo Web — no browser version drift.
+- **`<PrettyText>`** — CSS `text-wrap: pretty` semantics. Detects a
+  widowed last line and rewraps the tail so the paragraph doesn't end
+  with a single word.
+- **`balanceLayout()`, `balanceLayoutWithLines()`, `prettyLayout()`,
+  `layoutWithWrap()`** — imperative versions for FlashList cell
+  measurement, custom renderers, and per-frame use.
+
+### Why these ship on every platform (not just web CSS)
+
+Chrome 114+ and Safari 17.5+ implement `text-wrap: balance`; Firefox
+lagged for a year; Chrome 117+ has `text-wrap: pretty` but Safari and
+Firefox don't. On RN, neither iOS nor Android has any equivalent at all.
+We implement the algorithm in JS so iOS, Android, and Web all get the
+same output — pixel-identical across platforms.
+
+### Example app
+
+- **Balanced Headlines demo** — side-by-side greedy vs. balanced with a
+  width slider. Same demo renders identically on iOS simulator, Android
+  emulator, and the live web build.
+- **Live web playground** deployed at
+  [`https://expo-pretext.vercel.app`](https://expo-pretext.vercel.app) —
+  every demo accessible in a browser, no install required.
+
+### Tests
+
+- 637 passing (was 621). `tsc --noEmit` clean. Snapshot baseline
+  unchanged.
+
 ## 1.0.0 — 2026-04-17 — Production Ready 🎉
 
 First production-ready release. Closes the community-priority RN/Expo text-measurement gaps identified in April 2026 ecosystem research.
