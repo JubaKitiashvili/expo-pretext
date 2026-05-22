@@ -74,6 +74,7 @@ export type PreparedCore = {
   simpleLineWalkFastPath: boolean
   segLevels: Int8Array | null
   breakableFitAdvances: (number[] | null)[]
+  breakablePreferredBreaks: (number[] | null)[]
   discretionaryHyphenWidth: number
   tabStopAdvance: number
   chunks: PreparedLineChunk[]
@@ -116,6 +117,7 @@ function createEmptyPrepared(
     simpleLineWalkFastPath: true,
     segLevels: null,
     breakableFitAdvances: [],
+    breakablePreferredBreaks: [],
     discretionaryHyphenWidth: 0,
     tabStopAdvance: 0,
     chunks: [],
@@ -204,42 +206,56 @@ function buildBaseCjkUnits(
   return units
 }
 
-function mergeKeepAllTextUnits(units: MeasuredTextUnit[]): MeasuredTextUnit[] {
+function mergeKeepAllTextUnits(
+  segText: string,
+  units: MeasuredTextUnit[],
+  breakAfterPunctuation: boolean,
+): MeasuredTextUnit[] {
   if (units.length <= 1) return units
 
   const merged: MeasuredTextUnit[] = []
-  let currentTextParts = [units[0]!.text]
-  let currentStart = units[0]!.start
-  let currentContainsCJK = isCJK(units[0]!.text)
-  let currentCanContinue = canContinueKeepAllTextRun(units[0]!.text)
+  let groupStart = -1
+  let groupContainsCJK = false
 
-  function flushCurrent(): void {
+  function pushMergedUnit(start: number, end: number): void {
+    const sourceStart = units[start]!.start
+    const sourceEnd = end < units.length ? units[end]!.start : segText.length
     merged.push({
-      text: currentTextParts.length === 1 ? currentTextParts[0]! : currentTextParts.join(''),
-      start: currentStart,
+      text: segText.slice(sourceStart, sourceEnd),
+      start: sourceStart,
     })
   }
 
-  for (let i = 1; i < units.length; i++) {
-    const next = units[i]!
-    const nextContainsCJK = isCJK(next.text)
-    const nextCanContinue = canContinueKeepAllTextRun(next.text)
+  function flushGroup(end: number): void {
+    if (groupStart < 0) return
 
-    if (currentContainsCJK && currentCanContinue) {
-      currentTextParts.push(next.text)
-      currentContainsCJK = currentContainsCJK || nextContainsCJK
-      currentCanContinue = nextCanContinue
-      continue
+    if (groupContainsCJK) {
+      if (groupStart + 1 === end) {
+        merged.push(units[groupStart]!)
+      } else {
+        pushMergedUnit(groupStart, end)
+      }
+    } else {
+      for (let i = groupStart; i < end; i++) merged.push(units[i]!)
     }
 
-    flushCurrent()
-    currentTextParts = [next.text]
-    currentStart = next.start
-    currentContainsCJK = nextContainsCJK
-    currentCanContinue = nextCanContinue
+    groupStart = -1
+    groupContainsCJK = false
   }
 
-  flushCurrent()
+  for (let i = 0; i < units.length; i++) {
+    const unit = units[i]!
+    if (
+      groupStart >= 0 &&
+      !canContinueKeepAllTextRun(units[i - 1]!.text, breakAfterPunctuation)
+    ) {
+      flushGroup(i)
+    }
+    if (groupStart < 0) groupStart = i
+    groupContainsCJK = groupContainsCJK || isCJK(unit.text)
+  }
+
+  flushGroup(units.length)
   return merged
 }
 
@@ -297,6 +313,30 @@ function getGraphemeWidthsFromMap(
   }
 
   return widths
+}
+
+function isPreferredBreakGrapheme(grapheme: string): boolean {
+  return (
+    grapheme === '-' ||
+    grapheme === '\u058A' ||
+    grapheme === '\u2010' ||
+    grapheme === '\u2012' ||
+    grapheme === '\u2013' ||
+    grapheme === '\u2014'
+  )
+}
+
+function getBreakablePreferredBreaks(text: string): number[] | null {
+  if (!/[-\u058A\u2010\u2012\u2013\u2014]/u.test(text)) return null
+
+  const breaks: number[] = []
+  let graphemeIndex = 0
+  for (const gs of getSharedGraphemeSegmenter().segment(text)) {
+    graphemeIndex++
+    if (isPreferredBreakGrapheme(gs.segment)) breaks.push(graphemeIndex)
+  }
+
+  return breaks.length === 0 ? null : breaks
 }
 
 // Build cumulative prefix widths from per-grapheme widths.
@@ -364,6 +404,7 @@ function buildFromAnalysis(
   let simpleLineWalkFastPath = analysis.chunks.length <= 1
   const segStarts = includeSegments ? [] as number[] : null
   const breakableFitAdvances: (number[] | null)[] = []
+  const breakablePreferredBreaks: (number[] | null)[] = []
   const segments = includeSegments ? [] as string[] : null
   const preparedStartByAnalysisIndex = Array.from<number>({ length: analysis.len })
 
@@ -375,6 +416,7 @@ function buildFromAnalysis(
     kind: SegmentBreakKind,
     start: number,
     breakableFitAdvance: number[] | null,
+    breakablePreferredBreak: number[] | null,
   ): void {
     if (kind !== 'text' && kind !== 'space' && kind !== 'zero-width-break') {
       simpleLineWalkFastPath = false
@@ -385,6 +427,7 @@ function buildFromAnalysis(
     kinds.push(kind)
     segStarts?.push(start)
     breakableFitAdvances.push(breakableFitAdvance)
+    breakablePreferredBreaks.push(breakablePreferredBreak)
     if (segments !== null) segments.push(text)
   }
 
@@ -409,6 +452,7 @@ function buildFromAnalysis(
 
     if (allowOverflowBreaks && wordLike && text.length > 1) {
       const fitAdvances = getGraphemeWidthsFromMap(text, width, widthMap)
+      const preferredBreaks = wordBreak === 'keep-all' ? null : getBreakablePreferredBreaks(text)
       pushSegment(
         text,
         width,
@@ -417,6 +461,7 @@ function buildFromAnalysis(
         kind,
         start,
         fitAdvances,
+        preferredBreaks,
       )
       return
     }
@@ -428,6 +473,7 @@ function buildFromAnalysis(
       lineEndPaintAdvance,
       kind,
       start,
+      null,
       null,
     )
   }
@@ -448,17 +494,18 @@ function buildFromAnalysis(
         segKind,
         segStart,
         null,
+        null,
       )
       continue
     }
 
     if (segKind === 'hard-break') {
-      pushSegment(segText, 0, 0, 0, segKind, segStart, null)
+      pushSegment(segText, 0, 0, 0, segKind, segStart, null, null)
       continue
     }
 
     if (segKind === 'tab') {
-      pushSegment(segText, 0, 0, 0, segKind, segStart, null)
+      pushSegment(segText, 0, 0, 0, segKind, segStart, null, null)
       continue
     }
 
@@ -468,7 +515,7 @@ function buildFromAnalysis(
       const parentWidth = widthMap.get(segText) ?? 0
       const baseUnits = buildBaseCjkUnits(segText, engineProfile)
       const measuredUnits = wordBreak === 'keep-all'
-        ? mergeKeepAllTextUnits(baseUnits)
+        ? mergeKeepAllTextUnits(segText, baseUnits, engineProfile.breakKeepAllAfterPunctuation ?? true)
         : baseUnits
 
       for (let i = 0; i < measuredUnits.length; i++) {
@@ -500,6 +547,7 @@ function buildFromAnalysis(
     simpleLineWalkFastPath,
     segLevels,
     breakableFitAdvances,
+    breakablePreferredBreaks,
     discretionaryHyphenWidth,
     tabStopAdvance,
     chunks,

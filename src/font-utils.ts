@@ -18,9 +18,10 @@ import { getNativeModule } from './ExpoPretext'
  * resolveFontFamily(['NotLoaded1', 'NotLoaded2']) // → 'NotLoaded2' (last entry)
  * ```
  */
-export function resolveFontFamily(family: string | string[]): string {
+export function resolveFontFamily(family: string | string[] | undefined | null): string {
+  if (family == null) return 'System'
   if (typeof family === 'string') return family
-  if (family.length === 0) return 'System'
+  if (!Array.isArray(family) || family.length === 0) return 'System'
   for (const name of family) {
     if (isFontLoaded(name)) return name
   }
@@ -126,8 +127,10 @@ export function isFontLoaded(fontFamily: string): boolean {
  * }
  * ```
  */
-export function validateFont(family: string | string[]): boolean {
+export function validateFont(family: string | string[] | undefined | null): boolean {
+  if (family == null) return true
   if (typeof family === 'string') return isFontLoaded(family)
+  if (!Array.isArray(family)) return true
   for (const name of family) {
     if (isFontLoaded(name)) return true
   }
@@ -137,6 +140,7 @@ export function validateFont(family: string | string[]): boolean {
 export function warnIfFontNotLoaded(style: TextStyle): void {
   if (!__DEV__) return
   const family = style.fontFamily
+  if (family == null) return
   if (typeof family === 'string') {
     if (!isFontLoaded(family)) {
       console.warn(
@@ -146,6 +150,7 @@ export function warnIfFontNotLoaded(style: TextStyle): void {
     }
     return
   }
+  if (!Array.isArray(family)) return
   // Chain: warn only if every candidate is missing.
   for (const name of family) {
     if (isFontLoaded(name)) return

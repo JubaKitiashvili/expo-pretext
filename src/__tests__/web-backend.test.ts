@@ -6,6 +6,63 @@ import { createWebBackend, type WebBackendModule } from '../web-backend'
 
 const FONT = { fontFamily: 'System', fontSize: 16 }
 
+type FakeCanvasContext = {
+  font: string
+  measureText: (text: string) => {
+    width: number
+    actualBoundingBoxLeft?: number
+    actualBoundingBoxRight?: number
+    actualBoundingBoxAscent?: number
+    actualBoundingBoxDescent?: number
+    fontBoundingBoxAscent?: number
+    fontBoundingBoxDescent?: number
+  }
+}
+
+function installFakeCanvasContext(): {
+  readonly ctx: FakeCanvasContext
+  readonly restore: () => void
+} {
+  const g = globalThis as unknown as Record<string, unknown>
+  const previous = g.OffscreenCanvas
+  const ctx: FakeCanvasContext = {
+    font: '',
+    measureText: (text: string) => ({
+      width: text.length * 10,
+      actualBoundingBoxLeft: 0,
+      actualBoundingBoxRight: text.length * 10,
+      actualBoundingBoxAscent: 12,
+      actualBoundingBoxDescent: 4,
+      fontBoundingBoxAscent: 12,
+      fontBoundingBoxDescent: 4,
+    }),
+  }
+  Object.defineProperty(g, 'OffscreenCanvas', {
+    configurable: true,
+    writable: true,
+    value: class {
+    constructor(_width: number, _height: number) {}
+    getContext(type: string): FakeCanvasContext | null {
+      return type === '2d' ? ctx : null
+    }
+    },
+  })
+  return {
+    ctx,
+    restore: () => {
+      if (previous === undefined) {
+        delete g.OffscreenCanvas
+      } else {
+        Object.defineProperty(g, 'OffscreenCanvas', {
+          configurable: true,
+          writable: true,
+          value: previous,
+        })
+      }
+    },
+  }
+}
+
 describe('createWebBackend', () => {
   test('returns object with all required methods', () => {
     const backend = createWebBackend()
@@ -71,6 +128,22 @@ describe('clearNativeCache', () => {
     const backend = createWebBackend()
     expect(() => backend.clearNativeCache()).not.toThrow()
   })
+
+  test('lets the backend pick up a canvas that appears after an earlier no-canvas lookup', () => {
+    const backend = createWebBackend()
+    expect(() => backend.segmentAndMeasure('hello', FONT)).toThrow('No canvas available')
+
+    const { restore } = installFakeCanvasContext()
+    try {
+      backend.clearNativeCache()
+      const result = backend.segmentAndMeasure('hello', FONT)
+      expect(result.segments.length).toBeGreaterThan(0)
+      expect(result.widths[0]).toBeGreaterThan(0)
+    } finally {
+      restore()
+      backend.clearNativeCache()
+    }
+  })
 })
 
 describe('setNativeCacheSize', () => {
@@ -86,6 +159,53 @@ describe('measureGraphemeWidths without canvas', () => {
     const widths = backend.measureGraphemeWidths('Hi', FONT)
     expect(widths).toHaveLength(1) // fallback: [2 * 16 * 0.55]
     expect(widths[0]).toBeGreaterThan(0)
+  })
+})
+
+describe('web Canvas font string', () => {
+  test('maps System to the unquoted RN Web system stack', () => {
+    const backend = createWebBackend()
+    const { ctx, restore } = installFakeCanvasContext()
+    try {
+      backend.clearNativeCache()
+      backend.measureGraphemeWidths('Hi', { fontFamily: 'System', fontSize: 16 })
+      expect(ctx.font).toContain('system-ui')
+      expect(ctx.font).not.toContain('"System"')
+    } finally {
+      restore()
+      backend.clearNativeCache()
+    }
+  })
+
+  test('does not quote CSS fallback stacks or generic font families', () => {
+    const backend = createWebBackend()
+    const { ctx, restore } = installFakeCanvasContext()
+    try {
+      backend.clearNativeCache()
+      backend.measureGraphemeWidths('Hi', { fontFamily: 'Arial, sans-serif', fontSize: 16 })
+      expect(ctx.font).toContain('Arial, sans-serif')
+      expect(ctx.font).not.toContain('"Arial, sans-serif"')
+
+      backend.measureGraphemeWidths('Hi', { fontFamily: 'sans-serif', fontSize: 16 })
+      expect(ctx.font).toContain('sans-serif')
+      expect(ctx.font).not.toContain('"sans-serif"')
+    } finally {
+      restore()
+      backend.clearNativeCache()
+    }
+  })
+
+  test('keeps quoting concrete custom font names with spaces', () => {
+    const backend = createWebBackend()
+    const { ctx, restore } = installFakeCanvasContext()
+    try {
+      backend.clearNativeCache()
+      backend.measureGraphemeWidths('Hi', { fontFamily: 'Helvetica Neue', fontSize: 16 })
+      expect(ctx.font).toContain('"Helvetica Neue"')
+    } finally {
+      restore()
+      backend.clearNativeCache()
+    }
   })
 })
 

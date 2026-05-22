@@ -15,7 +15,7 @@ export type TextStyle = {
    * `'monospace'`, and common built-ins like `'Helvetica'`,
    * `'Georgia'`, `'Menlo'`) are always reported as loaded.
    */
-  fontFamily: string | string[]
+  fontFamily?: string | string[] | null
   fontSize: number
   lineHeight?: number
   fontWeight?: '400' | '500' | '600' | '700' | 'bold' | 'normal'

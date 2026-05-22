@@ -7,7 +7,7 @@
 // that prepare() uses when the native module is unavailable.
 
 import { describe, test, expect } from 'bun:test'
-import { buildPreparedText, buildPreparedTextWithSegments } from '../build'
+import { buildPreparedText, buildPreparedTextWithSegments, type PrepareOptions } from '../build'
 import {
   layout,
   layoutWithLines,
@@ -19,6 +19,12 @@ import { analyzeText } from '../analysis'
 import type { TextStyle, NativeSegmentResult } from '../types'
 
 const STYLE: TextStyle = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
+const PROFILE = { carryCJKAfterClosingQuote: false }
+const CHAR_WIDTH = STYLE.fontSize * 0.55
+
+function measureWidth(text: string): number {
+  return text.length * CHAR_WIDTH
+}
 
 // ---------------------------------------------------------------------------
 // Helpers — mirrors prepare.ts's fallback when native module is unavailable
@@ -43,24 +49,39 @@ function buildWidthMap(result: NativeSegmentResult): Map<string, number> {
   return map
 }
 
-function makePrepared(text: string, style: TextStyle = STYLE) {
+function makePrepared(text: string, style: TextStyle = STYLE, options?: PrepareOptions) {
   if (!text) {
-    const analysis = analyzeText([], [], { carryCJKAfterClosingQuote: false }, undefined)
-    return buildPreparedText(analysis, new Map(), style)
+    const analysis = analyzeText([], [], PROFILE, options?.whiteSpace, options?.wordBreak)
+    return buildPreparedText(analysis, new Map(), style, options)
   }
   const result = estimateSegments(text, style)
-  const analysis = analyzeText(result.segments, result.isWordLike, { carryCJKAfterClosingQuote: false }, undefined)
-  return buildPreparedText(analysis, buildWidthMap(result), style)
+  const analysis = analyzeText(result.segments, result.isWordLike, PROFILE, options?.whiteSpace, options?.wordBreak)
+  return buildPreparedText(analysis, buildWidthMap(result), style, options)
 }
 
-function makePreparedWithSegments(text: string, style: TextStyle = STYLE) {
+function makePreparedWithSegments(text: string, style: TextStyle = STYLE, options?: PrepareOptions) {
   if (!text) {
-    const analysis = analyzeText([], [], { carryCJKAfterClosingQuote: false }, undefined)
-    return buildPreparedTextWithSegments(analysis, new Map(), style)
+    const analysis = analyzeText([], [], PROFILE, options?.whiteSpace, options?.wordBreak)
+    return buildPreparedTextWithSegments(analysis, new Map(), style, options)
   }
   const result = estimateSegments(text, style)
-  const analysis = analyzeText(result.segments, result.isWordLike, { carryCJKAfterClosingQuote: false }, undefined)
-  return buildPreparedTextWithSegments(analysis, buildWidthMap(result), style)
+  const analysis = analyzeText(result.segments, result.isWordLike, PROFILE, options?.whiteSpace, options?.wordBreak)
+  return buildPreparedTextWithSegments(analysis, buildWidthMap(result), style, options)
+}
+
+function makePreparedFromNativeSegments(
+  segments: string[],
+  isWordLike: boolean[],
+  style: TextStyle = STYLE,
+  options?: PrepareOptions,
+) {
+  const result: NativeSegmentResult = {
+    segments,
+    isWordLike,
+    widths: segments.map(segment => measureWidth(segment)),
+  }
+  const analysis = analyzeText(result.segments, result.isWordLike, PROFILE, options?.whiteSpace, options?.wordBreak)
+  return buildPreparedTextWithSegments(analysis, buildWidthMap(result), style, options)
 }
 
 // ---------------------------------------------------------------------------
@@ -171,6 +192,73 @@ describe('layoutWithLines()', () => {
     for (const line of result.lines) {
       expect(line.width).toBeGreaterThanOrEqual(0)
     }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Pretext parity regressions
+// ---------------------------------------------------------------------------
+
+describe('pretext parity regressions', () => {
+  test('prefers hyphen-like boundaries inside overlong breakable runs', () => {
+    const text = 'https://alpha-beta-gamma-delta.example.test/path'
+    const prepared = makePreparedWithSegments(text)
+    const preparedDebug = prepared as unknown as {
+      segments: string[]
+    }
+    const width = measureWidth('https://alpha-bet') + 0.1
+
+    expect(preparedDebug.segments).toEqual([text])
+
+    const batched = layoutWithLines(prepared, width)
+    expect(batched.lines[0]?.text).toBe('https://alpha-')
+    expect(batched.lines[1]?.text).toBe('beta-gamma-')
+
+    const unicodeDash = makePreparedWithSegments('https://alpha\u2010beta\u2010gamma.example.test/path')
+    const unicodeWidth = measureWidth('https://alpha\u2010b') + 0.1
+    expect(layoutWithLines(unicodeDash, unicodeWidth).lines[0]?.text).toBe('https://alpha\u2010')
+  })
+
+  test('does not prefer hyphen-like boundaries in keep-all runs', () => {
+    const prepared = makePreparedFromNativeSegments(
+      ['foo', '-', 'bar', '日本語'],
+      [true, false, true, true],
+      STYLE,
+      { wordBreak: 'keep-all' },
+    ) as unknown as {
+      segments: string[]
+      breakablePreferredBreaks: (number[] | null)[]
+    }
+
+    expect(prepared.segments).toEqual(['foo-', 'bar日本語'])
+    expect(prepared.breakablePreferredBreaks).toEqual([null, null])
+  })
+
+  test('keeps no-space word-internal symbol chains together as one breakable segment', () => {
+    for (const symbol of ['`', '~', '!', '@', '#', '^', '&', '*', '=', '/', '{', '}', '[', ']', '|', '"', '<', '>', '♂', '╥', '∟', '┌']) {
+      const prepared = makePreparedFromNativeSegments(['foo', symbol, 'bar'], [true, false, true]) as unknown as {
+        segments: string[]
+      }
+      expect(prepared.segments).toEqual([`foo${symbol}bar`])
+    }
+
+    expect((makePreparedFromNativeSegments(['foo', '#', '$', 'bar'], [true, false, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo#$bar'])
+    expect((makePreparedFromNativeSegments(
+      ['#', 'hashtag', ' ', 'mention', '@', 'domain'],
+      [false, true, false, true, false, true],
+    ) as unknown as { segments: string[] }).segments).toEqual([
+      '#hashtag',
+      ' ',
+      'mention@domain',
+    ])
+  })
+
+  test('keeps browser break symbols out of no-space word-internal symbol chains', () => {
+    expect((makePreparedFromNativeSegments(['foo', '?', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo?', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '\u2014', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo', '\u2014', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '\u2026', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo\u2026', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '\u203C', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo', '\u203C', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '🙂', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo', '🙂', 'bar'])
   })
 })
 

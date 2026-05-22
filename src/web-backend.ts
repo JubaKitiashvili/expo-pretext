@@ -49,11 +49,23 @@ function getMeasureContext(): MeasureContext | null {
 
 // ─── Font Application ────────────────────────────────────
 let lastFontString = ''
+const WEB_SYSTEM_FONT_STACK =
+  'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+const WEB_GENERIC_FONT_FAMILIES = new Set(['serif', 'sans-serif', 'monospace', 'system-ui'])
+
+function canvasFontFamily(family: string | undefined | null): string {
+  if (family == null || family === 'System' || family === 'system' || family === 'system-ui') {
+    return WEB_SYSTEM_FONT_STACK
+  }
+  const normalized = family.trim().toLowerCase()
+  if (family.includes(',') || WEB_GENERIC_FONT_FAMILIES.has(normalized)) return family
+  return `"${family}"`
+}
 
 function applyFont(ctx: MeasureContext, font: FontDescriptor): void {
   const weight = font.fontWeight ?? '400'
   const style = font.fontStyle === 'italic' ? 'italic' : 'normal'
-  const fontString = `${style} ${weight} ${font.fontSize}px "${font.fontFamily}"`
+  const fontString = `${style} ${weight} ${font.fontSize}px ${canvasFontFamily(font.fontFamily)}`
   if (fontString !== lastFontString) {
     ctx.font = fontString
     lastFontString = fontString
@@ -222,6 +234,7 @@ export function createWebBackend(): WebBackendModule {
     clearNativeCache() {
       webCache.clear()
       webInkCache.clear()
+      measureCtx = undefined
       lastFontString = ''
     },
 

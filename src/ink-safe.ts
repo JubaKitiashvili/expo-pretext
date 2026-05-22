@@ -77,7 +77,9 @@ export function getInkSafePadding(
   // baked into the font file, not the fontStyle property.
   const familyNames = typeof style.fontFamily === 'string'
     ? [style.fontFamily]
-    : style.fontFamily
+    : Array.isArray(style.fontFamily)
+      ? style.fontFamily
+      : []
   const isItalic = style.fontStyle === 'italic' ||
     familyNames.some((name) => /italic|oblique/i.test(name))
 

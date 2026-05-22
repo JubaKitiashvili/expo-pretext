@@ -1,8 +1,10 @@
 import { describe, test, expect } from 'bun:test'
 import {
   textStyleToFontDescriptor,
+  resolveFontFamily,
   getFontKey,
   getLineHeight,
+  validateFont,
 } from '../font-utils'
 import type { TextStyle } from '../types'
 
@@ -34,6 +36,32 @@ describe('font-utils', () => {
         fontWeight: undefined,
         fontStyle: undefined,
       })
+    })
+
+    test('uses System when fontFamily is omitted', () => {
+      const desc = textStyleToFontDescriptor({ fontSize: 14 })
+      expect(desc.fontFamily).toBe('System')
+      expect(desc.fontSize).toBe(14)
+    })
+  })
+
+  describe('resolveFontFamily', () => {
+    test('uses System for missing or empty families', () => {
+      expect(resolveFontFamily(undefined)).toBe('System')
+      expect(resolveFontFamily(null)).toBe('System')
+      expect(resolveFontFamily([])).toBe('System')
+    })
+
+    test('treats non-array defensive input as System instead of throwing', () => {
+      expect(resolveFontFamily(42 as unknown as string[])).toBe('System')
+    })
+  })
+
+  describe('validateFont', () => {
+    test('accepts missing or non-array defensive input', () => {
+      expect(validateFont(undefined)).toBe(true)
+      expect(validateFont(null)).toBe(true)
+      expect(validateFont(42 as unknown as string[])).toBe(true)
     })
   })
 
