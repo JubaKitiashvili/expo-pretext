@@ -155,6 +155,7 @@ export type { BudgetedPrepareResult } from './perf-budget'
 // --- Utilities ---
 export { clearCache, setLocale } from './layout'
 export { setCacheBudget, getCacheStats } from './cache'
+export { PRETEXT_BEHAVIOR_FIXES } from './capabilities'
 
 // --- Kinsoku Shori (CJK line-break prohibitions) ---
 // Read-only sets exposing the characters forbidden at line start (closing
