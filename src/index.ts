@@ -36,7 +36,18 @@ export { measureHeights, measureTokenWidth } from './prepare'
 
 // --- Core API ---
 export { prepare, prepareWithSegments } from './prepare'
-export { layout, layoutWithLines, layoutNextLine, walkLineRanges, measureNaturalWidth, getLastLineWidth } from './layout'
+export {
+  layout,
+  layoutWithLines,
+  layoutNextLine,
+  layoutNextLineRange,
+  walkLineRanges,
+  measureNaturalWidth,
+  measureLineGeometry,
+  getLastLineWidth,
+  materializeLineRange,
+} from './layout'
+export type { LineGeometry } from './layout'
 
 // --- Rich Inline (formerly inline-flow) ---
 export { prepareInlineFlow, walkInlineFlowLines, measureInlineFlow } from './rich-inline'
