@@ -28,13 +28,18 @@ export function resolveFontFamily(family: string | string[]): string {
 }
 
 export function textStyleToFontDescriptor(style: TextStyle): FontDescriptor {
-  return {
+  // Only include optional fields when defined. The Android native module types
+  // `font` as Map<String, Any> (non-null values); a key whose value is
+  // `undefined` fails JSI conversion ("Value is undefined, expected an Object").
+  // Omitting absent fields is safe — the Kotlin side already defaults them.
+  const descriptor: FontDescriptor = {
     fontFamily: resolveFontFamily(style.fontFamily),
     fontSize: style.fontSize,
-    fontWeight: style.fontWeight,
-    fontStyle: style.fontStyle,
-    letterSpacing: style.letterSpacing,
   }
+  if (style.fontWeight !== undefined) descriptor.fontWeight = style.fontWeight
+  if (style.fontStyle !== undefined) descriptor.fontStyle = style.fontStyle
+  if (style.letterSpacing !== undefined) descriptor.letterSpacing = style.letterSpacing
+  return descriptor
 }
 
 export function getFontKey(style: TextStyle): string {
