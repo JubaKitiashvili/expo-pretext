@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'bun:test'
+import { describe, test, expect, mock } from 'bun:test'
 import {
   textStyleToFontDescriptor,
   resolveFontFamily,
@@ -62,6 +62,16 @@ describe('font-utils', () => {
       expect(validateFont(undefined)).toBe(true)
       expect(validateFont(null)).toBe(true)
       expect(validateFont(42 as unknown as string[])).toBe(true)
+    })
+
+    test('checks string font families through expo-font instead of defensive non-array fallback', () => {
+      mock.module('expo-font', () => ({
+        isLoaded: (family: string) => family === 'LoadedCustomFont',
+      }))
+
+      expect(validateFont('MissingCustomFont')).toBe(false)
+      expect(validateFont('LoadedCustomFont')).toBe(true)
+      expect(validateFont(['MissingCustomFont', 'LoadedCustomFont'])).toBe(true)
     })
   })
 
