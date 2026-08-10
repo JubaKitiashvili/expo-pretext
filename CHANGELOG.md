@@ -1,5 +1,58 @@
 # Changelog
 
+## 1.1.1 — 2026-08-10 — Android hotfix
+
+Android was non-functional from 1.0.0 through 1.1.0: the native module
+never compiled, so every call silently fell back to JS estimates. iOS and
+Web were unaffected. Both defects were reported and fixed by the
+community — thank you [@shahzaib78631](https://github.com/shahzaib78631)
+and [@arnolicious](https://github.com/arnolicious).
+
+### Fixed
+
+- **Android autolinking** ([#2], [#3], [#4]) — the package shipped
+  `android/src/main/java/expo/modules/pretext/ExpoPretextModule.kt` but no
+  `android/build.gradle`. Expo's Android autolinking locates each module
+  by its Gradle build file, so `expo-modules-autolinking resolve -p
+  android` returned no project, the Kotlin was never compiled, and every
+  call logged `Native module not available. Using JS estimates.` — even in
+  a real development or release build. Added the standard expo-module
+  `android/build.gradle`, including the `com.facebook.react:react-android`
+  dependency that `ReactFontManager` needs.
+
+- **`segmentAndMeasure` crash on Android** ([#3], [#5]) — with the module
+  finally loading, `textStyleToFontDescriptor()` always emitted
+  `fontWeight`, `fontStyle` and `letterSpacing`, even when unset. The
+  Kotlin functions type `font` as `Map<String, Any>` (non-null values), and
+  Expo's Android JSI converter rejects an `undefined` value for a non-null
+  entry:
+
+  ```
+  [segmentAndMeasure] Cannot convert '[object Object]' to a Kotlin type.
+  Value is undefined, expected an Object
+  ```
+
+  iOS's converter tolerates it, which is why this was Android-only. The
+  descriptor now carries only the fields that are actually set; the Kotlin
+  side already defaults each one (`(fontMap["fontWeight"] as? String) ?:
+  "400"`). `textStyleToFontDescriptor()` is the single funnel for every
+  native call, so this covers all measurement paths.
+
+### Upgrading
+
+No API changes, no behavior change on iOS or Web. Android users must
+rebuild the development client — a JS-only reload will not pick up a
+native module that was never compiled before.
+
+### Tests
+
+637 passing, `tsc --noEmit` clean, height snapshot baseline unchanged.
+
+[#2]: https://github.com/JubaKitiashvili/expo-pretext/issues/2
+[#3]: https://github.com/JubaKitiashvili/expo-pretext/issues/3
+[#4]: https://github.com/JubaKitiashvili/expo-pretext/pull/4
+[#5]: https://github.com/JubaKitiashvili/expo-pretext/pull/5
+
 ## 1.1.0 — 2026-04-18 — Balance + Pretty
 
 ### Added
