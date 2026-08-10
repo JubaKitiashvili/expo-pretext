@@ -50,10 +50,47 @@ function getMeasureContext(): MeasureContext | null {
 // ─── Font Application ────────────────────────────────────
 let lastFontString = ''
 
+// What react-native-web resolves `fontFamily: 'System'` to.
+const WEB_SYSTEM_FONT_STACK =
+  'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif'
+
+const WEB_GENERIC_FONT_FAMILIES = new Set([
+  'serif',
+  'sans-serif',
+  'monospace',
+  'cursive',
+  'fantasy',
+  'system-ui',
+  'ui-serif',
+  'ui-sans-serif',
+  'ui-monospace',
+  'ui-rounded',
+])
+
+// Render a family name into the `font` shorthand.
+//
+// A concrete family has to be quoted or a name containing spaces is parsed as
+// several families. A CSS keyword must NOT be quoted — `"sans-serif"` is a
+// request for a font literally named "sans-serif", which does not exist, so the
+// browser silently falls back and every measurement is taken in the wrong font.
+// The same applies to a comma-separated stack and to RN's `'System'`, which is
+// not a real family at all.
+function canvasFontFamily(family: string | undefined | null): string {
+  if (family == null) return WEB_SYSTEM_FONT_STACK
+
+  const trimmed = family.trim()
+  if (trimmed === '') return WEB_SYSTEM_FONT_STACK
+  if (trimmed === 'System' || trimmed === 'system') return WEB_SYSTEM_FONT_STACK
+  if (trimmed.includes(',')) return trimmed
+  if (WEB_GENERIC_FONT_FAMILIES.has(trimmed.toLowerCase())) return trimmed
+
+  return `"${trimmed}"`
+}
+
 function applyFont(ctx: MeasureContext, font: FontDescriptor): void {
   const weight = font.fontWeight ?? '400'
   const style = font.fontStyle === 'italic' ? 'italic' : 'normal'
-  const fontString = `${style} ${weight} ${font.fontSize}px "${font.fontFamily}"`
+  const fontString = `${style} ${weight} ${font.fontSize}px ${canvasFontFamily(font.fontFamily)}`
   if (fontString !== lastFontString) {
     ctx.font = fontString
     lastFontString = fontString
@@ -222,6 +259,11 @@ export function createWebBackend(): WebBackendModule {
     clearNativeCache() {
       webCache.clear()
       webInkCache.clear()
+      // getMeasureContext() memoises a null result too, so a backend created
+      // before a canvas existed — SSR, or a hydration pass that runs ahead of
+      // the DOM — would keep estimating forever. Dropping the memo lets the
+      // next call look again.
+      measureCtx = undefined
       lastFontString = ''
     },
 
