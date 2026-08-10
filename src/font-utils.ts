@@ -183,6 +183,11 @@ export type FontMetrics = {
  * Returns metrics for the exact font as rendered by iOS TextKit / Android TextPaint.
  * Useful for precise baseline alignment, vertical centering, and custom text decoration.
  *
+ * `descender` is negative on every platform (below the baseline). On Android,
+ * `xHeight` and `capHeight` are measured from the outline of a reference glyph
+ * (`x` / `H`), because `Paint` exposes no equivalent of iOS's `UIFont.xHeight` —
+ * expect sub-pixel differences from iOS for the same nominal font.
+ *
  * @param style - Text style to get metrics for
  * @returns Native font metrics, or estimates if native module unavailable
  *

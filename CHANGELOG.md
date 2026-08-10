@@ -4,9 +4,18 @@
 
 Android was non-functional from 1.0.0 through 1.1.0: the native module
 never compiled, so every call silently fell back to JS estimates. iOS and
-Web were unaffected. Both defects were reported and fixed by the
+Web were unaffected. The first two defects were reported and fixed by the
 community — thank you [@shahzaib78631](https://github.com/shahzaib78631)
-and [@arnolicious](https://github.com/arnolicious).
+and [@arnolicious](https://github.com/arnolicious). The third surfaced
+during on-device verification of the first two, since this is the first
+release in which the Kotlin ever ran.
+
+Measured on a Pixel 9 Pro emulator (API 37, Expo 55, RN 0.83.4): height
+prediction against `RN Text onLayout` improves from **9/24 to 13/24** of
+the sample corpus, because measurement now comes from real `TextPaint`
+advances instead of a `fontSize * 0.55` per-character estimate. The
+remaining mismatches are tracked separately — they under-predict by one
+line on narrow widths and are unrelated to these fixes.
 
 ### Fixed
 
@@ -38,11 +47,38 @@ and [@arnolicious](https://github.com/arnolicious).
   "400"`). `textStyleToFontDescriptor()` is the single funnel for every
   native call, so this covers all measurement paths.
 
+- **`getFontMetrics()` on Android** — two defects, invisible until the
+  module started loading:
+
+  - `descender` had the wrong sign. Android's `Paint.FontMetrics.descent`
+    is positive below the baseline, while iOS's `UIFont.descender`, the web
+    Canvas backend and the JS fallback all report it negative — as the
+    documented contract says. Android now negates it, so all four backends
+    agree. `getInkSafePadding()` / `<InkSafeText>` are unaffected either
+    way: both call sites already pass the value through `Math.abs()`.
+    `measureInkSafe()` carried the same inverted sign and is fixed too.
+
+  - `xHeight` and `capHeight` were hardcoded as `textSize * 0.52` and
+    `textSize * 0.72` — the JS fallback's guesses, not the font's real
+    metrics, despite the docs promising "metrics for the exact font as
+    rendered by … Android TextPaint". Android's `Paint` exposes no
+    x-height/cap-height, so they are now measured from the outline of a
+    reference glyph (`x` and `H`) via `Paint.getTextPath`, which gives
+    sub-pixel bounds. At `fontSize: 16` the system font now reports
+    `xHeight 8.453` / `capHeight 11.375` (Roboto's true 0.528 / 0.711
+    ratios) instead of the old `8.32` / `11.52`, and `serif` correctly
+    reports Noto's different `8.578` / `11.422`.
+
 ### Upgrading
 
 No API changes, no behavior change on iOS or Web. Android users must
 rebuild the development client — a JS-only reload will not pick up a
 native module that was never compiled before.
+
+`getFontMetrics().descender` now returns a negative number on Android, as
+it always has on every other platform. Nothing could have depended on the
+old positive value, since the Android module never loaded before this
+release.
 
 ### Tests
 

@@ -3,6 +3,8 @@ package expo.modules.pretext
 import android.graphics.Bitmap
 import android.graphics.Canvas
 import android.graphics.Paint
+import android.graphics.Path
+import android.graphics.RectF
 import android.graphics.Typeface
 import android.text.TextPaint
 import com.facebook.react.common.assets.ReactFontManager
@@ -166,7 +168,10 @@ class ExpoPretextModule : Module() {
                 "width" to bounds.width, "height" to bounds.height,
                 "advance" to advance,
                 "ascender" to -metrics.ascent.toDouble(),
-                "descender" to metrics.descent.toDouble(),
+                // Android's `descent` is positive below the baseline; iOS's
+                // `font.descender` and the JS/web fallbacks are negative.
+                // Negate so every platform reports the same sign convention.
+                "descender" to -metrics.descent.toDouble(),
             )
         }
 
@@ -176,11 +181,40 @@ class ExpoPretextModule : Module() {
             val metrics = paint.fontMetrics
             mapOf(
                 "ascender" to -metrics.ascent.toDouble(),  // Android ascent is negative
-                "descender" to metrics.descent.toDouble(),
-                "xHeight" to (paint.textSize * 0.52).toDouble(),  // approximate x-height
-                "capHeight" to (paint.textSize * 0.72).toDouble(),  // approximate cap-height
+                // Android's `descent` is positive below the baseline; iOS's
+                // `font.descender` and the JS/web fallbacks are negative.
+                // Negate so every platform reports the same sign convention.
+                "descender" to -metrics.descent.toDouble(),
+                "xHeight" to glyphInkHeight(paint, "x", 0.52f),
+                "capHeight" to glyphInkHeight(paint, "H", 0.72f),
                 "lineGap" to metrics.leading.toDouble(),
             )
+        }
+    }
+
+    /**
+     * Ink height of a single reference glyph, in pixels.
+     *
+     * Android's Paint exposes no x-height / cap-height metric (unlike iOS's
+     * UIFont.xHeight / capHeight, which read the OS/2 table), so we measure the
+     * outline of a reference glyph instead: "x" for x-height, "H" for
+     * cap-height. Paint.getTextPath gives sub-pixel bounds, unlike
+     * Paint.getTextBounds which rounds to whole pixels.
+     *
+     * Falls back to `textSize * ratio` when the font has no outline for the
+     * glyph (bitmap/colour fonts, or a missing glyph).
+     */
+    private fun glyphInkHeight(paint: TextPaint, glyph: String, fallbackRatio: Float): Double {
+        return try {
+            val path = Path()
+            paint.getTextPath(glyph, 0, glyph.length, 0f, 0f, path)
+            val bounds = RectF()
+            @Suppress("DEPRECATION")
+            path.computeBounds(bounds, true)
+            val height = bounds.height()
+            if (height > 0f) height.toDouble() else (paint.textSize * fallbackRatio).toDouble()
+        } catch (e: Exception) {
+            (paint.textSize * fallbackRatio).toDouble()
         }
     }
 
