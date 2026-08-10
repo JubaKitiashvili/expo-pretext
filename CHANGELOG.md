@@ -69,6 +69,13 @@ line on narrow widths and are unrelated to these fixes.
     ratios) instead of the old `8.32` / `11.52`, and `serif` correctly
     reports Noto's different `8.578` / `11.422`.
 
+- **Packaging** — `files` now excludes `android/build/`, `android/.cxx/`,
+  `android/.gradle/` and `ios/build/`. The `files` whitelist overrides
+  `.gitignore`, so a local Gradle build inside `android/` leaked 261
+  compiled artifacts (`.dex`, transform caches) into the tarball —
+  425 kB instead of 158 kB. Newly possible as of this release, since
+  `android/` could never be built before.
+
 ### Upgrading
 
 No API changes, no behavior change on iOS or Web. Android users must
