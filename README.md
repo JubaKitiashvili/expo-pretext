@@ -2,11 +2,18 @@
 
 **The text layout primitive React Native was missing.** Native measurement, ~0.0002ms pure-JS layout arithmetic, and full control over how text flows — around shapes, inside gestures, through animations. All with regular `<View>` and `<Text>`. No Skia canvas, no SVG tricks.
 
-**v1.0.0 is here.** Production-ready. Closes [18+ open React Native text bugs](#v100--fixes-for-18-open-rnexpo-text-bugs) — Android cut-off clusters, italic clipping, `numberOfLines` edge cases, font-load races, silent font fallback, and CJK typography.
+**v1.2.0 — Android is fixed.** Through 1.1.0 the Android native module never
+compiled, so every measurement on Android silently fell back to JS estimates.
+It now loads, and predicted heights match `RN Text` on every row of the sample
+corpus. **If you are on 1.1.0 or earlier and ship Android, upgrade and rebuild
+your development client** — a JS-only reload will not pick up a native module
+that was never compiled. Details in the [changelog](./CHANGELOG.md).
+
+Production-ready since v1.0.0. Closes [18+ open React Native text bugs](#v100--fixes-for-18-open-rnexpo-text-bugs) — Android cut-off clusters, italic clipping, `numberOfLines` edge cases, font-load races, silent font fallback, and CJK typography.
 
 [![npm](https://img.shields.io/npm/v/expo-pretext.svg)](https://www.npmjs.com/package/expo-pretext)
 [![license](https://img.shields.io/npm/l/expo-pretext.svg)](./LICENSE)
-[![tests](https://img.shields.io/badge/tests-637%20passing-brightgreen.svg)](./src/__tests__)
+[![tests](https://img.shields.io/badge/tests-663%20passing-brightgreen.svg)](./src/__tests__)
 [![benchmarks](https://img.shields.io/badge/benchmarks-docs-blue.svg)](./docs/BENCHMARKS.md)
 [![live demo](https://img.shields.io/badge/live%20demo-expo--pretext.vercel.app-ffd369.svg)](https://expo-pretext.vercel.app)
 
@@ -350,7 +357,7 @@ const { padding, inkWidth } = getInkSafePadding(text, style)
 | **Hyphenation** | `compileHyphenationPatterns`, `hyphenate`, `hyphenateAndJoin` (Liang-Knuth; bring your own TeX patterns) |
 | **Skia adapter** | `measureRuns` — per-run bounds + advance + font for Skia Paragraph |
 | **Developer tools** | `<PretextDebugOverlay>`, `compareDebugMeasurement`, `buildHeightSnapshot`, `compareHeightSnapshots`, `prepareWithBudget`, `PrepareBudgetTracker` |
-| **Power API** | `prepare`, `layout`, `layoutWithLines`, `layoutNextLine`, `walkLineRanges`, `prepareWithSegments` |
+| **Power API** | `prepare`, `prepareWithSegments`, `layout`, `layoutWithLines`, `layoutNextLine`, `layoutNextLineRange`, `walkLineRanges`, `materializeLineRange`, `measureLineGeometry` |
 
 See [`src/index.ts`](./src/index.ts) for the full public surface.
 
