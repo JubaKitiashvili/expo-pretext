@@ -22,7 +22,10 @@ import type {
 
 function getAnalysisProfile(): AnalysisProfile {
   const engine = getEngineProfile()
-  return { carryCJKAfterClosingQuote: engine.carryCJKAfterClosingQuote }
+  return {
+    carryCJKAfterClosingQuote: engine.carryCJKAfterClosingQuote,
+    breakKeepAllAfterPunctuation: engine.breakKeepAllAfterPunctuation ?? true,
+  }
 }
 
 // --- Auto-batch scheduler ---

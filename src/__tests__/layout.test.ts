@@ -7,7 +7,7 @@
 // that prepare() uses when the native module is unavailable.
 
 import { describe, test, expect } from 'bun:test'
-import { buildPreparedText, buildPreparedTextWithSegments } from '../build'
+import { buildPreparedText, buildPreparedTextWithSegments, type PrepareOptions } from '../build'
 import {
   layout,
   layoutWithLines,
@@ -19,6 +19,12 @@ import { analyzeText } from '../analysis'
 import type { TextStyle, NativeSegmentResult } from '../types'
 
 const STYLE: TextStyle = { fontFamily: 'System', fontSize: 16, lineHeight: 24 }
+const PROFILE = { carryCJKAfterClosingQuote: false }
+const CHAR_WIDTH = STYLE.fontSize * 0.55
+
+function measureWidth(text: string): number {
+  return text.length * CHAR_WIDTH
+}
 
 // ---------------------------------------------------------------------------
 // Helpers — mirrors prepare.ts's fallback when native module is unavailable
@@ -43,24 +49,39 @@ function buildWidthMap(result: NativeSegmentResult): Map<string, number> {
   return map
 }
 
-function makePrepared(text: string, style: TextStyle = STYLE) {
+function makePrepared(text: string, style: TextStyle = STYLE, options?: PrepareOptions) {
   if (!text) {
-    const analysis = analyzeText([], [], { carryCJKAfterClosingQuote: false }, undefined)
-    return buildPreparedText(analysis, new Map(), style)
+    const analysis = analyzeText([], [], PROFILE, options?.whiteSpace, options?.wordBreak)
+    return buildPreparedText(analysis, new Map(), style, options)
   }
   const result = estimateSegments(text, style)
-  const analysis = analyzeText(result.segments, result.isWordLike, { carryCJKAfterClosingQuote: false }, undefined)
-  return buildPreparedText(analysis, buildWidthMap(result), style)
+  const analysis = analyzeText(result.segments, result.isWordLike, PROFILE, options?.whiteSpace, options?.wordBreak)
+  return buildPreparedText(analysis, buildWidthMap(result), style, options)
 }
 
-function makePreparedWithSegments(text: string, style: TextStyle = STYLE) {
+function makePreparedWithSegments(text: string, style: TextStyle = STYLE, options?: PrepareOptions) {
   if (!text) {
-    const analysis = analyzeText([], [], { carryCJKAfterClosingQuote: false }, undefined)
-    return buildPreparedTextWithSegments(analysis, new Map(), style)
+    const analysis = analyzeText([], [], PROFILE, options?.whiteSpace, options?.wordBreak)
+    return buildPreparedTextWithSegments(analysis, new Map(), style, options)
   }
   const result = estimateSegments(text, style)
-  const analysis = analyzeText(result.segments, result.isWordLike, { carryCJKAfterClosingQuote: false }, undefined)
-  return buildPreparedTextWithSegments(analysis, buildWidthMap(result), style)
+  const analysis = analyzeText(result.segments, result.isWordLike, PROFILE, options?.whiteSpace, options?.wordBreak)
+  return buildPreparedTextWithSegments(analysis, buildWidthMap(result), style, options)
+}
+
+function makePreparedFromNativeSegments(
+  segments: string[],
+  isWordLike: boolean[],
+  style: TextStyle = STYLE,
+  options?: PrepareOptions,
+) {
+  const result: NativeSegmentResult = {
+    segments,
+    isWordLike,
+    widths: segments.map(segment => measureWidth(segment)),
+  }
+  const analysis = analyzeText(result.segments, result.isWordLike, PROFILE, options?.whiteSpace, options?.wordBreak)
+  return buildPreparedTextWithSegments(analysis, buildWidthMap(result), style, options)
 }
 
 // ---------------------------------------------------------------------------
@@ -171,6 +192,44 @@ describe('layoutWithLines()', () => {
     for (const line of result.lines) {
       expect(line.width).toBeGreaterThanOrEqual(0)
     }
+  })
+})
+
+// ---------------------------------------------------------------------------
+// Pretext parity regressions
+// ---------------------------------------------------------------------------
+
+describe('pretext parity regressions', () => {
+  // #6 also added a preferred-hyphen-break rule and two tests for it. Measured
+  // against RN Text on a Pixel 9 Pro it made the URL corpus worse — a 360px
+  // line went from one line short to two — and fixed nothing, so it is not
+  // ported here. See the PR discussion for the numbers.
+
+  test('keeps no-space word-internal symbol chains together as one breakable segment', () => {
+    for (const symbol of ['`', '~', '!', '@', '#', '^', '&', '*', '=', '/', '{', '}', '[', ']', '|', '"', '<', '>', '♂', '╥', '∟', '┌']) {
+      const prepared = makePreparedFromNativeSegments(['foo', symbol, 'bar'], [true, false, true]) as unknown as {
+        segments: string[]
+      }
+      expect(prepared.segments).toEqual([`foo${symbol}bar`])
+    }
+
+    expect((makePreparedFromNativeSegments(['foo', '#', '$', 'bar'], [true, false, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo#$bar'])
+    expect((makePreparedFromNativeSegments(
+      ['#', 'hashtag', ' ', 'mention', '@', 'domain'],
+      [false, true, false, true, false, true],
+    ) as unknown as { segments: string[] }).segments).toEqual([
+      '#hashtag',
+      ' ',
+      'mention@domain',
+    ])
+  })
+
+  test('keeps browser break symbols out of no-space word-internal symbol chains', () => {
+    expect((makePreparedFromNativeSegments(['foo', '?', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo?', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '\u2014', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo', '\u2014', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '\u2026', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo\u2026', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '\u203C', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo', '\u203C', 'bar'])
+    expect((makePreparedFromNativeSegments(['foo', '🙂', 'bar'], [true, false, true]) as unknown as { segments: string[] }).segments).toEqual(['foo', '🙂', 'bar'])
   })
 })
 
