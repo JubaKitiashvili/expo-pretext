@@ -1,6 +1,10 @@
 # Changelog
 
-## 1.1.1 — 2026-08-10 — Android hotfix
+## 1.2.0 — 2026-08-10 — Android hotfix + measurement parity
+
+Supersedes 1.1.1, which was committed but never tagged or published; its
+contents are folded in here. Minor rather than patch because the package
+entry gained public exports.
 
 Android was non-functional from 1.0.0 through 1.1.0: the native module
 never compiled, so every call silently fell back to JS estimates. iOS and
@@ -16,6 +20,17 @@ sample corpus (English, Arabic, Chinese, Japanese, Georgian, Thai, emoji
 and mixed-script, each at three widths). Getting the native module to load
 took it to 13/24; the three layout defects it exposed — listed below —
 account for the rest.
+
+### Added
+
+- **The public layout API is now reachable from the package entry.**
+  `layoutNextLineRange()`, `measureLineGeometry()`, `materializeLineRange()`
+  and the `LineGeometry` type were all exported from `src/layout.ts` and
+  absent from the `'./layout'` re-export in `src/index.ts`, so nothing
+  could import them through `'expo-pretext'`. Reported by
+  [@ahundt](https://github.com/ahundt) in [#6]; [#7] adds them plus
+  `LayoutLinesResult`, the return type of the already-exported
+  `layoutWithLines()`.
 
 ### Fixed
 
@@ -103,6 +118,35 @@ account for the rest.
   425 kB instead of 158 kB. Newly possible as of this release, since
   `android/` could never be built before.
 
+- **Web measurement used the wrong font entirely** ([#6], [#8]) — the Canvas
+  backend quoted every family into the `font` shorthand:
+
+  ```js
+  `${style} ${weight} ${font.fontSize}px "${font.fontFamily}"`
+  ```
+
+  A quoted name asks for a family literally called that, so `'System'`
+  became `"System"` — not a real font — and `'sans-serif'` / `'serif'` /
+  `'monospace'` stopped being CSS keywords. A comma-separated stack
+  collapsed the same way. In every one of those cases the browser silently
+  falls back, so widths were measured in whatever it picked. `'System'` now
+  maps to the react-native-web system stack, generics and stacks are left
+  unquoted, and concrete names stay quoted so families with spaces still
+  parse.
+
+- **A canvas appearing after the first lookup was never picked up**
+  ([#6], [#8]) — `getMeasureContext()` memoises a `null` result and
+  `clearNativeCache()` did not drop it, so a backend created before a canvas
+  existed kept returning estimates forever. Affects SSR and any hydration
+  pass that runs ahead of the DOM.
+
+- **Word-internal symbol chains were split into breakable segments**
+  ([#6], [#9]) — the merge only recognised `/^[A-Za-z0-9_]+[,:;]*$/`, so
+  text joined by any other symbol could wrap mid-token.
+  `"#hashtag … mention@domain … foo#$bar"` now stays intact. Numeric affixes
+  (currency, per-mille, degree) count as sticky, and `-` before a digit
+  stays with the number.
+
 ### Upgrading
 
 No API changes, no behavior change on iOS or Web. Android users must
@@ -116,14 +160,29 @@ release.
 
 ### Tests
 
-643 passing (was 637; six new width-map regression tests, five of which
-fail against the previous code), `tsc --noEmit` clean, height snapshot
-baseline unchanged.
+663 passing, was 637. `tsc --noEmit` clean.
+
+The height-snapshot corpus grew from 14 corpora to 22 and gained a
+`wordBreak: 'keep-all'` pass — 210 baseline rows to 435. It previously
+contained no URL, hyphen run, symbol chain or numeric affix, so it could
+not see a change to any of the segmentation this release touches. Adding
+them was purely additive: every pre-existing row kept its height and line
+count.
+
+That coverage immediately earned itself. [#6] also proposed a
+preferred-hyphen-break rule; it was the only part of that PR the new corpus
+reacted to, and measuring it on device showed it making the URL sample
+worse — one line short became two lines over — while correcting nothing. It
+is not in this release. See [#9] for the numbers.
 
 [#2]: https://github.com/JubaKitiashvili/expo-pretext/issues/2
 [#3]: https://github.com/JubaKitiashvili/expo-pretext/issues/3
 [#4]: https://github.com/JubaKitiashvili/expo-pretext/pull/4
 [#5]: https://github.com/JubaKitiashvili/expo-pretext/pull/5
+[#6]: https://github.com/JubaKitiashvili/expo-pretext/pull/6
+[#7]: https://github.com/JubaKitiashvili/expo-pretext/pull/7
+[#8]: https://github.com/JubaKitiashvili/expo-pretext/pull/8
+[#9]: https://github.com/JubaKitiashvili/expo-pretext/pull/9
 
 ## 1.1.0 — 2026-04-18 — Balance + Pretty
 
