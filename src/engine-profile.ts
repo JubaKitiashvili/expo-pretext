@@ -16,6 +16,8 @@ export type EngineProfile = {
   lineFitEpsilon: number
   /** Whether to carry CJK text after closing quotes to the same line (iOS TextKit behavior). */
   carryCJKAfterClosingQuote: boolean
+  /** Whether keep-all text may break after punctuation-like boundaries. */
+  breakKeepAllAfterPunctuation?: boolean
   /** Prefer prefix-width accumulation for breakable runs (experimental). */
   preferPrefixWidthsForBreakableRuns: boolean
   /** Break at soft hyphens earlier when close to the line limit (experimental). */
@@ -30,6 +32,7 @@ export const ENGINE_PROFILES = {
   ios: {
     lineFitEpsilon: 0.01,
     carryCJKAfterClosingQuote: true,
+    breakKeepAllAfterPunctuation: true,
     preferPrefixWidthsForBreakableRuns: false,
     preferEarlySoftHyphenBreak: false,
   } as EngineProfile,
@@ -44,6 +47,7 @@ export const ENGINE_PROFILES = {
     // total line count happened to match.
     lineFitEpsilon: -0.01,
     carryCJKAfterClosingQuote: false,
+    breakKeepAllAfterPunctuation: true,
     preferPrefixWidthsForBreakableRuns: false,
     preferEarlySoftHyphenBreak: false,
   } as EngineProfile,
@@ -56,6 +60,7 @@ export const ENGINE_PROFILES = {
   consistent: {
     lineFitEpsilon: 0.05,
     carryCJKAfterClosingQuote: false,
+    breakKeepAllAfterPunctuation: true,
     preferPrefixWidthsForBreakableRuns: false,
     preferEarlySoftHyphenBreak: false,
   } as EngineProfile,
@@ -64,6 +69,7 @@ export const ENGINE_PROFILES = {
   web: {
     lineFitEpsilon: 0.01,
     carryCJKAfterClosingQuote: false,
+    breakKeepAllAfterPunctuation: true,
     preferPrefixWidthsForBreakableRuns: false,
     preferEarlySoftHyphenBreak: false,
   } as EngineProfile,
@@ -82,7 +88,7 @@ let userOverride: EngineProfile | null = null
  * import { getEngineProfile } from 'expo-pretext'
  *
  * const profile = getEngineProfile()
- * console.log(profile.lineFitEpsilon) // 0.01 on iOS, 0.02 on Android
+ * console.log(profile.lineFitEpsilon) // 0.01 on iOS, -0.01 on Android
  * ```
  */
 export function getEngineProfile(): EngineProfile {
@@ -128,6 +134,7 @@ export function getEngineProfile(): EngineProfile {
  * setEngineProfile({
  *   lineFitEpsilon: 0.03,
  *   carryCJKAfterClosingQuote: true,
+ *   breakKeepAllAfterPunctuation: true,
  *   preferPrefixWidthsForBreakableRuns: false,
  *   preferEarlySoftHyphenBreak: false,
  * })
