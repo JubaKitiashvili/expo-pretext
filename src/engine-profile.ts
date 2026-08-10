@@ -36,7 +36,13 @@ export const ENGINE_PROFILES = {
 
   /** Android-optimized profile — matches TextPaint behavior. */
   android: {
-    lineFitEpsilon: 0.02,
+    // Negative on purpose. Android's TextPaint returns whole-pixel advances, so
+    // there is no float error to absorb — but a line whose width is exactly the
+    // container width does NOT fit in StaticLayout, while a positive tolerance
+    // let it through. Verified against RN Text on a Pixel 9 Pro (API 37): with a
+    // positive epsilon our line breaks drifted one word late even where the
+    // total line count happened to match.
+    lineFitEpsilon: -0.01,
     carryCJKAfterClosingQuote: false,
     preferPrefixWidthsForBreakableRuns: false,
     preferEarlySoftHyphenBreak: false,

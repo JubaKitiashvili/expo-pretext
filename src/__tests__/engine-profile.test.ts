@@ -88,7 +88,9 @@ describe('ENGINE_PROFILES', () => {
   })
 
   test('android profile exists', () => {
-    expect(ENGINE_PROFILES.android.lineFitEpsilon).toBe(0.02)
+    // Negative by design: an exactly-full line does not fit in StaticLayout.
+    // See the comment on ENGINE_PROFILES.android.
+    expect(ENGINE_PROFILES.android.lineFitEpsilon).toBe(-0.01)
   })
 
   test('consistent profile has higher epsilon', () => {

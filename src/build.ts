@@ -243,6 +243,58 @@ function mergeKeepAllTextUnits(units: MeasuredTextUnit[]): MeasuredTextUnit[] {
   return merged
 }
 
+// Distinct key lengths of a width map, longest first. Cached per map so the
+// decomposition below stays cheap across the many lookups in one build.
+const widthMapKeyLengths = new WeakMap<Map<string, number>, number[]>()
+
+function getWidthMapKeyLengths(widthMap: Map<string, number>): number[] {
+  let lengths = widthMapKeyLengths.get(widthMap)
+  if (lengths === undefined) {
+    const seen = new Set<number>()
+    for (const key of widthMap.keys()) {
+      if (key.length > 0) seen.add(key.length)
+    }
+    lengths = Array.from(seen).sort((a, b) => b - a)
+    widthMapKeyLengths.set(widthMap, lengths)
+  }
+  return lengths
+}
+
+// Rebuild a merged segment's width by splitting it back into the measured
+// pieces it was concatenated from.
+//
+// `analyzeText()` merges adjacent native segments (sentence-final punctuation,
+// URL runs, numeric runs, no-space symbol chains, …), but the width map is
+// keyed by the *pre-merge* segment text, so the merged text is never a key.
+// Left unhandled that scored those segments as zero-width — a sentence-final
+// `"dog."` cost 31px of line budget on Android — and the engine packed far too
+// much onto each line.
+//
+// Longest-prefix decomposition reconstructs them: `"dog."` → `"dog"` + `"."`.
+// Returns null when the text cannot be fully decomposed, so callers keep their
+// existing approximation.
+function decomposeWidth(text: string, widthMap: Map<string, number>): number | null {
+  const lengths = getWidthMapKeyLengths(widthMap)
+  if (lengths.length === 0) return null
+
+  let total = 0
+  let i = 0
+  outer: while (i < text.length) {
+    const remaining = text.length - i
+    for (const len of lengths) {
+      if (len > remaining) continue
+      const w = widthMap.get(text.slice(i, i + len))
+      if (w !== undefined) {
+        total += w
+        i += len
+        continue outer
+      }
+    }
+    return null
+  }
+  return total
+}
+
 // Look up width of a sub-segment from the pre-measured width map.
 function lookupWidth(
   text: string,
@@ -252,6 +304,9 @@ function lookupWidth(
 ): number {
   const cached = widthMap.get(text)
   if (cached !== undefined) return cached
+
+  const decomposed = decomposeWidth(text, widthMap)
+  if (decomposed !== null) return decomposed
 
   if (parentText.length > 0 && parentWidth > 0) {
     return (text.length / parentText.length) * parentWidth
@@ -465,7 +520,10 @@ function buildFromAnalysis(
     const containsCJK = isCJK(segText)
 
     if (segKind === 'text' && containsCJK) {
-      const parentWidth = widthMap.get(segText) ?? 0
+      // segText may be a merged analysis segment (e.g. "景象。"), which is never
+      // a width-map key — the map holds the pre-merge native segments. Fall back
+      // to decomposition, or every CJK unit below inherits a zero-width parent.
+      const parentWidth = widthMap.get(segText) ?? decomposeWidth(segText, widthMap) ?? 0
       const baseUnits = buildBaseCjkUnits(segText, engineProfile)
       const measuredUnits = wordBreak === 'keep-all'
         ? mergeKeepAllTextUnits(baseUnits)

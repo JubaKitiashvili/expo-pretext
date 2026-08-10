@@ -11,11 +11,11 @@ during on-device verification of the first two, since this is the first
 release in which the Kotlin ever ran.
 
 Measured on a Pixel 9 Pro emulator (API 37, Expo 55, RN 0.83.4): height
-prediction against `RN Text onLayout` improves from **9/24 to 13/24** of
-the sample corpus, because measurement now comes from real `TextPaint`
-advances instead of a `fontSize * 0.55` per-character estimate. The
-remaining mismatches are tracked separately — they under-predict by one
-line on narrow widths and are unrelated to these fixes.
+prediction against `RN Text onLayout` goes from **9/24 to 24/24** of the
+sample corpus (English, Arabic, Chinese, Japanese, Georgian, Thai, emoji
+and mixed-script, each at three widths). Getting the native module to load
+took it to 13/24; the three layout defects it exposed — listed below —
+account for the rest.
 
 ### Fixed
 
@@ -69,6 +69,33 @@ line on narrow widths and are unrelated to these fixes.
     ratios) instead of the old `8.32` / `11.52`, and `serif` correctly
     reports Noto's different `8.578` / `11.422`.
 
+- **Merged segments were measured as zero-width on Android.** The native
+  backends return one width per *pre-merge* segment and the width map is
+  keyed by segment text, but `analyzeText()` merges adjacent segments —
+  sentence-final punctuation, no-space symbol chains, URL and numeric runs.
+  A merged segment's text is therefore never a key, and the lookup fell
+  through to `0`. A single `"dog."` silently cost 31px of line budget; the
+  Georgian sample lost 202px of 831px total. The engine packed far too much
+  onto each line and under-predicted by one to two lines. Widths are now
+  reconstructed by decomposing the merged text back into the measured
+  pieces (`"dog."` → `"dog"` + `"."`), falling back to the previous
+  approximation only when the text cannot be decomposed.
+
+- **CJK units inherited a zero-width parent.** The CJK path read the parent
+  advance with a bare `widthMap.get(segText)`, which misses for the same
+  reason, so every per-character unit split out of a merged CJK run was
+  scored as free. Chinese at 200px predicted two lines where RN rendered
+  four. It now uses the same decomposition.
+
+- **`ENGINE_PROFILES.android.lineFitEpsilon` is now `-0.01`, was `0.02`.**
+  Android's `TextPaint` returns whole-pixel advances, so there is no float
+  error to absorb, and a line whose width exactly equals the container does
+  not fit in `StaticLayout` — the positive tolerance let it through. This
+  was visible even where the line *count* happened to agree: at 200px the
+  English sample broke as `"The quick brown fox jumps"` where RN Text
+  breaks after `"fox"`. With the strict bound our line content matches RN
+  exactly. iOS, web and the `consistent` profile are untouched.
+
 - **Packaging** — `files` now excludes `android/build/`, `android/.cxx/`,
   `android/.gradle/` and `ios/build/`. The `files` whitelist overrides
   `.gitignore`, so a local Gradle build inside `android/` leaked 261
@@ -89,7 +116,9 @@ release.
 
 ### Tests
 
-637 passing, `tsc --noEmit` clean, height snapshot baseline unchanged.
+643 passing (was 637; six new width-map regression tests, five of which
+fail against the previous code), `tsc --noEmit` clean, height snapshot
+baseline unchanged.
 
 [#2]: https://github.com/JubaKitiashvili/expo-pretext/issues/2
 [#3]: https://github.com/JubaKitiashvili/expo-pretext/issues/3
