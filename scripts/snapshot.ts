@@ -38,7 +38,33 @@ const CORPUS: Record<string, string> = {
   many_newlines: 'Line 1\nLine 2\nLine 3\nLine 4',
   only_whitespace: '     ',
   mixed_scripts_rtl_ltr: 'Hello مرحبا שלום 你好',
+
+  // Segmentation-sensitive inputs. analyzeText() merges adjacent segments for
+  // URLs, hyphen runs, numeric runs and no-space symbol chains, and the line
+  // breaker can prefer a hyphen boundary inside an overlong unbreakable run.
+  // Without these the baseline cannot see a change to any of that.
+  url: 'See https://alpha-beta-gamma-delta.example.test/path?query=1&lang=en for details.',
+  url_bare: 'https://sub.domain.example.test/a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t',
+  hyphenated: 'A state-of-the-art co-operative re-entry plan for long-hyphenated-compound-words.',
+  unicode_dashes: 'alpha\u2010beta\u2012gamma\u2013delta\u2014epsilon and en\u2013dash ranges 10\u201320.',
+  symbol_chain: 'Ping #hashtag then mention@domain plus foo#$bar and a/b|c<d>e~f^g.',
+  numeric_affix: 'Costs $1,234.56 or \u20ac2.5M, up 12.5% from -3.25 to +7 \u00b10.5\u00b0C.',
+  cjk_punctuation: '\u300c\u6625\u5929\u5230\u4e86\u300d\uff0c\u4e07\u7269\u590d\u82cf\u3002\u5c0f\u9e1f\u5728\u679d\u5934\u6b4c\u5531\uff01\u82b1\u513f\u6447\u66f3\uff1f',
+  cjk_latin_mix: '\u6625\u5929Spring\u5230\u4e86arrived\uff0c\u4e07\u7269everything\u590d\u82cf-renewed\u3002',
 }
+
+// Corpus keys also measured with `wordBreak: 'keep-all'`. Keep-all changes how
+// CJK runs are merged and where a run may break after punctuation, so it needs
+// its own coverage — the default-mode rows above cannot see those rules.
+const KEEP_ALL_KEYS = [
+  'chinese',
+  'japanese',
+  'cjk_punctuation',
+  'cjk_latin_mix',
+  'hyphenated',
+  'unicode_dashes',
+  'mixed',
+]
 
 const WIDTHS = [160, 240, 320, 420, 640]
 
@@ -71,10 +97,15 @@ function widthMap(r: NativeSegmentResult): Map<string, number> {
   return m
 }
 
-function prepareHeight(text: string, style: TextStyle, width: number): { height: number; lineCount: number } {
+function prepareHeight(
+  text: string,
+  style: TextStyle,
+  width: number,
+  wordBreak: 'normal' | 'keep-all' = 'normal',
+): { height: number; lineCount: number } {
   const s = estimateSegments(text, style)
-  const a = analyzeText(s.segments, s.isWordLike, PROFILE)
-  const p = buildPreparedText(a, widthMap(s), style)
+  const a = analyzeText(s.segments, s.isWordLike, PROFILE, 'normal', wordBreak)
+  const p = buildPreparedText(a, widthMap(s), style, { wordBreak })
   return layout(p, width)
 }
 
@@ -102,17 +133,26 @@ function buildSnapshot(): Snapshot {
   const entries: Entry[] = []
   for (const corpusKey of Object.keys(CORPUS)) {
     const text = CORPUS[corpusKey]!
-    for (const { key: styleKey, style } of STYLES) {
-      for (const width of WIDTHS) {
-        const { height, lineCount } = prepareHeight(text, style, width)
-        entries.push({
-          key: `${corpusKey}_${styleKey}_${width}`,
-          corpus: corpusKey,
-          style: styleKey,
-          width,
-          height,
-          lineCount,
-        })
+    const modes: Array<'normal' | 'keep-all'> = KEEP_ALL_KEYS.includes(corpusKey)
+      ? ['normal', 'keep-all']
+      : ['normal']
+
+    for (const wordBreak of modes) {
+      // Default-mode keys keep their original shape so existing baseline rows
+      // stay comparable across this change.
+      const suffix = wordBreak === 'normal' ? '' : '_keepall'
+      for (const { key: styleKey, style } of STYLES) {
+        for (const width of WIDTHS) {
+          const { height, lineCount } = prepareHeight(text, style, width, wordBreak)
+          entries.push({
+            key: `${corpusKey}${suffix}_${styleKey}_${width}`,
+            corpus: corpusKey,
+            style: styleKey,
+            width,
+            height,
+            lineCount,
+          })
+        }
       }
     }
   }

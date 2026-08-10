@@ -1,7 +1,7 @@
 {
   "version": 1,
-  "createdAt": "2026-04-17T18:53:41.339Z",
-  "total": 210,
+  "createdAt": "2026-08-10T08:36:35.854Z",
+  "total": 435,
   "entries": [
     {
       "key": "english_16/24_160",
@@ -364,6 +364,126 @@
       "lineCount": 1
     },
     {
+      "key": "chinese_keepall_16/24_160",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 160,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "chinese_keepall_16/24_240",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_keepall_16/24_320",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_keepall_16/24_420",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_keepall_16/24_640",
+      "corpus": "chinese",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_keepall_14/20_160",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 160,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "chinese_keepall_14/20_240",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_keepall_14/20_320",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_keepall_14/20_420",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_keepall_14/20_640",
+      "corpus": "chinese",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "chinese_keepall_20/30_160",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "chinese_keepall_20/30_240",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 240,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "chinese_keepall_20/30_320",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_keepall_20/30_420",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "chinese_keepall_20/30_640",
+      "corpus": "chinese",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
       "key": "japanese_16/24_160",
       "corpus": "japanese",
       "style": "16/24",
@@ -477,6 +597,126 @@
     },
     {
       "key": "japanese_20/30_640",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_16/24_160",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 160,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "japanese_keepall_16/24_240",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_keepall_16/24_320",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_16/24_420",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_16/24_640",
+      "corpus": "japanese",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_14/20_160",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 160,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_keepall_14/20_240",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_keepall_14/20_320",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_14/20_420",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_14/20_640",
+      "corpus": "japanese",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_20/30_160",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "japanese_keepall_20/30_240",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_keepall_20/30_320",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "japanese_keepall_20/30_420",
+      "corpus": "japanese",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "japanese_keepall_20/30_640",
       "corpus": "japanese",
       "style": "20/30",
       "width": 640,
@@ -957,6 +1197,126 @@
     },
     {
       "key": "mixed_20/30_640",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_keepall_16/24_160",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 160,
+      "height": 168,
+      "lineCount": 7
+    },
+    {
+      "key": "mixed_keepall_16/24_240",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 240,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "mixed_keepall_16/24_320",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 320,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "mixed_keepall_16/24_420",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 420,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_keepall_16/24_640",
+      "corpus": "mixed",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_keepall_14/20_160",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 160,
+      "height": 120,
+      "lineCount": 6
+    },
+    {
+      "key": "mixed_keepall_14/20_240",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 240,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "mixed_keepall_14/20_320",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 320,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_keepall_14/20_420",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 420,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_keepall_14/20_640",
+      "corpus": "mixed",
+      "style": "14/20",
+      "width": 640,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "mixed_keepall_20/30_160",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 160,
+      "height": 300,
+      "lineCount": 10
+    },
+    {
+      "key": "mixed_keepall_20/30_240",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 240,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "mixed_keepall_20/30_320",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 320,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "mixed_keepall_20/30_420",
+      "corpus": "mixed",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "mixed_keepall_20/30_640",
       "corpus": "mixed",
       "style": "20/30",
       "width": 640,
@@ -1678,6 +2038,1446 @@
     {
       "key": "mixed_scripts_rtl_ltr_20/30_640",
       "corpus": "mixed_scripts_rtl_ltr",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "url_16/24_160",
+      "corpus": "url",
+      "style": "16/24",
+      "width": 160,
+      "height": 144,
+      "lineCount": 6
+    },
+    {
+      "key": "url_16/24_240",
+      "corpus": "url",
+      "style": "16/24",
+      "width": 240,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "url_16/24_320",
+      "corpus": "url",
+      "style": "16/24",
+      "width": 320,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "url_16/24_420",
+      "corpus": "url",
+      "style": "16/24",
+      "width": 420,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "url_16/24_640",
+      "corpus": "url",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "url_14/20_160",
+      "corpus": "url",
+      "style": "14/20",
+      "width": 160,
+      "height": 100,
+      "lineCount": 5
+    },
+    {
+      "key": "url_14/20_240",
+      "corpus": "url",
+      "style": "14/20",
+      "width": 240,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "url_14/20_320",
+      "corpus": "url",
+      "style": "14/20",
+      "width": 320,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "url_14/20_420",
+      "corpus": "url",
+      "style": "14/20",
+      "width": 420,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "url_14/20_640",
+      "corpus": "url",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "url_20/30_160",
+      "corpus": "url",
+      "style": "20/30",
+      "width": 160,
+      "height": 210,
+      "lineCount": 7
+    },
+    {
+      "key": "url_20/30_240",
+      "corpus": "url",
+      "style": "20/30",
+      "width": 240,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "url_20/30_320",
+      "corpus": "url",
+      "style": "20/30",
+      "width": 320,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "url_20/30_420",
+      "corpus": "url",
+      "style": "20/30",
+      "width": 420,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "url_20/30_640",
+      "corpus": "url",
+      "style": "20/30",
+      "width": 640,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "url_bare_16/24_160",
+      "corpus": "url_bare",
+      "style": "16/24",
+      "width": 160,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "url_bare_16/24_240",
+      "corpus": "url_bare",
+      "style": "16/24",
+      "width": 240,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "url_bare_16/24_320",
+      "corpus": "url_bare",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "url_bare_16/24_420",
+      "corpus": "url_bare",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "url_bare_16/24_640",
+      "corpus": "url_bare",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "url_bare_14/20_160",
+      "corpus": "url_bare",
+      "style": "14/20",
+      "width": 160,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "url_bare_14/20_240",
+      "corpus": "url_bare",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "url_bare_14/20_320",
+      "corpus": "url_bare",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "url_bare_14/20_420",
+      "corpus": "url_bare",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "url_bare_14/20_640",
+      "corpus": "url_bare",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "url_bare_20/30_160",
+      "corpus": "url_bare",
+      "style": "20/30",
+      "width": 160,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "url_bare_20/30_240",
+      "corpus": "url_bare",
+      "style": "20/30",
+      "width": 240,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "url_bare_20/30_320",
+      "corpus": "url_bare",
+      "style": "20/30",
+      "width": 320,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "url_bare_20/30_420",
+      "corpus": "url_bare",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "url_bare_20/30_640",
+      "corpus": "url_bare",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_16/24_160",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 160,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_16/24_240",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 240,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_16/24_320",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 320,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "hyphenated_16/24_420",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_16/24_640",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_14/20_160",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 160,
+      "height": 100,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_14/20_240",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "hyphenated_14/20_320",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_14/20_420",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_14/20_640",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "hyphenated_20/30_160",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 160,
+      "height": 270,
+      "lineCount": 9
+    },
+    {
+      "key": "hyphenated_20/30_240",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 240,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_20/30_320",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 320,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_20/30_420",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "hyphenated_20/30_640",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_keepall_16/24_160",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 160,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_keepall_16/24_240",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 240,
+      "height": 120,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_keepall_16/24_320",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 320,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "hyphenated_keepall_16/24_420",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_keepall_16/24_640",
+      "corpus": "hyphenated",
+      "style": "16/24",
+      "width": 640,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_keepall_14/20_160",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 160,
+      "height": 100,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_keepall_14/20_240",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "hyphenated_keepall_14/20_320",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_keepall_14/20_420",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "hyphenated_keepall_14/20_640",
+      "corpus": "hyphenated",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "hyphenated_keepall_20/30_160",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 160,
+      "height": 270,
+      "lineCount": 9
+    },
+    {
+      "key": "hyphenated_keepall_20/30_240",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 240,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_keepall_20/30_320",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 320,
+      "height": 150,
+      "lineCount": 5
+    },
+    {
+      "key": "hyphenated_keepall_20/30_420",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 420,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "hyphenated_keepall_20/30_640",
+      "corpus": "hyphenated",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_16/24_160",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 160,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "unicode_dashes_16/24_240",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 240,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "unicode_dashes_16/24_320",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_16/24_420",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_16/24_640",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "unicode_dashes_14/20_160",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 160,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "unicode_dashes_14/20_240",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_14/20_320",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_14/20_420",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_14/20_640",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "unicode_dashes_20/30_160",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "unicode_dashes_20/30_240",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 240,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "unicode_dashes_20/30_320",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_20/30_420",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_20/30_640",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "unicode_dashes_keepall_16/24_160",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 160,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "unicode_dashes_keepall_16/24_240",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 240,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "unicode_dashes_keepall_16/24_320",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_16/24_420",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_16/24_640",
+      "corpus": "unicode_dashes",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "unicode_dashes_keepall_14/20_160",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 160,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "unicode_dashes_keepall_14/20_240",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_14/20_320",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_14/20_420",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_14/20_640",
+      "corpus": "unicode_dashes",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "unicode_dashes_keepall_20/30_160",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "unicode_dashes_keepall_20/30_240",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 240,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "unicode_dashes_keepall_20/30_320",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_20/30_420",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "unicode_dashes_keepall_20/30_640",
+      "corpus": "unicode_dashes",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "symbol_chain_16/24_160",
+      "corpus": "symbol_chain",
+      "style": "16/24",
+      "width": 160,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "symbol_chain_16/24_240",
+      "corpus": "symbol_chain",
+      "style": "16/24",
+      "width": 240,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "symbol_chain_16/24_320",
+      "corpus": "symbol_chain",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "symbol_chain_16/24_420",
+      "corpus": "symbol_chain",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "symbol_chain_16/24_640",
+      "corpus": "symbol_chain",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "symbol_chain_14/20_160",
+      "corpus": "symbol_chain",
+      "style": "14/20",
+      "width": 160,
+      "height": 80,
+      "lineCount": 4
+    },
+    {
+      "key": "symbol_chain_14/20_240",
+      "corpus": "symbol_chain",
+      "style": "14/20",
+      "width": 240,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "symbol_chain_14/20_320",
+      "corpus": "symbol_chain",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "symbol_chain_14/20_420",
+      "corpus": "symbol_chain",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "symbol_chain_14/20_640",
+      "corpus": "symbol_chain",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "symbol_chain_20/30_160",
+      "corpus": "symbol_chain",
+      "style": "20/30",
+      "width": 160,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "symbol_chain_20/30_240",
+      "corpus": "symbol_chain",
+      "style": "20/30",
+      "width": 240,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "symbol_chain_20/30_320",
+      "corpus": "symbol_chain",
+      "style": "20/30",
+      "width": 320,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "symbol_chain_20/30_420",
+      "corpus": "symbol_chain",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "symbol_chain_20/30_640",
+      "corpus": "symbol_chain",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_16/24_160",
+      "corpus": "numeric_affix",
+      "style": "16/24",
+      "width": 160,
+      "height": 96,
+      "lineCount": 4
+    },
+    {
+      "key": "numeric_affix_16/24_240",
+      "corpus": "numeric_affix",
+      "style": "16/24",
+      "width": 240,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "numeric_affix_16/24_320",
+      "corpus": "numeric_affix",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_16/24_420",
+      "corpus": "numeric_affix",
+      "style": "16/24",
+      "width": 420,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_16/24_640",
+      "corpus": "numeric_affix",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "numeric_affix_14/20_160",
+      "corpus": "numeric_affix",
+      "style": "14/20",
+      "width": 160,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "numeric_affix_14/20_240",
+      "corpus": "numeric_affix",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_14/20_320",
+      "corpus": "numeric_affix",
+      "style": "14/20",
+      "width": 320,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_14/20_420",
+      "corpus": "numeric_affix",
+      "style": "14/20",
+      "width": 420,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_14/20_640",
+      "corpus": "numeric_affix",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "numeric_affix_20/30_160",
+      "corpus": "numeric_affix",
+      "style": "20/30",
+      "width": 160,
+      "height": 180,
+      "lineCount": 6
+    },
+    {
+      "key": "numeric_affix_20/30_240",
+      "corpus": "numeric_affix",
+      "style": "20/30",
+      "width": 240,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "numeric_affix_20/30_320",
+      "corpus": "numeric_affix",
+      "style": "20/30",
+      "width": 320,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "numeric_affix_20/30_420",
+      "corpus": "numeric_affix",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "numeric_affix_20/30_640",
+      "corpus": "numeric_affix",
+      "style": "20/30",
+      "width": 640,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_16/24_160",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 160,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_16/24_240",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 240,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_16/24_320",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_16/24_420",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_16/24_640",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_14/20_160",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 160,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_14/20_240",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 240,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_14/20_320",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_14/20_420",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_14/20_640",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_20/30_160",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 160,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_20/30_240",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_20/30_320",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 320,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_20/30_420",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_20/30_640",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_16/24_160",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 160,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_keepall_16/24_240",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 240,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_16/24_320",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 320,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_16/24_420",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_16/24_640",
+      "corpus": "cjk_punctuation",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_14/20_160",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 160,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_keepall_14/20_240",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 240,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_14/20_320",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_14/20_420",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_14/20_640",
+      "corpus": "cjk_punctuation",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_20/30_160",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 160,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_keepall_20/30_240",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_punctuation_keepall_20/30_320",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 320,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_20/30_420",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 420,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_punctuation_keepall_20/30_640",
+      "corpus": "cjk_punctuation",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_16/24_160",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 160,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "cjk_latin_mix_16/24_240",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_16/24_320",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_16/24_420",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_16/24_640",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_14/20_160",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 160,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "cjk_latin_mix_14/20_240",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_14/20_320",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_14/20_420",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_14/20_640",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_20/30_160",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "cjk_latin_mix_20/30_240",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 240,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_20/30_320",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_20/30_420",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_20/30_640",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 640,
+      "height": 30,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_keepall_16/24_160",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 160,
+      "height": 72,
+      "lineCount": 3
+    },
+    {
+      "key": "cjk_latin_mix_keepall_16/24_240",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 240,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_keepall_16/24_320",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 320,
+      "height": 48,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_keepall_16/24_420",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 420,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_keepall_16/24_640",
+      "corpus": "cjk_latin_mix",
+      "style": "16/24",
+      "width": 640,
+      "height": 24,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_keepall_14/20_160",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 160,
+      "height": 60,
+      "lineCount": 3
+    },
+    {
+      "key": "cjk_latin_mix_keepall_14/20_240",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 240,
+      "height": 40,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_keepall_14/20_320",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 320,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_keepall_14/20_420",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 420,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_keepall_14/20_640",
+      "corpus": "cjk_latin_mix",
+      "style": "14/20",
+      "width": 640,
+      "height": 20,
+      "lineCount": 1
+    },
+    {
+      "key": "cjk_latin_mix_keepall_20/30_160",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 160,
+      "height": 120,
+      "lineCount": 4
+    },
+    {
+      "key": "cjk_latin_mix_keepall_20/30_240",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 240,
+      "height": 90,
+      "lineCount": 3
+    },
+    {
+      "key": "cjk_latin_mix_keepall_20/30_320",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 320,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_keepall_20/30_420",
+      "corpus": "cjk_latin_mix",
+      "style": "20/30",
+      "width": 420,
+      "height": 60,
+      "lineCount": 2
+    },
+    {
+      "key": "cjk_latin_mix_keepall_20/30_640",
+      "corpus": "cjk_latin_mix",
       "style": "20/30",
       "width": 640,
       "height": 30,
