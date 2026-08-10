@@ -16,7 +16,7 @@ mock.module('expo-modules-core', () => ({
   requireNativeModule: () => null,
 }))
 
-import { describe, test, expect, beforeEach } from 'bun:test'
+import { describe, test, expect, beforeEach, afterEach } from 'bun:test'
 import { getEngineProfile, setEngineProfile, ENGINE_PROFILES } from '../engine-profile'
 
 describe('getEngineProfile', () => {
@@ -41,6 +41,16 @@ describe('getEngineProfile', () => {
 
 describe('setEngineProfile', () => {
   beforeEach(() => {
+    setEngineProfile(null)
+  })
+
+  // beforeEach only cleans up *before* a test, so the last test in this block
+  // used to leave its override installed for whatever test file bun ran next
+  // (module state is shared across files). That made
+  // integration.test.ts's 'engine profile switch to consistent mode' fail
+  // depending on file order — which differs between macOS and the Linux CI
+  // runner, so it only ever reproduced in CI.
+  afterEach(() => {
     setEngineProfile(null)
   })
 

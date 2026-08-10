@@ -83,6 +83,9 @@ describe('v0.7.x integration — all APIs work together', () => {
   })
 
   test('engine profile switch to consistent mode', () => {
+    // Establish the platform default explicitly — do not inherit whatever
+    // override an earlier test file happened to leave behind.
+    setEngineProfile(null)
     const original = getEngineProfile()
     setEngineProfile(ENGINE_PROFILES.consistent)
     expect(getEngineProfile().lineFitEpsilon).toBe(0.05)
