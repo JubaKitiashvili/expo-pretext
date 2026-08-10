@@ -13,6 +13,7 @@ export type PreparedLineBreakData = {
   kinds: SegmentBreakKind[]
   simpleLineWalkFastPath: boolean
   breakableFitAdvances: (number[] | null)[]
+  breakablePreferredBreaks: (number[] | null)[]
   discretionaryHyphenWidth: number
   tabStopAdvance: number
   chunks: {
@@ -40,6 +41,83 @@ function normalizeSimpleLineStartSegmentIndex(
     segmentIndex++
   }
   return segmentIndex
+}
+
+// Tracks the last separator-aligned position a breakable run may be split at.
+//
+// `preferredBreaks` holds grapheme indices where a line may start (see
+// getBreakablePreferredBreaks in build.ts). While a walker advances through a
+// run it calls `note()` after each grapheme; when the run overflows it calls
+// `take()`, which returns the last such position reached, or null to fall back
+// to breaking at the current grapheme as before.
+//
+// One shared implementation because five walkers need identical behaviour.
+// Can part of a breakable run be placed on the current line?
+//
+// A separator inside a run is a real break opportunity, the same as a space, so
+// a run that does not fit whole should still fill the rest of the line up to one
+// — that is what RN does with URLs. Without this the engine falls back to the
+// preceding space and drops the whole run to the next line, which is how
+// `See https://…` ended up with `See ` alone on line one.
+//
+// Only true when a preferred break is reachable; runs with no internal break
+// opportunity keep moving down whole, as before.
+function preferredBreakFitsWithin(
+  fitAdvances: number[],
+  preferredBreaks: number[] | null,
+  remaining: number,
+): boolean {
+  if (preferredBreaks === null || preferredBreaks.length === 0) return false
+
+  let width = 0
+  let next = 0
+  for (let g = 0; g < fitAdvances.length; g++) {
+    width += fitAdvances[g]!
+    if (width > remaining) return false
+    while (next < preferredBreaks.length && preferredBreaks[next]! < g + 1) next++
+    if (next < preferredBreaks.length && preferredBreaks[next] === g + 1) return true
+  }
+  return false
+}
+
+class PreferredBreakTracker {
+  private breaks: number[] | null = null
+  private next = 0
+  private end = -1
+  private width = 0
+  private start = 0
+
+  reset(preferredBreaks: number[] | null, startGraphemeIndex: number): void {
+    this.breaks = preferredBreaks
+    this.start = startGraphemeIndex
+    this.end = -1
+    this.width = 0
+    this.next = 0
+    if (preferredBreaks !== null) {
+      while (this.next < preferredBreaks.length && preferredBreaks[this.next]! <= startGraphemeIndex) {
+        this.next++
+      }
+    }
+  }
+
+  note(graphemeEnd: number, lineWidth: number): void {
+    const breaks = this.breaks
+    if (breaks === null) return   // hot path: ordinary words never have preferred breaks
+    while (this.next < breaks.length && breaks[this.next]! < graphemeEnd) this.next++
+    if (this.next < breaks.length && breaks[this.next] === graphemeEnd) {
+      this.end = graphemeEnd
+      this.width = lineWidth
+      this.next++
+    }
+  }
+
+  take(): { end: number, width: number } | null {
+    if (this.end <= this.start) return null
+    const taken = { end: this.end, width: this.width }
+    this.end = -1
+    this.width = 0
+    return taken
+  }
 }
 
 function getTabAdvance(lineWidth: number, tabStopAdvance: number): number {
@@ -178,7 +256,7 @@ function walkPreparedLinesSimple(
   maxWidth: number,
   onLine?: (line: InternalLayoutLine) => void,
 ): number {
-  const { widths, kinds, breakableFitAdvances } = prepared
+  const { widths, kinds, breakableFitAdvances, breakablePreferredBreaks } = prepared
   if (widths.length === 0) return 0
 
   const engineProfile = getEngineProfile()
@@ -250,15 +328,26 @@ function walkPreparedLinesSimple(
     appendBreakableSegmentFrom(segmentIndex, 0)
   }
 
+  const preferred = new PreferredBreakTracker()
+
   function appendBreakableSegmentFrom(segmentIndex: number, startGraphemeIndex: number): void {
     const fitAdvances = breakableFitAdvances[segmentIndex]!
+    preferred.reset(breakablePreferredBreaks[segmentIndex] ?? null, startGraphemeIndex)
 
-    for (let g = startGraphemeIndex; g < fitAdvances.length; g++) {
+    let g = startGraphemeIndex
+    while (g < fitAdvances.length) {
       const gw = fitAdvances[g]!
 
       if (!hasContent) {
         startLineAtGrapheme(segmentIndex, g, gw)
       } else if (lineW + gw > fitLimit) {
+        const at = preferred.take()
+        if (at !== null) {
+          emitCurrentLine(segmentIndex, at.end, at.width)
+          g = at.end
+          preferred.reset(breakablePreferredBreaks[segmentIndex] ?? null, g)
+          continue
+        }
         emitCurrentLine()
         startLineAtGrapheme(segmentIndex, g, gw)
       } else {
@@ -266,6 +355,9 @@ function walkPreparedLinesSimple(
         lineEndSegmentIndex = segmentIndex
         lineEndGraphemeIndex = g + 1
       }
+
+      preferred.note(g + 1, lineW)
+      g++
     }
 
     if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
@@ -304,6 +396,17 @@ function walkPreparedLinesSimple(
       if (breakAfter) {
         appendWholeSegment(i, w)
         emitCurrentLine(i + 1, 0, lineW - w)
+        i++
+        continue
+      }
+
+      const preferredHere = breakablePreferredBreaks[i] ?? null
+      if (
+        preferredHere !== null &&
+        breakableFitAdvances[i] !== null &&
+        preferredBreakFitsWithin(breakableFitAdvances[i]!, preferredHere, fitLimit - lineW)
+      ) {
+        appendBreakableSegmentFrom(i, 0)
         i++
         continue
       }
@@ -358,6 +461,7 @@ export function walkPreparedLines(
     lineEndPaintAdvances,
     kinds,
     breakableFitAdvances,
+    breakablePreferredBreaks,
     discretionaryHyphenWidth,
     tabStopAdvance,
     chunks,
@@ -452,15 +556,26 @@ export function walkPreparedLines(
     appendBreakableSegmentFrom(segmentIndex, 0)
   }
 
+  const preferred = new PreferredBreakTracker()
+
   function appendBreakableSegmentFrom(segmentIndex: number, startGraphemeIndex: number): void {
     const fitAdvances = breakableFitAdvances[segmentIndex]!
+    preferred.reset(breakablePreferredBreaks[segmentIndex] ?? null, startGraphemeIndex)
 
-    for (let g = startGraphemeIndex; g < fitAdvances.length; g++) {
+    let g = startGraphemeIndex
+    while (g < fitAdvances.length) {
       const gw = fitAdvances[g]!
 
       if (!hasContent) {
         startLineAtGrapheme(segmentIndex, g, gw)
       } else if (lineW + gw > fitLimit) {
+        const at = preferred.take()
+        if (at !== null) {
+          emitCurrentLine(segmentIndex, at.end, at.width)
+          g = at.end
+          preferred.reset(breakablePreferredBreaks[segmentIndex] ?? null, g)
+          continue
+        }
         emitCurrentLine()
         startLineAtGrapheme(segmentIndex, g, gw)
       } else {
@@ -468,6 +583,9 @@ export function walkPreparedLines(
         lineEndSegmentIndex = segmentIndex
         lineEndGraphemeIndex = g + 1
       }
+
+      preferred.note(g + 1, lineW)
+      g++
     }
 
     if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
@@ -653,6 +771,7 @@ function stepPreparedChunkLineGeometry(
     lineEndPaintAdvances,
     kinds,
     breakableFitAdvances,
+    breakablePreferredBreaks,
     discretionaryHyphenWidth,
     tabStopAdvance,
   } = prepared
@@ -726,8 +845,11 @@ function stepPreparedChunkLineGeometry(
     pendingBreakKind = kind
   }
 
+  const preferred = new PreferredBreakTracker()
+
   function appendBreakableSegmentFrom(segmentIndex: number, startGraphemeIndex: number): number | null {
     const fitAdvances = breakableFitAdvances[segmentIndex]!
+    preferred.reset(breakablePreferredBreaks[segmentIndex] ?? null, startGraphemeIndex)
 
     for (let g = startGraphemeIndex; g < fitAdvances.length; g++) {
       const gw = fitAdvances[g]!
@@ -736,6 +858,8 @@ function stepPreparedChunkLineGeometry(
         startLineAtGrapheme(segmentIndex, g, gw)
       } else {
         if (lineW + gw > fitLimit) {
+          const at = preferred.take()
+          if (at !== null) return finishLine(segmentIndex, at.end, at.width)
           return finishLine()
         }
 
@@ -743,6 +867,8 @@ function stepPreparedChunkLineGeometry(
         lineEndSegmentIndex = segmentIndex
         lineEndGraphemeIndex = g + 1
       }
+
+      preferred.note(g + 1, lineW)
     }
 
     if (hasContent && lineEndSegmentIndex === segmentIndex && lineEndGraphemeIndex === fitAdvances.length) {
@@ -878,7 +1004,7 @@ function stepPreparedSimpleLineGeometry(
   cursor: LineBreakCursor,
   maxWidth: number,
 ): number | null {
-  const { widths, kinds, breakableFitAdvances } = prepared
+  const { widths, kinds, breakableFitAdvances, breakablePreferredBreaks } = prepared
   const engineProfile = getEngineProfile()
   const lineFitEpsilon = engineProfile.lineFitEpsilon
   const fitLimit = maxWidth + lineFitEpsilon
@@ -901,15 +1027,24 @@ function stepPreparedSimpleLineGeometry(
       if (startGraphemeIndex > 0 || (w > maxWidth && breakableFitAdvance !== null)) {
         const fitAdvances = breakableFitAdvance!
         const firstGraphemeWidth = fitAdvances[startGraphemeIndex]!
+        const preferred = new PreferredBreakTracker()
+        preferred.reset(breakablePreferredBreaks[i] ?? null, startGraphemeIndex)
 
         hasContent = true
         lineW = firstGraphemeWidth
         lineEndSegmentIndex = i
         lineEndGraphemeIndex = startGraphemeIndex + 1
+        preferred.note(startGraphemeIndex + 1, lineW)
 
         for (let g = startGraphemeIndex + 1; g < fitAdvances.length; g++) {
           const gw = fitAdvances[g]!
           if (lineW + gw > fitLimit) {
+            const at = preferred.take()
+            if (at !== null) {
+              cursor.segmentIndex = i
+              cursor.graphemeIndex = at.end
+              return at.width
+            }
             cursor.segmentIndex = lineEndSegmentIndex
             cursor.graphemeIndex = lineEndGraphemeIndex
             return lineW
@@ -917,6 +1052,7 @@ function stepPreparedSimpleLineGeometry(
           lineW += gw
           lineEndSegmentIndex = i
           lineEndGraphemeIndex = g + 1
+          preferred.note(g + 1, lineW)
         }
 
         if (lineEndSegmentIndex === i && lineEndGraphemeIndex === fitAdvances.length) {
@@ -941,6 +1077,31 @@ function stepPreparedSimpleLineGeometry(
         cursor.segmentIndex = i + 1
         cursor.graphemeIndex = 0
         return lineW
+      }
+
+      const preferredHere = breakablePreferredBreaks[i] ?? null
+      if (
+        preferredHere !== null &&
+        breakableFitAdvances[i] !== null &&
+        preferredBreakFitsWithin(breakableFitAdvances[i]!, preferredHere, fitLimit - lineW)
+      ) {
+        // Same rule as the full walkers: fill the rest of this line up to the
+        // last separator the run offers, rather than dropping it whole.
+        const fitAdvances = breakableFitAdvances[i]!
+        const preferred = new PreferredBreakTracker()
+        preferred.reset(breakablePreferredBreaks[i] ?? null, 0)
+        for (let g = 0; g < fitAdvances.length; g++) {
+          const gw = fitAdvances[g]!
+          if (lineW + gw > fitLimit) break
+          lineW += gw
+          preferred.note(g + 1, lineW)
+        }
+        const at = preferred.take()
+        if (at !== null) {
+          cursor.segmentIndex = i
+          cursor.graphemeIndex = at.end
+          return at.width
+        }
       }
 
       if (pendingBreakSegmentIndex >= 0) {

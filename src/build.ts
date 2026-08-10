@@ -74,6 +74,7 @@ export type PreparedCore = {
   simpleLineWalkFastPath: boolean
   segLevels: Int8Array | null
   breakableFitAdvances: (number[] | null)[]
+  breakablePreferredBreaks: (number[] | null)[]
   discretionaryHyphenWidth: number
   tabStopAdvance: number
   chunks: PreparedLineChunk[]
@@ -116,6 +117,7 @@ function createEmptyPrepared(
     simpleLineWalkFastPath: true,
     segLevels: null,
     breakableFitAdvances: [],
+    breakablePreferredBreaks: [],
     discretionaryHyphenWidth: 0,
     tabStopAdvance: 0,
     chunks: [],
@@ -368,6 +370,52 @@ function getGraphemeWidthsFromMap(
   return widths
 }
 
+// Grapheme indices inside a breakable run where a line may start.
+//
+// When a run has to be split, RN/Android does not break at an arbitrary
+// grapheme — it breaks at the separators. Measured against `onTextLayout` on a
+// Pixel 9 Pro, `https://alpha-beta-gamma-delta.example.test/path?query=1&lang=en`
+// at 192px wraps as:
+//
+//     See https://alpha-beta
+//     -gamma-delta.example
+//     .test/path?query=1&lang=
+//     en for details.
+//
+// so the break lands *before* `-`, `.` and `/` (the separator opens the next
+// line) and *after* `=`. Note line 1 could have fitted a trailing `-` and did
+// not, which is what rules out breaking after a hyphen.
+//
+// Returned indices are line-start positions. Null when the text has no
+// separator, which leaves ordinary long words breaking anywhere as before.
+const BREAK_BEFORE_CHARS = new Set(['-', '\u2010', '\u2012', '\u2013', '\u2014', '.', '/'])
+const BREAK_AFTER_CHARS = new Set(['='])
+
+function getBreakablePreferredBreaks(text: string): number[] | null {
+  // Scoped to URL-like runs — a path separator is the marker. This is the only
+  // shape the behaviour was measured against, and widening it to every run
+  // containing a dot or hyphen would also turn an O(1) "does this word fit"
+  // decision into a grapheme walk for ordinary punctuated prose.
+  if (!text.includes('/')) return null
+  if (!/[-\u2010\u2012\u2013\u2014./=]/.test(text)) return null
+
+  const breaks: number[] = []
+  let index = 0
+  let previousWasBreakAfter = false
+
+  for (const gs of getSharedGraphemeSegmenter().segment(text)) {
+    const g = gs.segment
+    // A break at index 0 is not a break, it is the run's own start.
+    if (index > 0 && (previousWasBreakAfter || BREAK_BEFORE_CHARS.has(g))) {
+      if (breaks[breaks.length - 1] !== index) breaks.push(index)
+    }
+    previousWasBreakAfter = BREAK_AFTER_CHARS.has(g)
+    index++
+  }
+
+  return breaks.length === 0 ? null : breaks
+}
+
 // Build cumulative prefix widths from per-grapheme widths.
 function buildPrefixWidths(graphemeWidths: number[]): number[] {
   const prefixWidths: number[] = new Array(graphemeWidths.length)
@@ -433,6 +481,7 @@ function buildFromAnalysis(
   let simpleLineWalkFastPath = analysis.chunks.length <= 1
   const segStarts = includeSegments ? [] as number[] : null
   const breakableFitAdvances: (number[] | null)[] = []
+  const breakablePreferredBreaks: (number[] | null)[] = []
   const segments = includeSegments ? [] as string[] : null
   const preparedStartByAnalysisIndex = Array.from<number>({ length: analysis.len })
 
@@ -444,6 +493,7 @@ function buildFromAnalysis(
     kind: SegmentBreakKind,
     start: number,
     breakableFitAdvance: number[] | null,
+    breakablePreferredBreak: number[] | null,
   ): void {
     if (kind !== 'text' && kind !== 'space' && kind !== 'zero-width-break') {
       simpleLineWalkFastPath = false
@@ -454,6 +504,7 @@ function buildFromAnalysis(
     kinds.push(kind)
     segStarts?.push(start)
     breakableFitAdvances.push(breakableFitAdvance)
+    breakablePreferredBreaks.push(breakablePreferredBreak)
     if (segments !== null) segments.push(text)
   }
 
@@ -478,6 +529,7 @@ function buildFromAnalysis(
 
     if (allowOverflowBreaks && wordLike && text.length > 1) {
       const fitAdvances = getGraphemeWidthsFromMap(text, width, widthMap)
+      const preferredBreaks = wordBreak === 'keep-all' ? null : getBreakablePreferredBreaks(text)
       pushSegment(
         text,
         width,
@@ -486,6 +538,7 @@ function buildFromAnalysis(
         kind,
         start,
         fitAdvances,
+        preferredBreaks,
       )
       return
     }
@@ -497,6 +550,7 @@ function buildFromAnalysis(
       lineEndPaintAdvance,
       kind,
       start,
+      null,
       null,
     )
   }
@@ -517,17 +571,18 @@ function buildFromAnalysis(
         segKind,
         segStart,
         null,
+        null,
       )
       continue
     }
 
     if (segKind === 'hard-break') {
-      pushSegment(segText, 0, 0, 0, segKind, segStart, null)
+      pushSegment(segText, 0, 0, 0, segKind, segStart, null, null)
       continue
     }
 
     if (segKind === 'tab') {
-      pushSegment(segText, 0, 0, 0, segKind, segStart, null)
+      pushSegment(segText, 0, 0, 0, segKind, segStart, null, null)
       continue
     }
 
@@ -572,6 +627,7 @@ function buildFromAnalysis(
     simpleLineWalkFastPath,
     segLevels,
     breakableFitAdvances,
+    breakablePreferredBreaks,
     discretionaryHyphenWidth,
     tabStopAdvance,
     chunks,

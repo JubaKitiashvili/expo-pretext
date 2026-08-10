@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "createdAt": "2026-08-10T08:36:35.854Z",
+  "createdAt": "2026-08-10T14:24:17.224Z",
   "total": 435,
   "entries": [
     {
@@ -2064,16 +2064,16 @@
       "corpus": "url",
       "style": "16/24",
       "width": 320,
-      "height": 96,
-      "lineCount": 4
+      "height": 72,
+      "lineCount": 3
     },
     {
       "key": "url_16/24_420",
       "corpus": "url",
       "style": "16/24",
       "width": 420,
-      "height": 72,
-      "lineCount": 3
+      "height": 48,
+      "lineCount": 2
     },
     {
       "key": "url_16/24_640",
@@ -2096,8 +2096,8 @@
       "corpus": "url",
       "style": "14/20",
       "width": 240,
-      "height": 80,
-      "lineCount": 4
+      "height": 60,
+      "lineCount": 3
     },
     {
       "key": "url_14/20_320",
@@ -2112,8 +2112,8 @@
       "corpus": "url",
       "style": "14/20",
       "width": 420,
-      "height": 60,
-      "lineCount": 3
+      "height": 40,
+      "lineCount": 2
     },
     {
       "key": "url_14/20_640",
@@ -2152,16 +2152,16 @@
       "corpus": "url",
       "style": "20/30",
       "width": 420,
-      "height": 120,
-      "lineCount": 4
+      "height": 90,
+      "lineCount": 3
     },
     {
       "key": "url_20/30_640",
       "corpus": "url",
       "style": "20/30",
       "width": 640,
-      "height": 90,
-      "lineCount": 3
+      "height": 60,
+      "lineCount": 2
     },
     {
       "key": "url_bare_16/24_160",
