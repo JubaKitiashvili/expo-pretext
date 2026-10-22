@@ -1,6 +1,10 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
-    "strict": true
+    "strict": true,
+    "paths": {
+      "expo-pretext": ["../src/index.ts"],
+      "expo-pretext/animated": ["../src/animated.ts"]
+    }
   }
 }
