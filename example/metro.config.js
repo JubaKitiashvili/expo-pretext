@@ -35,9 +35,13 @@ config.resolver.extraNodeModules = new Proxy(
 // @expo/metro-runtime needs. Disable exports and map subpaths manually.
 config.resolver.unstable_enablePackageExports = false
 
-// Manual subpath mapping for expo-pretext/animated (was handled by exports)
+// Resolve expo-pretext to the library source, so the example runs without
+// building the package first (its main/exports point at build/).
 const origResolveRequest = config.resolver.resolveRequest
 config.resolver.resolveRequest = (context, moduleName, platform) => {
+  if (moduleName === 'expo-pretext') {
+    return context.resolveRequest(context, path.join(workspaceRoot, 'src', 'index.ts'), platform)
+  }
   if (moduleName === 'expo-pretext/animated') {
     return context.resolveRequest(context, path.join(workspaceRoot, 'src', 'animated.ts'), platform)
   }

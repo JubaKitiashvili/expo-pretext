@@ -43,6 +43,9 @@ jobs:
       - name: Typecheck
         run: npx tsc --noEmit
 
+      - name: Build
+        run: bun run build
+
       - name: Tests
         run: bun test src/__tests__/
 
